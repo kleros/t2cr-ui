@@ -1,82 +1,100 @@
-const fs = require('fs');
-const path = require('path');
-
-const prettierOptions = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, '.prettierrc'), 'utf8'),
-);
-
 module.exports = {
-  parser: 'babel-eslint',
-  extends: ['airbnb', 'prettier', 'prettier/react'],
-  plugins: ['prettier', 'react', 'react-hooks', 'jsx-a11y'],
+  root: true,
+  plugins: ['unicorn', 'react-hooks', 'prettier', 'jsx-a11y', 'promise'],
   env: {
-    jest: true,
-    browser: true,
     node: true,
     es6: true,
   },
-  parserOptions: {
-    ecmaVersion: 6,
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
+  parserOptions: { ecmaVersion: 8 }, // to enable features such as async/await
+  ignorePatterns: ['node_modules/*', '!.prettierrc.js'], // We don't want to lint generated files nor node_modules, but we want to lint .prettierrc.js (ignored by default by eslint)
+  extends: [
+    'eslint:recommended',
+    'plugin:unicorn/recommended', // unicorn
+    'plugin:prettier/recommended', // prettier overrides
+    'prettier/react',
+    'plugin:jsx-a11y/recommended',
+    'plugin:promise/recommended',
+  ],
+  overrides: [
+    // This configuration will apply only to TypeScript files
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      settings: { react: { version: 'detect' } },
+      env: {
+        browser: true,
+        node: true,
+        es6: true,
+      },
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended', // TypeScript rules
+        'plugin:react/recommended', // React rules
+        'plugin:react-hooks/recommended', // React hooks rules
+        'plugin:jsx-a11y/recommended', // Accessibility rules
+        'plugin:prettier/recommended', // Prettier recommended rules
+        'prettier/@typescript-eslint', // Prettier plugin
+        'prettier/react',
+        'plugin:unicorn/recommended', // unicorn
+      ],
+      rules: {
+        // We will use TypeScript's types for component props instead
+        'react/prop-types': 'off',
+        '@typescript-eslint/no-unused-vars': ['error'],
+        'unicorn/no-useless-undefined': 0,
+
+        // I suggest this setting for requiring return types on functions only where useful
+        '@typescript-eslint/explicit-function-return-type': [
+          'warn',
+          {
+            allowExpressions: true,
+            allowConciseArrowFunctionExpressionsStartingWithVoid: true,
+          },
+        ],
+
+        'prefer-const': 2,
+        'arrow-body-style': [2, 'as-needed'],
+        curly: [2, 'multi'],
+        'padding-line-between-statements': [
+          2,
+          { blankLine: 'never', prev: 'import', next: 'import' },
+        ],
+        'no-useless-concat': 2,
+        'prefer-template': 2,
+
+        'prettier/prettier': ['error', {}, { usePrettierrc: true }], // Includes .prettierrc.js rules
+      },
     },
-  },
+  ],
+  // Rule Overrides
   rules: {
-    'prettier/prettier': ['error', prettierOptions],
+    'prefer-const': 2,
     'arrow-body-style': [2, 'as-needed'],
-    'class-methods-use-this': 0,
-    'import/extensions': 0,
-    'import/imports-first': 0,
-    'import/newline-after-import': 0,
-    'import/no-dynamic-require': 0,
-    'import/no-extraneous-dependencies': 0,
-    'import/no-named-as-default': 0,
-    'import/no-unresolved': 2,
-    'import/no-webpack-loader-syntax': 0,
-    'import/prefer-default-export': 0,
-    indent: [
+    curly: [2, 'multi'],
+    'padding-line-between-statements': [
       2,
-      2,
-      {
-        SwitchCase: 1,
-      },
+      { blankLine: 'never', prev: 'import', next: 'import' },
     ],
-    'jsx-a11y/aria-props': 2,
-    'jsx-a11y/heading-has-content': 0,
-    'jsx-a11y/label-has-associated-control': [
-      2,
-      {
-        // NOTE: If this error triggers, either disable it or add
-        // Your custom components, labels and attributes via these options
-        // See https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/label-has-associated-control.md
-        controlComponents: ['Input'],
-      },
-    ],
-    'jsx-a11y/label-has-for': 0,
-    'jsx-a11y/mouse-events-have-key-events': 2,
-    'jsx-a11y/role-has-required-aria-props': 2,
-    'jsx-a11y/role-supports-aria-props': 2,
-    'max-len': 0,
-    'newline-per-chained-call': 0,
-    'no-confusing-arrow': 0,
-    'no-console': 1,
-    'no-unused-vars': 2,
-    'no-use-before-define': 0,
+    'no-useless-concat': 2,
     'prefer-template': 2,
-    'react/destructuring-assignment': 0,
+
+    // unicorn
+    'unicorn/no-fn-reference-in-iterator': 0, // Allows [].map(func)
+    'unicorn/catch-error-name': [2, { name: 'error' }],
+    'unicorn/prevent-abbreviations': 'off',
+    'unicorn/no-abusive-eslint-disable': 'off',
+    'unicorn/no-useless-undefined': 0,
+
+    'react/jsx-indent': 0,
+    'react/jsx-curly-brace-presence': [2, 'never'],
+    'eslintreact/jsx-pascal-case': 0,
+
+    // React
+    'react/prefer-stateless-function': 2,
+    'react/destructuring-assignment': [2, 'always'],
+
+    // hooks
     'react-hooks/rules-of-hooks': 'error',
-    'react/jsx-closing-tag-location': 0,
-    'react/forbid-prop-types': 0,
-    'react/jsx-first-prop-new-line': [2, 'multiline'],
-    'react/jsx-filename-extension': 0,
-    'react/jsx-no-target-blank': 0,
-    'react/jsx-uses-vars': 2,
-    'react/require-default-props': 0,
-    'react/require-extension': 0,
-    'react/self-closing-comp': 0,
-    'react/sort-comp': 0,
-    'react/jsx-props-no-spreading': 0,
-    'require-yield': 0,
+    'react-hooks/exhaustive-deps': 'warn',
   },
 };
