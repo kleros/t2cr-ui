@@ -1,5 +1,1 @@
-import React from 'react';
-
-export default function Index() {
-  return <>Hello from index</>;
-}
+export { default } from '../_pages/index';

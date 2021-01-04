@@ -1,14 +1,30 @@
-import React from 'react';
-import Head from 'next/head';
-import { AppProps } from 'next/app';
+import {
+  ThemeProvider,
+  AccountSettingsPopup as _AccountSettingsPopup,
+} from '@kleros/components';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <>
-      <Head>
-        <title>Kleros - T2CR</title>
-      </Head>
-      <Component {...pageProps} />
-    </>
-  );
+const theme = {
+  colors: {
+    vouching: '#4d00b4',
+    pendingRegistration: '#ccc',
+    pendingRemoval: '#ff9900',
+    challengedRegistration: '#ffc700',
+    challengedRemoval: '#ffc700',
+    registered: '#009aff',
+    removed: '#4a4a4a',
+  },
+};
+
+// Invalid hook call error.
+// export default function App() {
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <div>Hello</div>
+//     </ThemeProvider>
+//   );
+// }
+
+// Works fine.
+export default function App() {
+  return <div>Hello</div>;
 }
