@@ -9,25 +9,16 @@ import {
   Text,
 } from '@kleros/components';
 import { AppProps } from 'next/dist/next-server/lib/router/router';
-import { useRouter } from 'next/router';
 
 import ThemeProvider from '../components/theme-provider';
-import SecuredByKleros from '../icons/secured-by-kleros';
-import T2CRLogo from '../icons/t2cr-logo';
-
-const theme = {
-  colors: {
-    accent: '#501caf',
-    accentComplement: '#501caf',
-  },
-};
+import { SecuredByKleros, Info, T2CRLogo } from '../icons';
 
 const header = {
   left: (
     <>
       <T2CRLogo />
       <Box sx={{ marginLeft: '8px' }}>
-        <Text>Tokens</Text>
+        <Text sx={{ fontWeight: 'bold' }}>TOKENS</Text>
       </Box>
     </>
   ),
@@ -63,11 +54,24 @@ const header = {
     </List>
   ),
 };
-const footer = { left: <SecuredByKleros />, right: <SocialIcons /> };
+const footer = {
+  left: <SecuredByKleros />,
+  right: (
+    <>
+      <NextLink href="/faq">
+        <Link variant="footer" sx={{ display: 'flex', alignItems: 'center' }}>
+          I need help{' '}
+          <Info color="#fff" sx={{ marginLeft: '8px', marginRight: '64px' }} />
+        </Link>
+      </NextLink>
+      <SocialIcons />
+    </>
+  ),
+};
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <Layout header={header} footer={footer}>
         <Component {...pageProps} />
       </Layout>

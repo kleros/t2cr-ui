@@ -1,6 +1,6 @@
 import { base } from '@theme-ui/presets';
 import { toTheme } from '@theme-ui/typography';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeProvider as _ThemeProvider, merge } from 'theme-ui';
 import typographyThemeSutro from 'typography-theme-sutro';
@@ -21,10 +21,10 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   colors: {
     text: '#000',
     background: '#fffffa',
-    primary: '#ff9900',
-    secondary: '#ffc700',
-    accent: '#ffb978',
-    accentComplement: '#fdc9d3',
+    primary: '#009AFF',
+    secondary: '#7BCBFF',
+    accent: '#4d00b4',
+    accentComplement: '#4d00b4',
     highlight: '#009aff',
     muted: '#fffcf0',
     skeleton: '#eee',
@@ -33,6 +33,14 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     warning: '#ffbb33',
     danger: '#ff4444',
     info: '#33b5e5',
+    pendingRegistration: '#009aff',
+    pendingRemoval: '#ccc',
+    challengedRegistration: '#ff9900',
+    challengedRemoval: '#ff9900',
+    registered: '#00c42b',
+    removed: '#6c6c6c',
+    appealed: '#f60c36',
+    crowdfunding: '#4d00b4',
   },
 
   // Styles
@@ -104,8 +112,11 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   },
   buttons: {
     primary: {
-      borderRadius: 300,
-      fontSize: 1,
+      borderRadius: 3,
+      fontStyle: 'normal',
+      fontWeight: 600,
+      lineHeight: '22px',
+      fontSize: 16,
       paddingX: 2,
       paddingY: 1,
       ':disabled:not([data-loading=true])': {
@@ -289,8 +300,12 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   links: {
     navigation: {
       color: 'background',
-      fontWeight: 'bold',
       textDecoration: 'none',
+    },
+    footer: {
+      color: 'background',
+      textDecoration: 'none',
+      fontWeight: 400,
     },
     unstyled: {
       color: 'inherit',
@@ -354,13 +369,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       overflow: 'hidden',
     },
   },
-  video: {
-    responsive: { paddingTop: '56.25%' },
-    thumbnail: {
-      height: '124px !important',
-      width: '124px !important',
-    },
-  },
 });
 export const klerosTheme = merge(theme, {
   // Colors
@@ -370,6 +378,8 @@ export const klerosTheme = merge(theme, {
     accent: '#4d00b4',
     accentComplement: '#4d00b4',
     muted: '#fbf9fe',
+    background: 'transparent',
+    text: 'text',
   },
 
   // Components
@@ -379,7 +389,13 @@ export const klerosTheme = merge(theme, {
     },
   },
 });
-export default function ThemeProvider({ theme: _theme, children }) {
+
+interface Props {
+  theme?: Object;
+  children: ReactNode;
+}
+
+export default function ThemeProvider({ theme: _theme, children }: Props) {
   const mergedTheme = useMemo(() => (_theme ? merge(theme, _theme) : theme), [
     _theme,
   ]);
