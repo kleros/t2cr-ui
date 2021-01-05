@@ -176,13 +176,18 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
         opacity: 0.8,
         outline: 'none',
       },
+      borderless: {
+        border: 0,
+        minWidth: '120px',
+      },
     },
   },
   cards: {
     primary: {
+      background: '#fff',
+      boxShadow: '0px 6px 24px rgba(77, 0, 180, 0.25)',
       backgroundColor: 'background',
       borderRadius: 3,
-      boxShadow: '0 6px 10px rgba(153, 153, 153, 0.25)',
       fontFamily: 'heading',
       fontSize: 0,
     },

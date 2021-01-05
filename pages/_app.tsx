@@ -9,6 +9,7 @@ import {
   Text,
 } from '@kleros/components';
 import { AppProps } from 'next/dist/next-server/lib/router/router';
+import Head from 'next/head';
 
 import ThemeProvider from '../components/theme-provider';
 import { SecuredByKleros, Info, T2CRLogo } from '../icons';
@@ -71,10 +72,15 @@ const footer = {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider>
-      <Layout header={header} footer={footer}>
-        <Component {...pageProps} />
-      </Layout>
-    </ThemeProvider>
+    <>
+      <Head>
+        <title>Kleros · Tokens</title>
+      </Head>
+      <ThemeProvider>
+        <Layout header={header} footer={footer}>
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeProvider>
+    </>
   );
 }

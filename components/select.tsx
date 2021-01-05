@@ -4,11 +4,10 @@ import { useRef } from 'react';
 import { usePopper } from 'react-popper';
 import { animated, useSpring } from 'react-spring';
 import useMeasure from 'react-use-measure';
-import { Box } from 'theme-ui';
+import { Box, Label } from 'theme-ui';
+import { List, ListItem } from '@kleros/components';
 
 import Button from './button';
-import Label from './label';
-import { List, ListItem } from '@kleros/components';
 
 const popperOptions = {
   modifiers: [
@@ -61,6 +60,7 @@ export default function Select({ items, onChange, value, label, ...rest }) {
       onChange(_selectedItem);
     },
     initialSelectedItem: value,
+    id: 'filter-switcher',
   });
 
   const toggleButtonRef = useRef();
@@ -80,17 +80,12 @@ export default function Select({ items, onChange, value, label, ...rest }) {
   });
   return (
     <Box {...rest}>
-      <Label
-        {...getLabelProps({
-          variant: 'forms.label.visuallyHidden',
-        })}
-      >
+      <Label {...getLabelProps()} variant="forms.label.visuallyHidden">
         {label}
       </Label>
       <Button
         {...getToggleButtonProps({
           ref: toggleButtonRef,
-          variant: 'select',
           sx: {
             width: '100%',
             '::after': {
@@ -105,6 +100,7 @@ export default function Select({ items, onChange, value, label, ...rest }) {
             },
           },
         })}
+        variant="select"
       >
         <Icon item={selectedItem} />
         {String(selectedItem)}
@@ -113,7 +109,6 @@ export default function Select({ items, onChange, value, label, ...rest }) {
         {...getMenuProps({
           ref: menuRef,
           style: popperStyle,
-          variant: 'select.list',
           sx: {
             boxShadow(theme) {
               return `0 6px 24px ${alpha('primary', 0.25)(theme)}`;
@@ -121,6 +116,7 @@ export default function Select({ items, onChange, value, label, ...rest }) {
           },
           ...popperAttributes,
         })}
+        variant="select.list"
       >
         <animated.div style={animatedMenuStyle}>
           <Box ref={measureMenuRef}>
@@ -128,7 +124,6 @@ export default function Select({ items, onChange, value, label, ...rest }) {
               <ListItem
                 key={`${item}-${index}`}
                 {...getItemProps({
-                  variant: 'select.list.item',
                   sx: {
                     backgroundColor:
                       highlightedIndex === index && alpha('highlight', 0.06),
@@ -141,6 +136,7 @@ export default function Select({ items, onChange, value, label, ...rest }) {
                   item,
                   index,
                 })}
+                variant="select.list.item"
               >
                 <Icon item={item} />
                 {String(item)}
