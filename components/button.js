@@ -5,17 +5,6 @@ import { Box, Button as _Button, SxStyleProp } from 'theme-ui';
 
 import { Text, Popup } from '@kleros/components';
 
-interface Props {
-  id?: string;
-  variant?: string;
-  sx?: any;
-  type: 'button' | 'submit' | 'reset';
-  disabled?: boolean;
-  children: ReactNode;
-  loading?: boolean;
-  disabledTooltip?: boolean;
-}
-
 const Button = forwardRef(
   (
     {
@@ -28,7 +17,7 @@ const Button = forwardRef(
       loading,
       disabledTooltip,
       ...rest
-    }: Props,
+    },
     ref
   ) => {
     const innerRef = useRef();

@@ -2,16 +2,11 @@ import { Card } from 'theme-ui';
 import { Flex, Box, Image, Text, Link } from '@kleros/components';
 import { EtherscanLogo } from '@kleros/icons';
 
-interface Props {
-  token: Token;
-  network?: string;
-}
-
 const TokenCard = ({
   token: { status, name, ticker, address, symbolMultihash },
   network,
-}: Props) => (
-  <Card variant="primary">
+}) => (
+  <Card variant="token">
     <Box
       sx={{
         background: 'rgba(0, 196, 43, 0.06)',
@@ -43,7 +38,7 @@ const TokenCard = ({
         marginTop: '8px',
         paddingX: '24px',
         backgroundColor: '#FBF9FE',
-        borderRadius: '3px',
+        borderRadius: '8px',
         height: 45,
         alignItems: 'center',
       }}
@@ -51,7 +46,7 @@ const TokenCard = ({
       <Box>Badges</Box>
       <Link
         href={`https://${
-          network && `${network}.`
+          network ? `${network}.` : ''
         }etherscan.io/token/${address}`}
       >
         <EtherscanLogo />

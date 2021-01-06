@@ -1,6 +1,6 @@
 import { base } from '@theme-ui/presets';
 import { toTheme } from '@theme-ui/typography';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeProvider as _ThemeProvider, merge } from 'theme-ui';
 import typographyThemeSutro from 'typography-theme-sutro';
@@ -69,47 +69,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   },
 
   // Components
-  accordion: {
-    item: {
-      marginY: 2,
-    },
-    heading: {
-      borderRadius: 3,
-      color: 'background',
-      fontWeight: 'bold',
-      paddingLeft: 2,
-      paddingRight: 5,
-      paddingY: 1,
-      ':hover': {
-        opacity: 0.8,
-      },
-    },
-    panel: {
-      backgroundColor: 'background',
-      bordeRadius: 3,
-      boxShadow: '0 6px 90px rgba(153, 153, 153, 0.25)',
-      fontSize: 1,
-      paddingX: 4,
-      paddingY: 3,
-    },
-  },
-  alert: {
-    info: {
-      borderColor: 'info',
-      borderRadius: 3,
-      borderStyle: 'solid',
-      borderWidth: 1,
-      padding: 2,
-      icon: {
-        stroke: 'info',
-        path: { fill: 'info' },
-      },
-      title: {
-        color: 'info',
-        fontWeight: 'bold',
-      },
-    },
-  },
   buttons: {
     primary: {
       borderRadius: 3,
@@ -183,49 +142,16 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     },
   },
   cards: {
-    primary: {
+    token: {
       background: '#fff',
       boxShadow: '0px 6px 24px rgba(77, 0, 180, 0.25)',
       backgroundColor: 'background',
       borderRadius: 3,
       fontFamily: 'heading',
       fontSize: 0,
-    },
-    muted: {
-      backgroundColor: 'muted',
-      borderColor: 'transparent',
-      borderRadius: 12,
-      borderStyle: 'solid',
-      borderWidth: 2,
-      fontSize: 1,
-      padding: 2,
-      ':disabled': {
-        backgroundColor: 'skeleton',
-      },
-      ':focus': {
-        outline: 'none',
-      },
-      ':focus,:hover[role=button]:not([disabled]),&.active': {
-        borderColor: 'primary',
-      },
-    },
-  },
-  card: {
-    header: {
-      backgroundColor: 'muted',
-      borderRadius: '3px 3px 0 0',
+      display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'space-between',
-      paddingX: 2,
-      paddingY: 1,
-    },
-    main: {
-      padding: 3,
-    },
-    footer: {
-      backgroundColor: 'muted',
-      borderRadius: '0 0 3px 3px',
-      justifyContent: 'flex-end',
-      padding: 1,
     },
   },
   forms: {
@@ -287,10 +213,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     mutedInput: { border: 'none', paddingY: 1 },
     textarea: { borderColor: 'skeleton' },
   },
-  form: {
-    flex: 1,
-    width: '100%',
-  },
   images: {
     avatar: {
       borderRadius: 62,
@@ -317,38 +239,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       textDecoration: 'none',
     },
   },
-  select: {
-    list: {
-      backgroundColor: 'background',
-      borderRadius: 3,
-      listStyle: 'none',
-      padding: 0,
-      zIndex: 1000,
-      ':focus': { outline: 'none' },
-      item: {
-        paddingX: 2,
-        paddingY: 1,
-      },
-    },
-  },
-  tabs: {
-    tabList: {
-      fontSize: 1,
-      marginBottom: 3,
-      marginTop: 2,
-      padding: 0,
-    },
-    tab: {
-      borderBottomColor: 'skeleton',
-      borderBottomStyle: 'solid',
-      borderBottomWidth: 1,
-      padding: 1,
-      textAlign: 'center',
-      '&[aria-selected=true]': {
-        color: 'primary',
-      },
-    },
-  },
   text: {
     buttons: {
       primary: {
@@ -366,12 +256,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-    },
-    multiClipped: {
-      WebkitBoxOrient: 'vertical',
-      WebkitLineClamp: ' 2 ',
-      display: '-webkit-box',
-      overflow: 'hidden',
     },
   },
 });
@@ -394,13 +278,7 @@ export const klerosTheme = merge(theme, {
     },
   },
 });
-
-interface Props {
-  theme?: Object;
-  children: ReactNode;
-}
-
-export default function ThemeProvider({ theme: _theme, children }: Props) {
+export default function ThemeProvider({ theme: _theme, children }) {
   const mergedTheme = useMemo(() => (_theme ? merge(theme, _theme) : theme), [
     _theme,
   ]);

@@ -3,15 +3,11 @@ import { Image, Text, Flex, Grid } from '@kleros/components';
 import PageContent from '../components/page-content';
 import Button from '../components/button';
 import Search from '../components/search-bar';
-import Filter from '../components/filter';
 import TokenCard from '../components/token-card';
 
 const ItemCountLabel = ({
   itemName,
   count,
-}: {
-  itemName: string;
-  count: number;
 }) => (
   <Flex>
     <Text sx={{ fontWeight: 600, marginRight: '8px' }}>{itemName}</Text>
@@ -19,7 +15,7 @@ const ItemCountLabel = ({
   </Flex>
 );
 
-const dummyTokens: Token[] = [
+const dummyTokens = [
   {
     name: 'Synthetic ETC',
     status: 'Registered',
@@ -137,7 +133,6 @@ export default function Index() {
             Submit Token
           </Button>
           <Search sx={{ flexGrow: 1, marginX: '24px' }} />
-          <Filter sx={{ minWidth: '252px' }} />
         </Flex>
         <Flex
           sx={{
