@@ -1,7 +1,7 @@
-import { forwardRef, ReactNode, useRef } from "react";
+import { forwardRef, useRef } from "react";
 import ReactRipples from "react-ripples";
 import { MoonLoader } from "react-spinners";
-import { Box, Button as _Button, SxStyleProp } from "theme-ui";
+import { Box, Button as _Button } from "theme-ui";
 
 import { Text, Popup } from "@kleros/components";
 

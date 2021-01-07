@@ -1,10 +1,15 @@
 import { Image, Text, Flex, Grid } from "@kleros/components";
+import { useRouter } from "next/router";
 
-import PageContent from "../components/page-content";
-import Button from "../components/button";
-import Search from "../components/search-bar";
-import TokenCard from "../components/token-card";
+import {
+  PageContent,
+  Button,
+  SearchBar,
+  TokenCard,
+  Select,
+} from "../components";
 import { dummyTokens } from "../tools/data";
+import { submissionStatusEnum } from "../data";
 
 const ItemCountLabel = ({ itemName, count }) => (
   <Flex>
@@ -14,6 +19,7 @@ const ItemCountLabel = ({ itemName, count }) => (
 );
 
 export default function Index() {
+  const router = useRouter();
   return (
     <>
       <Image src="/top-visual.svg" alt="banner" sx={{ width: "100%" }} />
@@ -35,7 +41,37 @@ export default function Index() {
           <Button type="button" variant="primary" sx={{ minWidth: "171px" }}>
             Submit Token
           </Button>
-          <Search sx={{ flexGrow: 1, marginLeft: "24px" }} />
+          <SearchBar
+            sx={{
+              flexGrow: 1,
+              marginLeft: "24px",
+              borderRadius: "3px",
+              alignItems: "center",
+              display: "flex",
+            }}
+          />
+          <Select
+            sx={{
+              marginLeft: 1,
+              width: 270,
+              border: "1px solid #ccc;",
+              borderRadius: "3px",
+            }}
+            items={submissionStatusEnum.array}
+            onChange={({ kebabCase }) => {
+              const query = { ...router.query };
+              if (!kebabCase) delete query.status;
+              else query.status = kebabCase;
+              router.push({
+                query,
+              });
+            }}
+            value={submissionStatusEnum.array.find(
+              ({ kebabCase }) => kebabCase === router.query.status
+            )}
+            label="Filter by status:"
+            id="filter-by-status"
+          />
         </Flex>
         <Flex
           sx={{

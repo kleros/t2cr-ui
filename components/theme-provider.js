@@ -239,6 +239,38 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       textDecoration: "none",
     },
   },
+  select: {
+    list: {
+      backgroundColor: "background",
+      borderRadius: 3,
+      listStyle: "none",
+      padding: 0,
+      zIndex: 1000,
+      ":focus": { outline: "none" },
+      item: {
+        paddingX: 2,
+        paddingY: 1,
+      },
+    },
+  },
+  tabs: {
+    tabList: {
+      fontSize: 1,
+      marginBottom: 3,
+      marginTop: 2,
+      padding: 0,
+    },
+    tab: {
+      borderBottomColor: "skeleton",
+      borderBottomStyle: "solid",
+      borderBottomWidth: 1,
+      padding: 1,
+      textAlign: "center",
+      "&[aria-selected=true]": {
+        color: "primary",
+      },
+    },
+  },
   text: {
     buttons: {
       primary: {
