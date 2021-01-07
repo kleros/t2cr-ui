@@ -6,17 +6,18 @@
     "build": "next build",
     "start": "next start",
     "release": "standard-version",
-    "lint:eslint": "eslint --ext=.js",
-    "lint:eslint:fix": "eslint --fix --ext=.js",
+    "lint:eslint": "eslint",
+    "lint:eslint:fix": "eslint --fix",
     "lint": "npm run lint:eslint && npm run lint:prettier",
-    "lint:prettier": "prettier --check '**/*.{js}'",
-    "lint:prettier:fix": "prettier --write '**/*.{js}'",
+    "lint:prettier": "prettier --check .",
+    "lint:prettier:fix": "prettier --write .",
     "lint:fix": "npm run lint:eslint:fix && npm run lint:prettier:fix"
   },
   "dependencies": {
     "@kleros/components": "^1.0.0-beta.1",
     "@kleros/icons": "^1.0.0-beta.1",
-    "next-transpile-modules": "^6.0.0"
+    "next-transpile-modules": "^6.0.0",
+    "react-burger-menu": "^3.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",

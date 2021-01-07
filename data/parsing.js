@@ -1,43 +1,43 @@
-import { createEnum } from '@kleros/components';
-import { Check, Pending, X } from '@kleros/icons';
+import { createEnum } from "@kleros/components";
+import { Check, Pending, X } from "@kleros/icons";
 
 export const submissionStatusEnum = createEnum(
   [
-    ['None', { kebabCase: undefined, startCase: 'All' }],
+    ["None", { kebabCase: undefined, startCase: "All" }],
     [
-      'PendingRegistration',
-      { Icon: Pending, query: { where: { status: 'PendingRegistration' } } },
+      "PendingRegistration",
+      { Icon: Pending, query: { where: { status: "PendingRegistration" } } },
     ],
     [
-      'PendingRemoval',
+      "PendingRemoval",
       {
         Icon: Pending,
-        query: { where: { status: 'PendingRemoval' } },
+        query: { where: { status: "PendingRemoval" } },
       },
     ],
     [
-      'ChallengedRegistration',
+      "ChallengedRegistration",
       {
         Icon: Pending,
-        query: { where: { status: 'PendingRegistration', disputed: true } },
+        query: { where: { status: "PendingRegistration", disputed: true } },
       },
     ],
     [
-      'ChallengedRemoval',
+      "ChallengedRemoval",
       {
         Icon: Pending,
-        query: { where: { status: 'PendingRemoval', disputed: true } },
+        query: { where: { status: "PendingRemoval", disputed: true } },
       },
     ],
     [
-      'Registered',
-      { Icon: Check, query: { where: { status: 'None', registered: true } } },
+      "Registered",
+      { Icon: Check, query: { where: { status: "None", registered: true } } },
     ],
     [
-      'Removed',
+      "Removed",
       {
         Icon: X,
-        query: { where: { status: 'None', registered: false } },
+        query: { where: { status: "None", registered: false } },
       },
     ],
   ],
@@ -54,7 +54,7 @@ export const submissionStatusEnum = createEnum(
   }
 );
 
-export const partyEnum = createEnum(['Requester', 'Challenger'], (array) => ({
+export const partyEnum = createEnum(["Requester", "Challenger"], (array) => ({
   [partyEnum.Requester.key]: array[0],
   [partyEnum.Challenger.key]: array[1],
 }));

@@ -1,17 +1,17 @@
-import { forwardRef, ReactNode, useRef } from 'react';
-import ReactRipples from 'react-ripples';
-import { MoonLoader } from 'react-spinners';
-import { Box, Button as _Button, SxStyleProp } from 'theme-ui';
+import { forwardRef, ReactNode, useRef } from "react";
+import ReactRipples from "react-ripples";
+import { MoonLoader } from "react-spinners";
+import { Box, Button as _Button, SxStyleProp } from "theme-ui";
 
-import { Text, Popup } from '@kleros/components';
+import { Text, Popup } from "@kleros/components";
 
 const Button = forwardRef(
   (
     {
       id,
-      variant = 'primary',
+      variant = "primary",
       sx,
-      type = 'button',
+      type = "button",
       disabled,
       children,
       loading,
@@ -28,8 +28,8 @@ const Button = forwardRef(
         variant={variant}
         sx={{
           backgroundColor: variant,
-          position: 'relative',
-          ':focus': {
+          position: "relative",
+          ":focus": {
             boxShadow({ colors: { text } }) {
               return `0 0 1px ${text}`;
             },
@@ -46,8 +46,8 @@ const Button = forwardRef(
           id={id && `${id}-text`}
           variant={`buttons.${variant}`}
           sx={{
-            alignItems: 'center',
-            display: 'flex',
+            alignItems: "center",
+            display: "flex",
           }}
         >
           {children}
@@ -60,11 +60,11 @@ const Button = forwardRef(
         <Box
           as={ReactRipples}
           sx={{
-            height: '100%',
+            height: "100%",
             left: 0,
-            position: 'absolute !important',
+            position: "absolute !important",
             top: 0,
-            width: '100%',
+            width: "100%",
           }}
           onClick={() => innerRef.current.click()}
         />
@@ -75,7 +75,7 @@ const Button = forwardRef(
         trigger={
           <Box
             sx={{
-              display: 'inline-block',
+              display: "inline-block",
               height: sx?.height,
               width: sx?.width,
             }}
@@ -83,8 +83,8 @@ const Button = forwardRef(
             {button}
           </Box>
         }
-        on={['focus', 'hover']}
-        sx={{ backgroundColor: 'skeleton', fontSize: 1 }}
+        on={["focus", "hover"]}
+        sx={{ backgroundColor: "skeleton", fontSize: 1 }}
       >
         {disabledTooltip}
       </Popup>
@@ -94,6 +94,6 @@ const Button = forwardRef(
   }
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 export default Button;

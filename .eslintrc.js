@@ -111,28 +111,14 @@ module.exports = {
         missingExports: true,
         unusedExports: true,
         // Ignore Next.js default default page exports and our CLI scripts.
-        ignoreExports: [
-          "pages",
-          "./*.js",
-          "scripts",
-          "subgraph",
-          "components/.storybook/**",
-          "components/*.stories.{js,mdx}",
-        ],
+        ignoreExports: ["pages", "./*.js"],
       },
     ],
     // Don't allow reaching into modules, except for Next.js imports, and assets.
     "import/no-internal-modules": [
       "error",
       {
-        allow: [
-          "next/*",
-          "_pages/**",
-          "assets/**",
-          "subgraph/**",
-          "react-player/lazy",
-          "@storybook/addon-docs/blocks",
-        ],
+        allow: ["next/*"],
       },
     ],
     "import/no-useless-path-segments": [
@@ -379,75 +365,6 @@ module.exports = {
   },
 
   settings: {
-    "import/resolver": {
-      alias: [
-        ["@kleros/components", "./components"],
-        ["@kleros/icons", "./icons"],
-        ["_pages", "./_pages"],
-        ["assets", "./assets"],
-        ["data", "./data"],
-        ["subgraph", "./subgraph"],
-      ],
-    },
     react: { version: "detect" },
   },
-
-  // Don't allow modules internal to the aliased packages to use their own alias.
-  overrides: [
-    {
-      files: "components/**",
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            patterns: [
-              "@kleros/components",
-              "**/icons",
-              "!@kleros/icons",
-              "..", // No relative parent imports.
-            ],
-          },
-        ],
-      },
-    },
-    {
-      files: "icons/**",
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            patterns: [
-              "**/components",
-              "!@kleros/components",
-              "@kleros/icons",
-              "..", // No relative parent imports.
-              "theme-ui", // This should be internal to the design system.
-              "next/link", // Use the custom version that maintains query parameters instead.
-            ],
-          },
-        ],
-      },
-    },
-    // Node config files and scripts.
-    {
-      files: [
-        "./*.js",
-        "scripts/**.js",
-        "subgraph/**.js",
-        "components/.storybook/main.js",
-      ],
-      env: { node: true },
-    },
-    {
-      files: "components/.storybook/**",
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            patterns: ["@kleros/components", "**/icons", "!@kleros/icons"],
-          },
-        ],
-      },
-    },
-  ],
 };
