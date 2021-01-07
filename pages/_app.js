@@ -1,39 +1,19 @@
 import {
   Box,
-  Layout,
   Link,
   List,
   ListItem,
   NextLink,
-  SocialIcons,
   Text,
+  SocialIcons,
 } from "@kleros/components";
 import Head from "next/head";
 import { useCallback, useState } from "react";
 
 import { slide as Menu } from "react-burger-menu";
-import Button from "../components/button";
-import ThemeProvider from "../components/theme-provider";
+import { ThemeProvider, Button, Layout } from "../components";
 import { SecuredByKleros, Info, T2CRLogo, HamburgerMenu } from "../icons";
-
-const links = [
-  {
-    to: "/",
-    label: "Tokens",
-  },
-  {
-    to: "/badges",
-    label: "Badges",
-  },
-  {
-    to: "/criteria",
-    label: "Criteria",
-  },
-  {
-    to: "/statistics",
-    label: "Statistics",
-  },
-];
+import { navigation } from "../utils";
 
 const header = {
   left: (
@@ -53,7 +33,7 @@ const header = {
         width: "100%",
       }}
     >
-      {links.map(({ to, label }, i) => (
+      {navigation.map(({ to, label }, i) => (
         <ListItem key={i}>
           <NextLink href={to}>
             <Link variant="navigation">{label}</Link>
@@ -70,10 +50,15 @@ const footer = {
       <NextLink href="/faq">
         <Link variant="footer" sx={{ display: "flex", alignItems: "center" }}>
           I need help{" "}
-          <Info color="#fff" sx={{ marginLeft: "8px", marginRight: "64px" }} />
+          <Info
+            color="#fff"
+            sx={{ marginLeft: "8px", marginRight: [0, 0, 0, "32px"] }}
+          />
         </Link>
       </NextLink>
-      <SocialIcons />
+      <Box sx={{ display: ["none", "none", "inherit", "inherit"] }}>
+        <SocialIcons />
+      </Box>
     </>
   ),
 };
@@ -111,7 +96,7 @@ export default function App({ Component, pageProps }) {
         >
           <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
             <List sx={{ paddingTop: "24px", listStyle: "none" }}>
-              {links.map(({ to, label }, i) => (
+              {navigation.map(({ to, label }, i) => (
                 <ListItem key={i}>
                   <NextLink href={to}>
                     <Link variant="navigation">{label}</Link>
