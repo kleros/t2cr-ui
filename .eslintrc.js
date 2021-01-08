@@ -44,7 +44,6 @@ module.exports = {
   rules: {
     // Core
     "arrow-body-style": "error", // Don't use unnecessary curly braces for arrow functions.
-    "capitalized-comments": "error",
     "new-cap": "error", // Require constructor names to begin with a capital letter.
     "new-parens": "error",
     "no-array-constructor": "error",
@@ -81,21 +80,7 @@ module.exports = {
     "spaced-comment": "error",
     curly: ["error", "multi"], // Don't use unnecessary curly braces.
     eqeqeq: "error",
-    // Force the use of aliases for aliased modules.
-    "no-restricted-imports": [
-      "error",
-      {
-        patterns: [
-          "**/components",
-          "!@kleros/components",
-          "**/icons",
-          "!@kleros/icons",
-          "..", // No relative parent imports.
-          "theme-ui", // This should be internal to the design system.
-          "next/link", // Use the custom version that maintains query parameters instead.
-        ],
-      },
-    ],
+
     // Sort named import members alphabetically.
     "sort-imports": [
       "error",
@@ -349,7 +334,6 @@ module.exports = {
         "@js[x]", // Don't use a custom JSX pragma.
         "Style[d]", // Don't use "styled" components.
         ",\\s+&", // Don't use spaces between comma separated selectors.
-        "eslint-disabl[e]", // Don't disable rules.
       ],
     ],
 

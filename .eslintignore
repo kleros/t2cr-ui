@@ -1,0 +1,12 @@
+# Don't ignore dotfiles.
+!/.*.js
+
+# Build
+/out/
+
+# Storybook
+!/components/.storybook/
+
+subgraph/**/*
+
+/.relay/

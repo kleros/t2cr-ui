@@ -8,3 +8,4 @@ package.json
 .next
 gitignore
 README.md
+subgraph/**/*
