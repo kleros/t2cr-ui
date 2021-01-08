@@ -14,7 +14,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import { graphql } from "relay-hooks";
 
-import { Button, Layout, RelayProvider, ThemeProvider } from "../components";
+import {
+  Button,
+  Layout,
+  RelayProvider,
+  ThemeProvider,
+  Title,
+} from "../components";
 import { queryEnums } from "../data";
 import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "../icons";
 import { navigation } from "../utils";
@@ -127,7 +133,7 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>Kleros · Tokens</title>
+        <Title>Kleros · Tokens</Title>
       </Head>
       <RelayProvider
         // eslint-disable-next-line no-undef

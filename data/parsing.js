@@ -5,39 +5,48 @@ export const submissionStatusEnum = createEnum(
   [
     ["None", { kebabCase: undefined, startCase: "All" }],
     [
-      "PendingRegistration",
-      { Icon: Pending, query: { where: { status: "PendingRegistration" } } },
+      "RegistrationRequested",
+      { Icon: Pending, query: { where: { status: "RegistrationRequested" } } },
     ],
     [
-      "PendingRemoval",
+      "ClearingRequested",
       {
         Icon: Pending,
-        query: { where: { status: "PendingRemoval" } },
+        query: { where: { status: "ClearingRequested" } },
       },
     ],
     [
       "ChallengedRegistration",
       {
         Icon: Pending,
-        query: { where: { status: "PendingRegistration", disputed: true } },
+        query: { where: { status: "RegistrationRequested", disputed: true } },
       },
     ],
     [
       "ChallengedRemoval",
       {
         Icon: Pending,
-        query: { where: { status: "PendingRemoval", disputed: true } },
+        query: { where: { status: "ClearingRequested", disputed: true } },
       },
     ],
-    [
-      "Registered",
-      { Icon: Check, query: { where: { status: "None", registered: true } } },
-    ],
+    ["Registered", { Icon: Check, query: { where: { status: "Registered" } } }],
     [
       "Removed",
       {
         Icon: X,
-        query: { where: { status: "None", registered: false } },
+        query: { where: { status: "Absent" } },
+      },
+    ],
+    [
+      "Crowdfunding",
+      {
+        Icon: X,
+        query: {
+          where: {
+            appealPeriodStart_gt: 0,
+            appealPeriodEnd_lt: Date.now() / 1000,
+          },
+        },
       },
     ],
   ],
@@ -47,7 +56,7 @@ export const submissionStatusEnum = createEnum(
         ? submissionStatusEnum.Registered
         : submissionStatusEnum.Removed;
     if (disputed)
-      return status === submissionStatusEnum.PendingRegistration.key
+      return status === submissionStatusEnum.RegistrationRequested.key
         ? submissionStatusEnum.ChallengedRegistration
         : submissionStatusEnum.ChallengedRemoval;
     return submissionStatusEnum[status];
