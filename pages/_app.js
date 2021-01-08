@@ -4,16 +4,37 @@ import {
   List,
   ListItem,
   NextLink,
-  Text,
   SocialIcons,
+  Text,
+  createWrapConnection,
 } from "@kleros/components";
 import Head from "next/head";
-import { useCallback, useState } from "react";
-
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
-import { ThemeProvider, Button, Layout } from "../components";
-import { SecuredByKleros, Info, T2CRLogo, HamburgerMenu } from "../icons";
+import { graphql } from "relay-hooks";
+
+import { Button, Layout, RelayProvider, ThemeProvider } from "../components";
+import { queryEnums } from "../data";
+import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "../icons";
 import { navigation } from "../utils";
+
+const indexQuery = graphql`
+  query AppQuery($skip: Int = 0, $first: Int = 9, $where: Token_filter) {
+    tokens(skip: $skip, first: $first, where: $where) {
+      status
+      name
+      ticker
+      address
+      symbolMultihash
+      appealPeriodEnd
+    }
+  }
+`;
+const queries = {
+  "/": indexQuery,
+};
+const wrapConnection = createWrapConnection(queries, queryEnums);
 
 const header = {
   left: (
@@ -33,8 +54,8 @@ const header = {
         width: "100%",
       }}
     >
-      {navigation.map(({ to, label }, i) => (
-        <ListItem key={i}>
+      {navigation.map(({ to, label }, index) => (
+        <ListItem key={index}>
           <NextLink href={to}>
             <Link variant="navigation">{label}</Link>
           </NextLink>
@@ -64,12 +85,33 @@ const footer = {
 };
 
 export default function App({ Component, pageProps }) {
+  // Sidebar menu handling.
   const [sideBarOpen, setSideBarOpen] = useState();
   const onSideBarClose = useCallback(() => setSideBarOpen(false), []);
   const openSidebar = useCallback(() => {
     setSideBarOpen(true);
   }, []);
-  const right = (
+
+  // Use URL to select which graphql node the app will query.
+  const router = useRouter();
+  const { network = "mainnet" } = useMemo(
+    () => wrapConnection.parseAsPath(router.asPath).query,
+    [router.asPath]
+  );
+  const [routeChangeConnection, setRouteChangeConnection] = useState();
+  const connectToRouteChange = useCallback((connection) => {
+    const wrappedConnection = wrapConnection(connection);
+    wrappedConnection(location.pathname + location.search);
+    setRouteChangeConnection(() => wrappedConnection);
+  }, []);
+  useEffect(() => {
+    if (routeChangeConnection) {
+      router.events.on("routeChangeStart", routeChangeConnection);
+      return () => router.events.off("routeChangeStart", routeChangeConnection);
+    }
+  }, [routeChangeConnection, router.events]);
+
+  const hamburgerMenu = (
     <Button
       sx={{
         display: ["initial", "initial", "initial", "none"],
@@ -87,29 +129,36 @@ export default function App({ Component, pageProps }) {
       <Head>
         <title>Kleros · Tokens</title>
       </Head>
-      <ThemeProvider>
-        <Menu
-          right
-          customBurgerIcon={false}
-          isOpen={sideBarOpen}
-          onClose={onSideBarClose}
-        >
-          <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
-            <List sx={{ paddingTop: "24px", listStyle: "none" }}>
-              {navigation.map(({ to, label }, i) => (
-                <ListItem key={i}>
-                  <NextLink href={to}>
-                    <Link variant="navigation">{label}</Link>
-                  </NextLink>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Menu>
-        <Layout header={{ ...header, right }} footer={footer}>
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
+      <RelayProvider
+        // eslint-disable-next-line no-undef
+        endpoint={JSON.parse(process.env.NEXT_PUBLIC_GRAPH_ENDPOINTS)[network]}
+        queries={queries}
+        connectToRouteChange={connectToRouteChange}
+      >
+        <ThemeProvider>
+          <Menu
+            right
+            customBurgerIcon={false}
+            isOpen={sideBarOpen}
+            onClose={onSideBarClose}
+          >
+            <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
+              <List sx={{ paddingTop: "24px", listStyle: "none" }}>
+                {navigation.map(({ to, label }, index) => (
+                  <ListItem key={index}>
+                    <NextLink href={to}>
+                      <Link variant="navigation">{label}</Link>
+                    </NextLink>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          </Menu>
+          <Layout header={{ ...header, right: hamburgerMenu }} footer={footer}>
+            <Component {...pageProps} />
+          </Layout>
+        </ThemeProvider>
+      </RelayProvider>
     </>
   );
 }

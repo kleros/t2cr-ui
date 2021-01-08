@@ -9,4 +9,4 @@
 
 subgraph/**/*
 
-/.relay/
+.relay/**/*

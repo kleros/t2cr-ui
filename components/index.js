@@ -6,3 +6,4 @@ export { default as TokenCard } from "./token-card";
 export { default as Layout } from "./layout";
 export { default as Select } from "./select";
 export { default as Label } from "./label";
+export { default as RelayProvider } from "./relay-provider";

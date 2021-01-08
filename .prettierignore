@@ -9,3 +9,4 @@ package.json
 gitignore
 README.md
 subgraph/**/*
+.relay/**/*
