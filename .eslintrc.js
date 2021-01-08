@@ -6,6 +6,7 @@ module.exports = {
   env: {
     es2020: true,
     browser: true,
+    node: true,
   },
 
   // Enable ES Module mode.
@@ -103,7 +104,7 @@ module.exports = {
     "import/no-internal-modules": [
       "error",
       {
-        allow: ["next/*"],
+        allow: ["next/*", "tools/**"],
       },
     ],
     "import/no-useless-path-segments": [
@@ -328,7 +329,6 @@ module.exports = {
       "error",
       [
         'import.*(/|\\.)";', // Don't use trailing slashes or cyclic index imports.
-        '"\\d+"', // Don't use numerical strings.
         "[^\\d]0p[x]", // Don't use pixels unit for zero values.
         "(?=.*[A-F])#[0-9a-fA-F]{1,6}", // Don't use upper case letters in hex colors.
         "@js[x]", // Don't use a custom JSX pragma.

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unused-modules */
 const input = [];
 process.stdin.setEncoding("utf8");
 process.stdin.on("data", (chunk) => {

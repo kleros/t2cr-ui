@@ -5,14 +5,14 @@ import { SkeletonTheme } from "react-loading-skeleton";
 import { ThemeProvider as _ThemeProvider, merge } from "theme-ui";
 import typographyThemeSutro from "typography-theme-sutro";
 
-export const typographyTheme = {
+const typographyTheme = {
   ...typographyThemeSutro,
   bodyFontFamily: typographyThemeSutro.headerFontFamily,
   boldWeight: 600,
   googleFonts: [{ name: "Open Sans", styles: [300, "300i", 600, "600i"] }],
   headerWeight: 600,
 };
-export const theme = merge(merge(base, toTheme(typographyTheme)), {
+const theme = merge(merge(base, toTheme(typographyTheme)), {
   // Settings
   initialColorModeName: "light",
   useColorSchemeMediaQuery: true,
@@ -21,8 +21,8 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   colors: {
     text: "#000",
     background: "#fffffa",
-    primary: "#009AFF",
-    secondary: "#7BCBFF",
+    primary: "#009aff",
+    secondary: "#7bcbff",
     accent: "#4d00b4",
     accentComplement: "#4d00b4",
     highlight: "#009aff",
@@ -144,7 +144,7 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   cards: {
     token: {
       background: "#fff",
-      boxShadow: "0px 6px 24px rgba(77, 0, 180, 0.25)",
+      boxShadow: "0 6px 24px rgba(77, 0, 180, 0.25)",
       backgroundColor: "background",
       borderRadius: 3,
       fontFamily: "heading",
@@ -291,25 +291,7 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     },
   },
 });
-export const klerosTheme = merge(theme, {
-  // Colors
-  colors: {
-    primary: "#009aff",
-    secondary: "#009aff",
-    accent: "#4d00b4",
-    accentComplement: "#4d00b4",
-    muted: "#fbf9fe",
-    background: "transparent",
-    text: "text",
-  },
 
-  // Components
-  buttons: {
-    primary: {
-      borderRadius: 3,
-    },
-  },
-});
 export default function ThemeProvider({ theme: _theme, children }) {
   const mergedTheme = useMemo(() => (_theme ? merge(theme, _theme) : theme), [
     _theme,

@@ -6,7 +6,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 export default function SearchBar({ sx }) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const [userQuery, setUserQuery] = useState("");
   const debounced = useDebouncedCallback((value) => {
     const query = { ...router.query };
     if (!value) delete query.search;
@@ -15,17 +15,20 @@ export default function SearchBar({ sx }) {
       query,
     });
   }, 300);
-  const queryChanged = useCallback((e) => {
-    setQuery(e.target.value || "");
-    debounced.callback(e.target.value);
-  }, []);
+  const queryChanged = useCallback(
+    (event) => {
+      setUserQuery(event.target.value || "");
+      debounced.callback(event.target.value);
+    },
+    [debounced]
+  );
 
   return (
     <Card
       sx={{
         flexDirection: "row",
         boxShadow: "none",
-        border: "1px solid #CCCCCC",
+        border: "1px solid #ccc",
         ...sx,
       }}
       mainSx={{ paddingX: 2, paddingY: 0 }}
@@ -36,7 +39,7 @@ export default function SearchBar({ sx }) {
         placeholder="Search Token"
         icon={<Search />}
         onChange={queryChanged}
-        value={query}
+        value={userQuery}
       />
     </Card>
   );

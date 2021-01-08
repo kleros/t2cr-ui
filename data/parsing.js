@@ -63,9 +63,4 @@ export const submissionStatusEnum = createEnum(
   }
 );
 
-export const partyEnum = createEnum(["Requester", "Challenger"], (array) => ({
-  [partyEnum.Requester.key]: array[0],
-  [partyEnum.Challenger.key]: array[1],
-}));
-
 export const queryEnums = { status: submissionStatusEnum };

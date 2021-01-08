@@ -1,9 +1,8 @@
+import { Popup, Text } from "@kleros/components";
 import { forwardRef, useRef } from "react";
 import ReactRipples from "react-ripples";
 import { MoonLoader } from "react-spinners";
 import { Box, Button as _Button } from "theme-ui";
-
-import { Text, Popup } from "@kleros/components";
 
 const Button = forwardRef(
   (

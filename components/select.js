@@ -6,7 +6,9 @@ import { usePopper } from "react-popper";
 import { animated, useSpring } from "react-spring";
 import useMeasure from "react-use-measure";
 import { Box } from "theme-ui";
-import { Button, Label } from ".";
+
+import Button from "./button";
+import Label from "./label";
 
 const popperOptions = {
   modifiers: [

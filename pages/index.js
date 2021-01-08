@@ -1,22 +1,24 @@
-import { Image, Text, Flex, Grid } from "@kleros/components";
+import { Flex, Grid, Image, Text } from "@kleros/components";
 import { useRouter } from "next/router";
 
 import {
-  PageContent,
   Button,
+  PageContent,
   SearchBar,
-  TokenCard,
   Select,
+  TokenCard,
 } from "../components";
-import { dummyTokens } from "../tools/data";
 import { submissionStatusEnum } from "../data";
+import { dummyTokens } from "../tools/data";
 
-const ItemCountLabel = ({ itemName, count }) => (
-  <Flex>
-    <Text sx={{ fontWeight: 600, marginRight: "8px" }}>{itemName}</Text>
-    <Text>{count}</Text>
-  </Flex>
-);
+function ItemCountLabel({ itemName, count }) {
+  return (
+    <Flex>
+      <Text sx={{ fontWeight: 600, marginRight: "8px" }}>{itemName}</Text>
+      <Text>{count}</Text>
+    </Flex>
+  );
+}
 
 export default function Index() {
   const router = useRouter();
@@ -31,7 +33,7 @@ export default function Index() {
             fontSize: "24px",
             fontWeight: "600",
             lineHeight: "33px",
-            letterSpacing: "0px",
+            letterSpacing: "0",
             textAlign: "center",
           }}
         >
@@ -87,8 +89,8 @@ export default function Index() {
           </Flex>
         </Flex>
         <Grid columns={[1, 2, 3, 4]} gap={3} sx={{ marginY: "32px" }}>
-          {dummyTokens.map((token, i) => (
-            <TokenCard token={token} key={i} />
+          {dummyTokens.map((token, index) => (
+            <TokenCard token={token} key={index} />
           ))}
         </Grid>
       </PageContent>
