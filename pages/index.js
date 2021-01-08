@@ -39,14 +39,29 @@ export default function Index() {
         >
           Submit Tokens for Community Curation
         </Text>
-        <Flex sx={{ justifyContent: "space-between", marginTop: "30px" }}>
-          <Button type="button" variant="primary" sx={{ minWidth: "171px" }}>
+        <Flex
+          sx={{
+            justifyContent: "space-between",
+            marginTop: "30px",
+            flexDirection: ["column", "column", "column", "row"],
+          }}
+        >
+          <Button
+            type="button"
+            variant="primary"
+            sx={{
+              minWidth: "171px",
+              marginY: [8, 8, 8, 0],
+              height: ["60px", "60px", "60px", "auto"],
+            }}
+          >
             Submit Token
           </Button>
           <SearchBar
             sx={{
               flexGrow: 1,
-              marginLeft: "24px",
+              marginLeft: [0, 0, 0, "24px"],
+              marginY: [8, 8, 8, 0],
               borderRadius: "3px",
               alignItems: "center",
               display: "flex",
@@ -54,8 +69,9 @@ export default function Index() {
           />
           <Select
             sx={{
-              marginLeft: 1,
-              width: 270,
+              marginLeft: [0, 0, 0, 1],
+              marginY: [8, 8, 8, 0],
+              minWidth: 270,
               border: "1px solid #ccc;",
               borderRadius: "3px",
             }}

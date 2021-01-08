@@ -136,7 +136,6 @@ export default function App({ Component, pageProps }) {
         <Title>Kleros · Tokens</Title>
       </Head>
       <RelayProvider
-        // eslint-disable-next-line no-undef
         endpoint={JSON.parse(process.env.NEXT_PUBLIC_GRAPH_ENDPOINTS)[network]}
         queries={queries}
         connectToRouteChange={connectToRouteChange}
