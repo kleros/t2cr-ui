@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/import-index */
+/* eslint-disable import/no-useless-path-segments */
 import {
   Box,
   Link,
@@ -12,8 +14,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
-import { graphql } from "relay-hooks";
 
+import { indexQuery } from "../_pages/index";
 import {
   Button,
   Layout,
@@ -25,18 +27,6 @@ import { queryEnums } from "../data";
 import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "../icons";
 import { navigation } from "../utils";
 
-const indexQuery = graphql`
-  query AppQuery($skip: Int = 0, $first: Int = 9, $where: Token_filter) {
-    tokens(skip: $skip, first: $first, where: $where) {
-      status
-      name
-      ticker
-      address
-      symbolMultihash
-      appealPeriodEnd
-    }
-  }
-`;
 const queries = {
   "/": indexQuery,
 };
@@ -116,6 +106,15 @@ export default function App({ Component, pageProps }) {
       return () => router.events.off("routeChangeStart", routeChangeConnection);
     }
   }, [routeChangeConnection, router.events]);
+
+  // Patch to deal with react-infinite-scroller issue #247.
+  // https://github.com/danbovey/react-infinite-scroller/issues/247
+  useEffect(() => {
+    const __scrollTo = window.scrollTo;
+    window.scrollTo = (x, y) => {
+      if (x !== 0 && y !== 0) __scrollTo(x, y);
+    };
+  }, []);
 
   const hamburgerMenu = (
     <Button

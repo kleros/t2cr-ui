@@ -2,24 +2,26 @@ import { Box, Flex, Image, Link, Text } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons";
 import { Card } from "theme-ui";
 
-function TokenCard({
-  token: { status, name, ticker, address, symbolMultihash },
-  network,
-}) {
+import { tokenStatusEnum } from "../data";
+
+function TokenCard({ token, network }) {
+  const { status, name, ticker, address, symbolMultihash } = token;
   return (
     <Card variant="token">
       <Box
         sx={{
-          background: "rgba(0, 196, 43, 0.06)",
+          background: (theme) =>
+            theme.colors[`muted${tokenStatusEnum.parse(token).key}`],
           paddingX: "24px",
           paddingY: "12px",
-          borderTop: "5px solid #00c42b",
+          borderTop: (theme) =>
+            `5px solid ${theme.colors[tokenStatusEnum.parse(token).camelCase]}`,
           fontWeight: 400,
           fontSize: "16px",
           borderRadius: 3,
         }}
       >
-        {status}
+        {tokenStatusEnum[status].startCase}
       </Box>
       <Flex
         sx={{ alignItems: "center", flexDirection: "column", padding: "8px" }}
@@ -27,7 +29,7 @@ function TokenCard({
         <Image
           width={96}
           src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}${symbolMultihash}`}
-          sx={{ margin: "8px" }}
+          sx={{ margin: "8px", maxHeight: "96px", objectFit: "contain" }}
         />
         <Text sx={{ margin: "8px" }}>
           {name} - {ticker}
@@ -44,7 +46,7 @@ function TokenCard({
           alignItems: "center",
         }}
       >
-        <Box>Badges</Box>
+        <Box /> {/* TODO: Display badges here */}
         <Link
           href={`https://${
             network ? `${network}.` : ""

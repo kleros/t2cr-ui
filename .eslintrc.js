@@ -48,7 +48,6 @@ module.exports = {
     "new-cap": "error", // Require constructor names to begin with a capital letter.
     "new-parens": "error",
     "no-array-constructor": "error",
-    "no-console": "error",
     "no-duplicate-imports": ["error", { includeExports: true }],
     "no-else-return": ["error", { allowElseIf: false }],
     "no-extra-bind": "error",
@@ -90,23 +89,6 @@ module.exports = {
       },
     ],
 
-    // Import Plugin
-    "import/no-unused-modules": [
-      "error",
-      {
-        missingExports: true,
-        unusedExports: true,
-        // Ignore Next.js default default page exports and our CLI scripts.
-        ignoreExports: ["pages", "./*.js"],
-      },
-    ],
-    // Don't allow reaching into modules, except for Next.js imports, and assets.
-    "import/no-internal-modules": [
-      "error",
-      {
-        allow: ["next/*", "tools/**"],
-      },
-    ],
     "import/no-useless-path-segments": [
       "error",
       {
@@ -161,7 +143,6 @@ module.exports = {
       },
     ],
     "unicorn/custom-error-definition": "error",
-    "unicorn/no-keyword-prefix": "error",
     "unicorn/no-unsafe-regex": "error",
     "unicorn/no-unused-properties": "error",
     "unicorn/prefer-flat-map": "error",

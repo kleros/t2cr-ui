@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unused-modules */
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   RelayNetworkLayer,

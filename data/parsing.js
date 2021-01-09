@@ -1,12 +1,15 @@
 import { createEnum } from "@kleros/components";
 import { Check, Pending, X } from "@kleros/icons";
 
-export const submissionStatusEnum = createEnum(
+export const tokenStatusEnum = createEnum(
   [
     ["None", { kebabCase: undefined, startCase: "All" }],
     [
       "RegistrationRequested",
-      { Icon: Pending, query: { where: { status: "RegistrationRequested" } } },
+      {
+        Icon: Pending,
+        query: { where: { status: "RegistrationRequested" } },
+      },
     ],
     [
       "ClearingRequested",
@@ -29,12 +32,19 @@ export const submissionStatusEnum = createEnum(
         query: { where: { status: "ClearingRequested", disputed: true } },
       },
     ],
-    ["Registered", { Icon: Check, query: { where: { status: "Registered" } } }],
     [
-      "Removed",
+      "Registered",
+      {
+        Icon: Check,
+        query: { where: { status: "Registered" } },
+      },
+    ],
+    [
+      "Absent",
       {
         Icon: X,
         query: { where: { status: "Absent" } },
+        accentColor: "#6c6c6c",
       },
     ],
     [
@@ -47,20 +57,32 @@ export const submissionStatusEnum = createEnum(
             appealPeriodEnd_lt: Date.now() / 1000,
           },
         },
+        accentColor: "#4d00b4",
       },
     ],
   ],
-  ({ status, registered, disputed }) => {
-    if (status === submissionStatusEnum.None.key)
-      return registered
-        ? submissionStatusEnum.Registered
-        : submissionStatusEnum.Removed;
-    if (disputed)
-      return status === submissionStatusEnum.RegistrationRequested.key
-        ? submissionStatusEnum.ChallengedRegistration
-        : submissionStatusEnum.ChallengedRemoval;
-    return submissionStatusEnum[status];
+  ({ status, disputed, appealPeriodStart, appealPeriodEnd }) => {
+    const currentTime = Date.now() / 1000;
+    if (currentTime > appealPeriodStart && currentTime < appealPeriodEnd)
+      return tokenStatusEnum.Crowdfunding;
+    if (disputed) {
+      if (status === tokenStatusEnum.RegistrationRequested.key)
+        return tokenStatusEnum.ChallengedRegistration;
+      return tokenStatusEnum.ChallengedRemoval;
+    }
+    switch (status) {
+      case tokenStatusEnum.Registered.key:
+        return tokenStatusEnum.Registered;
+      case tokenStatusEnum.RegistrationRequested.key:
+        return tokenStatusEnum.RegistrationRequested;
+      case tokenStatusEnum.ClearingRequested.key:
+        return tokenStatusEnum.ClearingRequested;
+      case tokenStatusEnum.Absent.key:
+        return tokenStatusEnum.Absent;
+      default:
+        throw new Error("Unknown status");
+    }
   }
 );
 
-export const queryEnums = { status: submissionStatusEnum };
+export const queryEnums = { status: tokenStatusEnum };

@@ -2,8 +2,9 @@
   "name": "t2cr-ui",
   "version": "1.0.0",
   "scripts": {
-    "dev": "npm run build:relay && NODE_OPTIONS='--inspect' next",
-    "build:relay": "mkdirp subgraph/build && get-graphql-schema https://api.thegraph.com/subgraphs/name/kleros/t2cr > subgraph/build/full-schema.graphql && get-graphql-schema https://api.thegraph.com/subgraphs/name/kleros/t2cr --json > subgraph/build/full-schema.json",
+    "dev": "npm run build:relay:watch & NODE_OPTIONS='--inspect' next",
+    "build:relay": "mkdirp subgraph/build && get-graphql-schema https://api.thegraph.com/subgraphs/name/kleros/t2cr > subgraph/build/full-schema.graphql && get-graphql-schema https://api.thegraph.com/subgraphs/name/kleros/t2cr --json > subgraph/build/full-schema.json && relay-compiler",
+    "build:relay:watch": "npm run build:relay && relay-compiler --watch",
     "build": "npm run build:relay && next build",
     "start": "next start",
     "release": "standard-version",
@@ -19,6 +20,7 @@
     "@kleros/icons": "^1.0.0-beta.1",
     "next-transpile-modules": "^6.0.0",
     "react-burger-menu": "^3.0.3",
+    "react-infinite-scroller": "^1.2.4",
     "use-debounce": "^5.2.0"
   },
   "devDependencies": {
