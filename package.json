@@ -5,7 +5,7 @@
     "dev": "npm run build:relay:watch & NODE_OPTIONS='--inspect' next",
     "build:relay": "mkdirp subgraph/build && get-graphql-schema https://api.thegraph.com/subgraphs/name/kleros/t2cr > subgraph/build/full-schema.graphql && get-graphql-schema https://api.thegraph.com/subgraphs/name/kleros/t2cr --json > subgraph/build/full-schema.json && relay-compiler",
     "build:relay:watch": "npm run build:relay && relay-compiler --watch",
-    "build": "npm run build:relay && next build",
+    "build": "npm run build:relay && next build && next export",
     "start": "next start",
     "release": "standard-version",
     "lint:eslint": "eslint --ext js .",

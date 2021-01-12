@@ -53,8 +53,8 @@ export const tokenStatusEnum = createEnum(
         Icon: X,
         query: {
           where: {
-            appealPeriodStart_gt: 0,
-            appealPeriodEnd_lt: Date.now() / 1000,
+            appealPeriodStart_gt: "0",
+            appealPeriodEnd_lt: Math.floor(Date.now() / 1000).toString(),
           },
         },
         accentColor: "#4d00b4",

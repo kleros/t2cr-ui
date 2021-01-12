@@ -1,11 +1,11 @@
-import { Box, Flex, Image, Link, Text } from "@kleros/components";
+import { Box, Flex, Image, Link, NextLink, Text } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons";
 import { Card } from "theme-ui";
 
 import { tokenStatusEnum } from "../data";
 
 function TokenCard({ token, network }) {
-  const { status, name, ticker, address, symbolMultihash } = token;
+  const { name, ticker, address, symbolMultihash, id } = token;
   return (
     <Card variant="token">
       <Box
@@ -21,20 +21,28 @@ function TokenCard({ token, network }) {
           borderRadius: 3,
         }}
       >
-        {tokenStatusEnum[status].startCase}
+        {tokenStatusEnum.parse(token).startCase}
       </Box>
-      <Flex
-        sx={{ alignItems: "center", flexDirection: "column", padding: "8px" }}
-      >
-        <Image
-          width={96}
-          src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}${symbolMultihash}`}
-          sx={{ margin: "8px", maxHeight: "96px", objectFit: "contain" }}
-        />
-        <Text sx={{ margin: "8px" }}>
-          {name} - {ticker}
-        </Text>
-      </Flex>
+      <NextLink href="/profile/[id]" as={`/profile/${id}`}>
+        <Flex
+          sx={{
+            alignItems: "center",
+            flexDirection: "column",
+            padding: "8px",
+            textAlign: "center",
+            cursor: "pointer",
+          }}
+        >
+          <Image
+            width={96}
+            src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}${symbolMultihash}`}
+            sx={{ margin: "8px", maxHeight: "96px", objectFit: "contain" }}
+          />
+          <Text sx={{ margin: "8px" }}>
+            {name} - {ticker}
+          </Text>
+        </Flex>
+      </NextLink>
       <Flex
         sx={{
           justifyContent: "space-between",

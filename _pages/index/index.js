@@ -25,13 +25,27 @@ function ItemCountLabel({ itemName, count }) {
 
 export const PAGE_SIZE = 16;
 export const indexQuery = graphql`
-  query indexQuery($skip: Int = 0, $first: Int = 16, $where: Token_filter) {
-    tokens(skip: $skip, first: $first, where: $where) {
+  query indexQuery(
+    $skip: Int = 0
+    $first: Int = 16
+    $where: Token_filter
+    $orderDirection: OrderDirection = desc
+  ) {
+    tokens(
+      skip: $skip
+      first: $first
+      where: $where
+      orderBy: lastStatusChangeTime
+      orderDirection: $orderDirection
+    ) {
+      id
       status
       name
       ticker
       address
       symbolMultihash
+      disputed
+      appealPeriodStart
       appealPeriodEnd
     }
   }
