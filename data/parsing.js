@@ -3,7 +3,14 @@ import { Check, Pending, X } from "@kleros/icons";
 
 export const tokenStatusEnum = createEnum(
   [
-    ["None", { kebabCase: undefined, startCase: "All" }],
+    [
+      "None",
+      {
+        kebabCase: undefined,
+        startCase: "All",
+        query: { where: { status_not: "Absent" } },
+      },
+    ],
     [
       "RegistrationRequested",
       {
@@ -54,7 +61,7 @@ export const tokenStatusEnum = createEnum(
         query: {
           where: {
             appealPeriodStart_gt: "0",
-            appealPeriodEnd_lt: Math.floor(Date.now() / 1000).toString(),
+            appealPeriodEnd_gt: Math.floor(Date.now() / 1000).toString(),
           },
         },
         accentColor: "#4d00b4",

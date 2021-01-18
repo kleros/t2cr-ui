@@ -23,7 +23,7 @@ function TokenCard({ token, network }) {
       >
         {tokenStatusEnum.parse(token).startCase}
       </Box>
-      <NextLink href="/profile/[id]" as={`/profile/${id}`}>
+      <NextLink href="/token/[id]" as={`/token/${id}`}>
         <Flex
           sx={{
             alignItems: "center",

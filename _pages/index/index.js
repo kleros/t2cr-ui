@@ -28,7 +28,7 @@ export const indexQuery = graphql`
   query indexQuery(
     $skip: Int = 0
     $first: Int = 16
-    $where: Token_filter
+    $where: Token_filter = { status_not: Absent }
     $orderDirection: OrderDirection = desc
   ) {
     tokens(
@@ -131,7 +131,9 @@ export default function Index() {
             }}
             items={tokenStatusEnum.array}
             onChange={({ kebabCase }) => {
+              setLoadedTokens([]);
               const query = { ...router.query };
+              delete query.skip;
               if (!kebabCase) delete query.status;
               else query.status = kebabCase;
               router.push({
