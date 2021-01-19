@@ -1,6 +1,6 @@
 import { Box, Flex, Image, Link, NextLink, Text } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons";
-import { Card } from "theme-ui";
+import { Card, Label } from "theme-ui";
 
 import { tokenStatusEnum } from "../data";
 
@@ -19,8 +19,24 @@ function TokenCard({ token, network }) {
           fontWeight: 400,
           fontSize: "16px",
           borderRadius: 3,
+          display: "flex",
+          alignItems: "center",
+          color: (theme) =>
+            theme.colors[tokenStatusEnum.parse(token).camelCase],
         }}
       >
+        <Label
+          sx={{
+            height: 8,
+            width: 8,
+            backgroundColor: (theme) =>
+              theme.colors[tokenStatusEnum.parse(token).camelCase],
+            borderRadius: "50%",
+            display: "inline-block",
+            marginBottom: 0,
+            marginRight: 8,
+          }}
+        />
         {tokenStatusEnum.parse(token).startCase}
       </Box>
       <NextLink href="/token/[id]" as={`/token/${id}`}>
