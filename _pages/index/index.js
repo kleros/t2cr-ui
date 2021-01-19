@@ -9,10 +9,11 @@ import {
   PageContent,
   SearchBar,
   Select,
-  TokenCard,
   useQuery,
 } from "../../components";
 import { tokenStatusEnum } from "../../data";
+
+import TokenPreviewCard from "./token-preview-card";
 
 function ItemCountLabel({ itemName, count }) {
   return (
@@ -30,6 +31,7 @@ export const indexQuery = graphql`
     $first: Int = 16
     $where: Token_filter = { status_not: Absent }
     $orderDirection: OrderDirection = desc
+    $search: String = ""
   ) {
     tokens(
       skip: $skip
@@ -38,15 +40,10 @@ export const indexQuery = graphql`
       orderBy: lastStatusChangeTime
       orderDirection: $orderDirection
     ) {
-      id
-      status
-      name
-      ticker
-      address
-      symbolMultihash
-      disputed
-      appealPeriodStart
-      appealPeriodEnd
+      ...tokenPreviewCard
+    }
+    tokenSearch(text: $search) {
+      ...tokenPreviewCard
     }
   }
 `;
@@ -56,10 +53,13 @@ export default function Index() {
   const { props } = useQuery();
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [fetching, setFetching] = useState();
-  const tokens = router.query.search ? props?.tokensSearch : props?.tokens;
+  const { tokens: tokenPreviewFragments, tokenSearch: tokenSearchFragments } =
+    props || {};
+  const { query } = router || {};
+  const { search } = query || {};
 
   const onLoadMore = useCallback(() => {
-    if (fetching) return;
+    if (fetching || search) return;
 
     setFetching(true);
     const query = { ...router.query };
@@ -70,11 +70,15 @@ export default function Index() {
   }, [fetching, router]);
 
   useEffect(() => {
-    setLoadedTokens((previousTokens) =>
-      tokens ? previousTokens.concat(tokens) : previousTokens
-    );
+    setLoadedTokens((previousTokens) => {
+      return search
+        ? tokenSearchFragments
+        : tokenPreviewFragments
+        ? previousTokens.concat(tokenPreviewFragments)
+        : previousTokens;
+    });
     setFetching(false);
-  }, [tokens]);
+  }, [tokenPreviewFragments, tokenSearchFragments, search]);
 
   return (
     <>
@@ -166,9 +170,12 @@ export default function Index() {
           loadMore={onLoadMore}
         >
           <Grid columns={[1, 2, 3, 4]} gap={3} sx={{ marginY: "32px" }}>
-            {loadedTokens.length > 0 &&
-              loadedTokens?.map((token, index) => (
-                <TokenCard token={token} key={`grid-item-${index}`} />
+            {loadedTokens?.length > 0 &&
+              loadedTokens?.map((tokenPreviewFragment, index) => (
+                <TokenPreviewCard
+                  tokenPreviewFragment={tokenPreviewFragment}
+                  key={`grid-item-${index}`}
+                />
               ))}
           </Grid>
         </InfiniteScroll>

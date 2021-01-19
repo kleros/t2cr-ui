@@ -1,28 +1,49 @@
 import { Box, Flex, Image, Link, NextLink, Text } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons";
+import { graphql, useFragment } from "relay-hooks";
 import { Card, Label } from "theme-ui";
 
-import { tokenStatusEnum } from "../data";
+import { tokenStatusEnum } from "../../data";
 
-function TokenCard({ token, network }) {
-  const { name, ticker, address, symbolMultihash, id } = token;
+const tokenPreviewCardFragment = graphql`
+  fragment tokenPreviewCard on Token {
+    id
+    status
+    name
+    ticker
+    address
+    symbolMultihash
+    disputed
+    appealPeriodStart
+    appealPeriodEnd
+  }
+`;
+
+function TokenPreviewCard({ tokenPreviewFragment, network }) {
+  const tokenPreview = useFragment(
+    tokenPreviewCardFragment,
+    tokenPreviewFragment
+  );
+  const { name, ticker, address, symbolMultihash, id } = tokenPreview;
   return (
     <Card variant="token">
       <Box
         sx={{
           background: (theme) =>
-            theme.colors[`muted${tokenStatusEnum.parse(token).key}`],
+            theme.colors[`muted${tokenStatusEnum.parse(tokenPreview).key}`],
           paddingX: "24px",
           paddingY: "12px",
           borderTop: (theme) =>
-            `5px solid ${theme.colors[tokenStatusEnum.parse(token).camelCase]}`,
+            `5px solid ${
+              theme.colors[tokenStatusEnum.parse(tokenPreview).camelCase]
+            }`,
           fontWeight: 400,
           fontSize: "16px",
           borderRadius: 3,
           display: "flex",
           alignItems: "center",
           color: (theme) =>
-            theme.colors[tokenStatusEnum.parse(token).camelCase],
+            theme.colors[tokenStatusEnum.parse(tokenPreview).camelCase],
         }}
       >
         <Label
@@ -30,14 +51,14 @@ function TokenCard({ token, network }) {
             height: 8,
             width: 8,
             backgroundColor: (theme) =>
-              theme.colors[tokenStatusEnum.parse(token).camelCase],
+              theme.colors[tokenStatusEnum.parse(tokenPreview).camelCase],
             borderRadius: "50%",
             display: "inline-block",
             marginBottom: 0,
             marginRight: 8,
           }}
         />
-        {tokenStatusEnum.parse(token).startCase}
+        {tokenStatusEnum.parse(tokenPreview).startCase}
       </Box>
       <NextLink href="/token/[id]" as={`/token/${id}`}>
         <Flex
@@ -83,4 +104,4 @@ function TokenCard({ token, network }) {
   );
 }
 
-export default TokenCard;
+export default TokenPreviewCard;

@@ -11,9 +11,7 @@ export default function SearchBar({ sx }) {
     const query = { ...router.query };
     if (!value) delete query.search;
     else query.search = value.replaceAll(" ", " & ");
-    router.push({
-      query,
-    });
+    router.push({ query });
   }, 300);
   const queryChanged = useCallback(
     (event) => {
