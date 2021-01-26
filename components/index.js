@@ -6,3 +6,6 @@ export { default as Layout } from "./layout";
 export { default as Select } from "./select";
 export { default as Title } from "./title";
 export { default as RelayProvider, useQuery } from "./relay-provider";
+export { default as Status } from "./status";
+export { default as ScrollTo } from "./scroll-to";
+export { default as Evidences } from "./evidences";

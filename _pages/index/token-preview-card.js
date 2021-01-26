@@ -1,9 +1,10 @@
 import { Box, Flex, Image, Link, NextLink, Text } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons";
 import { graphql, useFragment } from "relay-hooks";
-import { Card, Label } from "theme-ui";
+import { Card } from "theme-ui";
+import { Status } from "../../components";
 
-import { tokenStatusEnum } from "../../data";
+import { itemStatusEnum } from "../../data";
 
 const tokenPreviewCardFragment = graphql`
   fragment tokenPreviewCard on Token {
@@ -30,12 +31,12 @@ function TokenPreviewCard({ tokenPreviewFragment, network }) {
       <Box
         sx={{
           background: (theme) =>
-            theme.colors[`muted${tokenStatusEnum.parse(tokenPreview).key}`],
+            theme.colors[`muted${itemStatusEnum.parse(tokenPreview).key}`],
           paddingX: "24px",
           paddingY: "12px",
           borderTop: (theme) =>
             `5px solid ${
-              theme.colors[tokenStatusEnum.parse(tokenPreview).camelCase]
+              theme.colors[itemStatusEnum.parse(tokenPreview).camelCase]
             }`,
           fontWeight: 400,
           fontSize: "16px",
@@ -43,22 +44,10 @@ function TokenPreviewCard({ tokenPreviewFragment, network }) {
           display: "flex",
           alignItems: "center",
           color: (theme) =>
-            theme.colors[tokenStatusEnum.parse(tokenPreview).camelCase],
+            theme.colors[itemStatusEnum.parse(tokenPreview).camelCase],
         }}
       >
-        <Label
-          sx={{
-            height: 8,
-            width: 8,
-            backgroundColor: (theme) =>
-              theme.colors[tokenStatusEnum.parse(tokenPreview).camelCase],
-            borderRadius: "50%",
-            display: "inline-block",
-            marginBottom: 0,
-            marginRight: 8,
-          }}
-        />
-        {tokenStatusEnum.parse(tokenPreview).startCase}
+        <Status item={tokenPreview} />
       </Box>
       <NextLink href="/token/[id]" as={`/token/${id}`}>
         <Flex

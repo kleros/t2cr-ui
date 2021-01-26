@@ -11,7 +11,7 @@ import {
   Select,
   useQuery,
 } from "../../components";
-import { tokenStatusEnum } from "../../data";
+import { itemStatusEnum } from "../../data";
 
 import TokenPreviewCard from "./token-preview-card";
 
@@ -133,7 +133,7 @@ export default function Index() {
               border: "1px solid #ccc;",
               borderRadius: "3px",
             }}
-            items={tokenStatusEnum.array}
+            items={itemStatusEnum.array}
             onChange={({ kebabCase }) => {
               setLoadedTokens([]);
               const query = { ...router.query };
@@ -144,7 +144,7 @@ export default function Index() {
                 query,
               });
             }}
-            value={tokenStatusEnum.array.find(
+            value={itemStatusEnum.array.find(
               ({ kebabCase }) => kebabCase === router.query.status
             )}
             label="Filter by status:"

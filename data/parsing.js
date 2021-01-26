@@ -1,7 +1,7 @@
 import { createEnum } from "@kleros/components";
 import { Check, Pending, X } from "@kleros/icons";
 
-export const tokenStatusEnum = createEnum(
+export const itemStatusEnum = createEnum(
   [
     [
       "None",
@@ -71,25 +71,25 @@ export const tokenStatusEnum = createEnum(
   ({ status, disputed, appealPeriodStart, appealPeriodEnd }) => {
     const currentTime = Date.now() / 1000;
     if (currentTime > appealPeriodStart && currentTime < appealPeriodEnd)
-      return tokenStatusEnum.Crowdfunding;
+      return itemStatusEnum.Crowdfunding;
     if (disputed) {
-      if (status === tokenStatusEnum.RegistrationRequested.key)
-        return tokenStatusEnum.ChallengedRegistration;
-      return tokenStatusEnum.ChallengedRemoval;
+      if (status === itemStatusEnum.RegistrationRequested.key)
+        return itemStatusEnum.ChallengedRegistration;
+      return itemStatusEnum.ChallengedRemoval;
     }
     switch (status) {
-      case tokenStatusEnum.Registered.key:
-        return tokenStatusEnum.Registered;
-      case tokenStatusEnum.RegistrationRequested.key:
-        return tokenStatusEnum.RegistrationRequested;
-      case tokenStatusEnum.ClearingRequested.key:
-        return tokenStatusEnum.ClearingRequested;
-      case tokenStatusEnum.Absent.key:
-        return tokenStatusEnum.Absent;
+      case itemStatusEnum.Registered.key:
+        return itemStatusEnum.Registered;
+      case itemStatusEnum.RegistrationRequested.key:
+        return itemStatusEnum.RegistrationRequested;
+      case itemStatusEnum.ClearingRequested.key:
+        return itemStatusEnum.ClearingRequested;
+      case itemStatusEnum.Absent.key:
+        return itemStatusEnum.Absent;
       default:
         throw new Error("Unknown status");
     }
   }
 );
 
-export const queryEnums = { status: tokenStatusEnum };
+export const queryEnums = { status: itemStatusEnum };
