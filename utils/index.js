@@ -1,3 +1,5 @@
+import { itemStatusEnum } from "../data";
+
 export const navigation = [
   {
     to: "/",
@@ -16,3 +18,6 @@ export const navigation = [
     label: "Statistics",
   },
 ];
+
+export const isResolved = (status) =>
+  status === itemStatusEnum.Registered || status === itemStatusEnum.Absent;

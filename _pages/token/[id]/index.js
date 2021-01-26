@@ -1,14 +1,11 @@
-import { Accordion } from "@kleros/components/components";
+import { Accordion, VotingHistory } from "@kleros/components/components";
 import { graphql } from "relay-hooks";
 import { Card } from "theme-ui";
 
-import { Button, Evidence, Evidences, PageContent, useQuery } from "../../../components";
-import { itemStatusEnum } from "../../../data";
+import { Button, Evidences, PageContent, useQuery } from "../../../components";
 import { Info } from "../icons";
+import InfoBox from "./info-box";
 import { Step } from './step'
-
-const isResolved = (status) =>
-  status === itemStatusEnum.Registered || status === itemStatusEnum.Absent;
 
 export default function TokenWithID() {
   const { props } = useQuery();
@@ -19,6 +16,7 @@ export default function TokenWithID() {
   const { name, ticker, address, symbolMultihash, requests } = token
   const latestRequest = requests[0]
   const { disputed } = latestRequest
+  const inAppealPeriod = Date.now()/1000 > appealPeriodStart && Date.now()/1000 < appealPeriodEnd
 
   return (
     <PageContent>
@@ -57,21 +55,7 @@ export default function TokenWithID() {
       </Box>
       {!isResolved && disputed && (
         <>
-          <Flex>
-            <Info />
-            <Box>
-              <Text>The Token Registration was Challenged</Text>
-              <Text>
-                When there’s a challenge a dispute is created. A random pool of
-                specialized jurors is selected to evaluate the case, study the
-                evidence, and vote. The side that receives the majority of votes
-                wins the dispute and receives the deposit back. After the
-                juror's decision, both sides can still appeal if not satisfied
-                with the result. It leads to another round with different
-                jurors.
-              </Text>
-            </Box>
-          </Flex>
+          <InfoBox item={item} />
           <Card>
             <Flex>
               <Step
@@ -95,13 +79,30 @@ export default function TokenWithID() {
               <DisputeInfo label="Court" icon={<Info />} value="Curate" />
               <DisputeInfo label="Jurors" icon={<Info />} value={3} />
             </Flex>
+
             <Accordion allowMultipleExpanded allowZeroExpanded>
+              {inAppealPeriod(
+                <AccordionItem>
+                  <AccordionItemHeading>Appeal</AccordionItemHeading>
+                  <AccordionItemPanel>
+                    <Appeal />
+                  </AccordionItemPanel>
+                </AccordionItem>
+              )}
               <AccordionItem>
                 <AccordionItemHeading>Evidence</AccordionItemHeading>
                 <AccordionItemPanel>
                   <Evidences evidences={latestRequest.evidences} />
                 </AccordionItemPanel>
               </AccordionItem>
+              {disputed && (
+                <AccordionItem>
+                  <AccordionItemHeading>Voting History</AccordionItemHeading>
+                  <AccordionItemPanel>
+                    <VotingHistory />
+                  </AccordionItemPanel>
+                </AccordionItem>
+              )}
             </Accordion>
           </Card>
         </>

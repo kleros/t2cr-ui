@@ -1,4 +1,5 @@
-import { Box, Flex } from "@kleros/components";
+import { Box, Flex, Text } from "@kleros/components";
+import humanizeDuration from "humanize-duration";
 
 export default function Step({ number, title, duration }) {
   return (
