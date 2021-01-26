@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 
 import { indexQuery } from "../_pages/index";
+import { IdQuery } from "../_pages/token/[id]";
 import {
   Button,
   Layout,
@@ -29,6 +30,7 @@ import { navigation } from "../utils";
 
 const queries = {
   "/": indexQuery,
+  "/token/:id": IdQuery,
 };
 const wrapConnection = createWrapConnection(queries, queryEnums);
 
