@@ -1,22 +1,40 @@
-import { Accordion, VotingHistory } from "@kleros/components/components";
+import { Accordion, Text, Flex, Link, Image } from "@kleros/components";
+import { EtherscanLogo } from "@kleros/icons/icons";
 import { graphql } from "relay-hooks";
-import { Card } from "theme-ui";
+import { Box, Card } from "theme-ui";
 
-import { Button, Evidences, PageContent, useQuery } from "../../../components";
-import { Info } from "../icons";
+import {
+  Button,
+  Evidences,
+  PageContent,
+  Status,
+  useQuery,
+} from "../../../components";
+import { Info } from "../../../icons";
+import { isResolved } from "../../../utils";
 import InfoBox from "./info-box";
-import { Step } from './step'
+import Step from "./step";
 
-export default function TokenWithID() {
+export default function TokenWithID({ network }) {
   const { props } = useQuery();
-  const { token } = props || {}
+  const { token } = props || {};
 
-  if (!token) return 'Loading...'
+  if (!token) return "Loading...";
 
-  const { name, ticker, address, symbolMultihash, requests } = token
-  const latestRequest = requests[0]
-  const { disputed } = latestRequest
-  const inAppealPeriod = Date.now()/1000 > appealPeriodStart && Date.now()/1000 < appealPeriodEnd
+  const {
+    name,
+    ticker,
+    address,
+    symbolMultihash,
+    requests,
+    appealPeriodStart,
+    appealPeriodEnd,
+  } = token;
+  const latestRequest = requests[0];
+  const { disputed } = latestRequest;
+  const inAppealPeriod =
+    Date.now() / 1000 > appealPeriodStart &&
+    Date.now() / 1000 < appealPeriodEnd;
 
   return (
     <PageContent>
