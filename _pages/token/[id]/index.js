@@ -1,7 +1,17 @@
-import { Accordion, Text, Flex, Link, Image } from "@kleros/components";
+import {
+  Accordion,
+  Text,
+  Flex,
+  Link,
+  Image,
+  AccordionItem,
+  AccordionItemHeading,
+  AccordionItemPanel,
+} from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons/icons";
 import { graphql } from "relay-hooks";
 import { Card } from "theme-ui";
+import humanizeDuration from "humanize-duration";
 
 import {
   Button,
@@ -14,6 +24,9 @@ import { Info } from "../../../icons";
 import { isResolved } from "../../../utils";
 import InfoBox from "./info-box";
 import Step from "./step";
+import DisputeInfo from "./dispute-info";
+import Appeal from "./appeal";
+import VotingHistory from "./voting-history";
 
 export default function TokenWithID({ network }) {
   const { props } = useQuery();
@@ -33,6 +46,7 @@ export default function TokenWithID({ network }) {
 
   const latestRequest = requests[0];
   const { disputed } = latestRequest;
+  console.info(latestRequest);
   const inAppealPeriod =
     Date.now() / 1000 > appealPeriodStart &&
     Date.now() / 1000 < appealPeriodEnd;
@@ -40,19 +54,25 @@ export default function TokenWithID({ network }) {
   return (
     <PageContent>
       <Flex sx={{ marginTop: "70px", justifyContent: "space-between" }}>
-        <Flex>
+        <Flex sx={{ alignItems: "center" }}>
           <Text
             sx={{
               fontWeight: 600,
               textTransform: "capitalize",
-              fontSize: "24px",
+              fontSize: ["12px", "14px", "16px"],
+              display: "flex",
             }}
           >
             {name.toLowerCase()} - {ticker}
           </Text>
-          <Status item={token} sx={{ marginLeft: "32px" }} />
-          {!isResolved && !disputed && (
-            <Text>{humanizeDuration(3.5 * 24 * 60 * 60 * 1000)}</Text>
+          <Status
+            item={token}
+            sx={{ marginLeft: "32px", marginRight: "8px" }}
+          />
+          {!isResolved(status) && !disputed && (
+            <Text sx={{ fontSize: ["10px", "12px", "14px"] }}>
+              {humanizeDuration(3.5 * 24 * 60 * 60 * 1000)}
+            </Text>
           )}
         </Flex>
         <Button type="button" variant="primary">
@@ -98,9 +118,9 @@ export default function TokenWithID({ network }) {
           </Link>
         </Flex>
       </Flex>
-      {!isResolved && disputed && (
+      {!isResolved(status) && disputed && (
         <>
-          <InfoBox item={item} />
+          <InfoBox item={token} />
           <Card>
             alignContent: 'center', flexDirection: "column"
             <Flex>
@@ -126,7 +146,7 @@ export default function TokenWithID({ network }) {
               <DisputeInfo label="Jurors" icon={<Info />} value={3} />
             </Flex>
             <Accordion allowMultipleExpanded allowZeroExpanded>
-              {inAppealPeriod(
+              {inAppealPeriod && (
                 <AccordionItem>
                   <AccordionItemHeading>Appeal</AccordionItemHeading>
                   <AccordionItemPanel>
@@ -169,12 +189,15 @@ export const IdQuery = graphql`
       appealPeriodStart
       appealPeriodEnd
       requests {
+        id
         submissionTime
         result
         resolutionTime
         requester
         challenger
+        disputed
         rounds {
+          id
           amountPaidRequester
           amountPaidChallenger
           hasPaidRequester
@@ -186,6 +209,7 @@ export const IdQuery = graphql`
           appealPeriodEnd
         }
         evidences {
+          id
           submitter
           submissionTime
           evidenceURI

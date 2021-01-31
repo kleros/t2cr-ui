@@ -17,7 +17,7 @@ const intlDateTimeFormat = new Intl.DateTimeFormat("default", {
   hour12: false,
 });
 
-function EvidenceItem({ evidence: { sender, creationTime }, index }) {
+function EvidenceItem({ evidence: { submitter, submissionTime }, index }) {
   const evidence = {
     id: "",
     name: "",
@@ -31,17 +31,17 @@ function EvidenceItem({ evidence: { sender, creationTime }, index }) {
       footer={
         <>
           <Flex sx={{ alignItems: "center" }}>
-            <Identicon address={sender} />
+            <Identicon address={submitter} />
             <Box sx={{ marginLeft: 1 }}>
               <Text>
                 <Text as="span" sx={{ fontWeight: "bold" }}>
                   #{index}
                 </Text>{" "}
                 submitted by{" "}
-                <NextETHLink address={sender}>{sender}</NextETHLink>
+                <NextETHLink address={submitter}>{submitter}</NextETHLink>
               </Text>
               <Text>
-                {intlDateTimeFormat.format(new Date(creationTime * 1000))}
+                {/* {intlDateTimeFormat.format(new Date(submissionTime * 1000))} */}
               </Text>
             </Box>
           </Flex>

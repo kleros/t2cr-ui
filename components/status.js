@@ -4,7 +4,9 @@ import { itemStatusEnum } from "../data";
 
 export default function Status({ item, sx }) {
   return (
-    <Flex sx={{ alignItems: "center", ...sx }}>
+    <Flex
+      sx={{ alignItems: "center", fontSize: ["10px", "12px", "14px"], ...sx }}
+    >
       <Label
         sx={{
           height: 8,
