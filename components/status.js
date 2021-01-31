@@ -1,10 +1,10 @@
-import { Label } from "theme-ui";
+import { Flex, Label } from "theme-ui";
 
 import { itemStatusEnum } from "../data";
 
-export default function Status({ item }) {
+export default function Status({ item, sx }) {
   return (
-    <>
+    <Flex sx={{ alignItems: "center", ...sx }}>
       <Label
         sx={{
           height: 8,
@@ -18,6 +18,6 @@ export default function Status({ item }) {
         }}
       />
       {itemStatusEnum.parse(item).startCase}
-    </>
+    </Flex>
   );
 }

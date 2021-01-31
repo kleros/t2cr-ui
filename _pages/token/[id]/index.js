@@ -1,7 +1,7 @@
 import { Accordion, Text, Flex, Link, Image } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons/icons";
 import { graphql } from "relay-hooks";
-import { Box, Card } from "theme-ui";
+import { Card } from "theme-ui";
 
 import {
   Button,
@@ -30,6 +30,7 @@ export default function TokenWithID({ network }) {
     appealPeriodStart,
     appealPeriodEnd,
   } = token;
+
   const latestRequest = requests[0];
   const { disputed } = latestRequest;
   const inAppealPeriod =
@@ -38,14 +39,22 @@ export default function TokenWithID({ network }) {
 
   return (
     <PageContent>
-      <Flex>
-        <Text>
-          {name} - {ticker}{" "}
-        </Text>
-        <Status item={token} />
-        {!isResolved && !disputed && (
-          <Text>{humanizeDuration(3.5 * 24 * 60 * 60 * 1000)}</Text>
-        )}
+      <Flex sx={{ marginTop: "70px", justifyContent: "space-between" }}>
+        <Flex>
+          <Text
+            sx={{
+              fontWeight: 600,
+              textTransform: "capitalize",
+              fontSize: "24px",
+            }}
+          >
+            {name.toLowerCase()} - {ticker}
+          </Text>
+          <Status item={token} sx={{ marginLeft: "32px" }} />
+          {!isResolved && !disputed && (
+            <Text>{humanizeDuration(3.5 * 24 * 60 * 60 * 1000)}</Text>
+          )}
+        </Flex>
         <Button type="button" variant="primary">
           Submit Token
         </Button>
@@ -55,12 +64,30 @@ export default function TokenWithID({ network }) {
           </Button>
         )}
       </Flex>
-      <Box>
+      <Flex
+        sx={{
+          marginTop: "37px",
+          background: "linear-gradient(180deg, #FBF9FE 0%, #FFFFFF 100%)",
+          width: "100%",
+          alignItems: "center",
+          flexDirection: "column",
+          paddingTop: "37px",
+        }}
+      >
         <Image
           width={96}
+          height={96}
+          sx={{ objectFit: "contain" }}
           src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}${symbolMultihash}`}
         />
-        <Flex>
+        <Flex
+          sx={{
+            width: "100%",
+            paddingX: "24px",
+            paddingBottom: "15px",
+            justifyContent: "space-between",
+          }}
+        >
           <Text>4 Badges</Text>
           <Link
             href={`https://${
@@ -70,11 +97,12 @@ export default function TokenWithID({ network }) {
             <EtherscanLogo />
           </Link>
         </Flex>
-      </Box>
+      </Flex>
       {!isResolved && disputed && (
         <>
           <InfoBox item={item} />
           <Card>
+            alignContent: 'center', flexDirection: "column"
             <Flex>
               <Step
                 number={1}
@@ -97,7 +125,6 @@ export default function TokenWithID({ network }) {
               <DisputeInfo label="Court" icon={<Info />} value="Curate" />
               <DisputeInfo label="Jurors" icon={<Info />} value={3} />
             </Flex>
-
             <Accordion allowMultipleExpanded allowZeroExpanded>
               {inAppealPeriod(
                 <AccordionItem>
