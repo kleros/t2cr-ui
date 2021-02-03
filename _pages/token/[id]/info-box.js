@@ -1,5 +1,3 @@
-import { Box, Flex, Text } from "@kleros/components/components";
-
 import { itemStatusEnum } from "../../../data";
 import { isResolved } from "../../../utils";
 
@@ -32,9 +30,13 @@ const getStatusInfo = ({ status, disputed, appealPeriodStart }) => {
   return null;
 };
 
-export default function InfoBox({ item }) {
+export default function InfoBox({ item, sx }) {
   const { title, description } = getStatusInfo(item) || {};
   if (!title || !description) return null;
 
-  return <Alert title={title}>{description}</Alert>;
+  return (
+    <Alert sx={{ ...sx }} title={title}>
+      {description}
+    </Alert>
+  );
 }

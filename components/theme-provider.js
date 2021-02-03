@@ -75,6 +75,48 @@ const theme = merge(merge(base, toTheme(typographyTheme)), {
     },
   },
 
+  accordion: {
+    item: {
+      marginY: 2,
+    },
+    heading: {
+      borderRadius: 3,
+      color: "background",
+      fontWeight: "bold",
+      paddingLeft: 2,
+      paddingRight: 5,
+      paddingY: 1,
+      ":hover": {
+        opacity: 0.8,
+      },
+    },
+    panel: {
+      backgroundColor: "background",
+      bordeRadius: 3,
+      boxShadow: "0 6px 90px rgba(153, 153, 153, 0.25)",
+      fontSize: 1,
+      paddingX: 4,
+      paddingY: 3,
+    },
+  },
+  alert: {
+    info: {
+      borderColor: "info",
+      borderRadius: 3,
+      borderStyle: "solid",
+      borderWidth: 1,
+      padding: 2,
+      icon: {
+        stroke: "info",
+        path: { fill: "info" },
+      },
+      title: {
+        color: "info",
+        fontWeight: "bold",
+      },
+    },
+  },
+
   // Components
   buttons: {
     primary: {

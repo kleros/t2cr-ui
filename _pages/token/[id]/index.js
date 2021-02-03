@@ -10,7 +10,7 @@ import {
 } from "@kleros/components";
 import { EtherscanLogo } from "@kleros/icons/icons";
 import { graphql } from "relay-hooks";
-import { Card } from "theme-ui";
+import { Card, Divider } from "theme-ui";
 import humanizeDuration from "humanize-duration";
 
 import {
@@ -20,7 +20,7 @@ import {
   Status,
   useQuery,
 } from "../../../components";
-import { Info } from "../../../icons";
+import { Number, Court, User } from "../../../icons";
 import { isResolved } from "../../../utils";
 import InfoBox from "./info-box";
 import Step from "./step";
@@ -46,14 +46,19 @@ export default function TokenWithID({ network }) {
 
   const latestRequest = requests[0];
   const { disputed } = latestRequest;
-  console.info(latestRequest);
   const inAppealPeriod =
     Date.now() / 1000 > appealPeriodStart &&
     Date.now() / 1000 < appealPeriodEnd;
 
   return (
     <PageContent>
-      <Flex sx={{ marginTop: "70px", justifyContent: "space-between" }}>
+      <Flex
+        sx={{
+          marginTop: "70px",
+          marginBottom: "8px",
+          justifyContent: "space-between",
+        }}
+      >
         <Flex sx={{ alignItems: "center" }}>
           <Text
             sx={{
@@ -86,7 +91,7 @@ export default function TokenWithID({ network }) {
       </Flex>
       <Flex
         sx={{
-          marginTop: "37px",
+          marginY: "24px",
           background: "linear-gradient(180deg, #FBF9FE 0%, #FFFFFF 100%)",
           width: "100%",
           alignItems: "center",
@@ -120,55 +125,109 @@ export default function TokenWithID({ network }) {
       </Flex>
       {!isResolved(status) && disputed && (
         <>
-          <InfoBox item={token} />
-          <Card>
-            alignContent: 'center', flexDirection: "column"
-            <Flex>
-              <Step
-                number={1}
-                title="Evidence Period"
-                duration={3.25 * 24 * 60 * 60 * 1000}
+          <InfoBox sx={{ marginY: "24px" }} item={token} />
+          <Card
+            sx={{
+              alignContent: "center",
+              flexDirection: "column",
+              boxShadow: "0px 6px 24px rgba(77, 0, 180, 0.25)",
+              borderRadius: "18px",
+              padding: "32px",
+              marginY: "24px",
+            }}
+          >
+            <Flex sx={{ flexDirection: "column" }}>
+              <Flex
+                sx={{
+                  justifyContent: "space-between",
+                  marginBottom: "14px",
+                  alignItems: ["flex-start", "center"],
+                  flexDirection: ["column", "row"],
+                }}
+              >
+                <Step
+                  number={1}
+                  title="Evidence Period"
+                  duration={3.25 * 24 * 60 * 60 * 1000}
+                />
+                <Divider
+                  sx={{
+                    flexGrow: 1,
+                    marginTop: 0,
+                    marginX: "24px",
+                    marginBottom: "14px",
+                  }}
+                />
+                <Step
+                  number={2}
+                  title="Voting Period"
+                  duration={3 * 24 * 60 * 60 * 1000}
+                />
+                <Divider
+                  sx={{
+                    flexGrow: 1,
+                    marginTop: 0,
+                    marginX: "24px",
+                    marginBottom: "14px",
+                  }}
+                />
+                <Step
+                  number={3}
+                  title="Appeal Period"
+                  duration={3 * 24 * 60 * 60 * 1000}
+                />
+              </Flex>
+              <Divider
+                sx={{
+                  borderBottom: "2px solid #4D00B4",
+                  marginY: "14px",
+                }}
               />
-              <Step
-                number={2}
-                title="Evidence Period"
-                duration={3 * 24 * 60 * 60 * 1000}
-              />
-              <Step
-                number={3}
-                title="Evidence Period"
-                duration={3 * 24 * 60 * 60 * 1000}
-              />
-            </Flex>
-            <Flex>
-              <DisputeInfo label="Dispute" icon={<Info />} value={1369} />
-              <DisputeInfo label="Court" icon={<Info />} value="Curate" />
-              <DisputeInfo label="Jurors" icon={<Info />} value={3} />
-            </Flex>
-            <Accordion allowMultipleExpanded allowZeroExpanded>
-              {inAppealPeriod && (
+              <Flex sx={{ marginY: "14px", justifyContent: "space-between" }}>
+                <DisputeInfo
+                  sx={{ flexGrow: 1 }}
+                  label="Dispute"
+                  icon={<Number />}
+                  value={latestRequest.disputeID}
+                />
+                <DisputeInfo
+                  sx={{ flexGrow: 3, marginX: 24 }}
+                  label="Court"
+                  icon={<Court />}
+                  value="Curate"
+                />
+                <DisputeInfo
+                  sx={{ flexGrow: 1 }}
+                  label="Jurors"
+                  icon={<User />}
+                  value={3}
+                />
+              </Flex>
+              <Accordion allowMultipleExpanded allowZeroExpanded>
+                {inAppealPeriod && (
+                  <AccordionItem>
+                    <AccordionItemHeading>Appeal</AccordionItemHeading>
+                    <AccordionItemPanel>
+                      <Appeal />
+                    </AccordionItemPanel>
+                  </AccordionItem>
+                )}
                 <AccordionItem>
-                  <AccordionItemHeading>Appeal</AccordionItemHeading>
+                  <AccordionItemHeading>Evidence</AccordionItemHeading>
                   <AccordionItemPanel>
-                    <Appeal />
+                    <Evidences evidences={latestRequest.evidences} />
                   </AccordionItemPanel>
                 </AccordionItem>
-              )}
-              <AccordionItem>
-                <AccordionItemHeading>Evidence</AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Evidences evidences={latestRequest.evidences} />
-                </AccordionItemPanel>
-              </AccordionItem>
-              {disputed && (
-                <AccordionItem>
-                  <AccordionItemHeading>Voting History</AccordionItemHeading>
-                  <AccordionItemPanel>
-                    <VotingHistory />
-                  </AccordionItemPanel>
-                </AccordionItem>
-              )}
-            </Accordion>
+                {disputed && (
+                  <AccordionItem>
+                    <AccordionItemHeading>Voting History</AccordionItemHeading>
+                    <AccordionItemPanel>
+                      <VotingHistory />
+                    </AccordionItemPanel>
+                  </AccordionItem>
+                )}
+              </Accordion>
+            </Flex>
           </Card>
         </>
       )}
@@ -196,6 +255,7 @@ export const IdQuery = graphql`
         requester
         challenger
         disputed
+        disputeID
         rounds {
           id
           amountPaidRequester

@@ -41,7 +41,7 @@ function EvidenceItem({ evidence: { submitter, submissionTime }, index }) {
                 <NextETHLink address={submitter}>{submitter}</NextETHLink>
               </Text>
               <Text>
-                {/* {intlDateTimeFormat.format(new Date(submissionTime * 1000))} */}
+                {intlDateTimeFormat.format(new Date(submissionTime * 1000))}
               </Text>
             </Box>
           </Flex>
