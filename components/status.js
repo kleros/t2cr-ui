@@ -5,7 +5,11 @@ import { itemStatusEnum } from "../data";
 export default function Status({ item, sx }) {
   return (
     <Flex
-      sx={{ alignItems: "center", fontSize: ["10px", "12px", "14px"], ...sx }}
+      sx={{
+        alignItems: "center",
+        fontSize: ["16px", "14px", "12px", "14px"],
+        ...sx,
+      }}
     >
       <Label
         sx={{

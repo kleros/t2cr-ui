@@ -1,6 +1,10 @@
-import { Link, NextETHLink, Text } from "@kleros/components/components";
-import { DownArrow, File, UpArrow } from "@kleros/icons";
-import { Box, Card, Flex } from "theme-ui";
+import { Card, Link, NextETHLink, Text } from "@kleros/components";
+import { DownArrow, UpArrow } from "@kleros/icons";
+import { useEffect, useState } from "react";
+import { Box, Flex } from "theme-ui";
+
+import { File } from "../icons";
+import { truncateEthAddr } from "../utils";
 
 import Identicon from "./identicon";
 import ScrollTo, { ScrollArea } from "./scroll-to";
@@ -17,53 +21,91 @@ const intlDateTimeFormat = new Intl.DateTimeFormat("default", {
   hour12: false,
 });
 
-function EvidenceItem({ evidence: { submitter, submissionTime }, index }) {
-  const evidence = {
-    id: "",
-    name: "",
-    description: "",
-    fileURI: "",
-  };
+function EvidenceItem({
+  evidence: { submitter, submissionTime, evidenceURI },
+  index,
+}) {
+  const [evidenceFile, setEvidenceFile] = useState();
+  useEffect(() => {
+    (async () => {
+      setEvidenceFile(
+        await (
+          await fetch(`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}${evidenceURI}`)
+        ).json()
+      );
+    })();
+  }, [evidenceURI]);
+
   return (
     <Card
-      sx={{ marginBottom: 2 }}
-      mainSx={{ alignItems: "flex-start", flexDirection: "column" }}
+      sx={{
+        marginBottom: 3,
+        boxShadow: "0 6px 24px rgba(77, 0, 180, 0.25)",
+        borderRadius: "3px",
+      }}
+      mainSx={{
+        alignItems: "flex-start",
+        flexDirection: "column",
+        padding: 24,
+      }}
       footer={
         <>
-          <Flex sx={{ alignItems: "center" }}>
+          <Flex
+            sx={{
+              alignItems: "center",
+            }}
+          >
             <Identicon address={submitter} />
-            <Box sx={{ marginLeft: 1 }}>
+            <Box
+              sx={{
+                marginLeft: 1,
+                color: (theme) => theme.colors.accent,
+                fontSize: "14px",
+              }}
+            >
               <Text>
-                <Text as="span" sx={{ fontWeight: "bold" }}>
-                  #{index}
-                </Text>{" "}
-                submitted by{" "}
-                <NextETHLink address={submitter}>{submitter}</NextETHLink>
+                <Text as="span">#{index}</Text> submitted by{" "}
+                <NextETHLink address={submitter}>
+                  {truncateEthAddr(submitter)}
+                </NextETHLink>
               </Text>
               <Text>
                 {intlDateTimeFormat.format(new Date(submissionTime * 1000))}
               </Text>
             </Box>
           </Flex>
-          {evidence?.fileURI && (
-            <Link newTab href={evidence?.fileURI}>
-              <File sx={{ stroke: "background", path: { fill: "primary" } }} />
+          {evidenceFile?.fileURI && (
+            <Link
+              newTab
+              href={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}${evidenceFile?.fileURI}`}
+            >
+              <File width={24} height={24} color="#009aff" />
             </Link>
           )}
         </>
       }
-      footerSx={{ justifyContent: "space-between", paddingX: 3 }}
+      footerSx={{
+        justifyContent: "space-between",
+        background: "#fbf9fe",
+        borderRadius: "3px",
+        paddingX: 24,
+        paddingY: 17,
+        marginTop: 18,
+      }}
     >
       <Text
         sx={{
-          fontSize: 2,
-          fontWeight: "bold",
+          fontWeight: 600,
+          fontSize: "16px",
+          lineHeight: "22px",
+          color: "rgba(0, 0, 0, 0.85)",
         }}
       >
-        {evidence?.name}
+        {evidenceFile?.title}
       </Text>
       <Text>
-        {evidence?.description || (evidence ? "No description." : undefined)}
+        {evidenceFile?.description ||
+          (evidenceFile ? "No description." : undefined)}
       </Text>
     </Card>
   );
@@ -73,7 +115,7 @@ export default function Evidences({ evidences }) {
   return (
     <ScrollTo>
       {({ scroll }) => (
-        <Box sx={{ paddingX: 4 }}>
+        <Box>
           <Flex
             sx={{
               alignItems: "center",

@@ -32,7 +32,7 @@ function TokenPreviewCard({ tokenPreviewFragment, network }) {
         sx={{
           background: (theme) =>
             theme.colors[`muted${itemStatusEnum.parse(tokenPreview).key}`],
-          paddingX: "24px",
+          paddingLeft: "24px",
           paddingY: "12px",
           borderTop: (theme) =>
             `5px solid ${

@@ -27,6 +27,24 @@ import Step from "./step";
 import DisputeInfo from "./dispute-info";
 import Appeal from "./appeal";
 import VotingHistory from "./voting-history";
+import { itemStatusEnum } from "../../../data";
+
+const availableAction = (item) => {
+  const status = itemStatusEnum.parse(item).key;
+
+  switch (status) {
+    case itemStatusEnum.Registered.key:
+      return "remove";
+    case itemStatusEnum.RegistrationRequested.key:
+      return "challenge registration";
+    case itemStatusEnum.ClearingRequested.key:
+      return "challenge removal";
+    case itemStatusEnum.Absent.key:
+      return "resubmit";
+    default:
+      "";
+  }
+};
 
 export default function TokenWithID({ network }) {
   const { props } = useQuery();
@@ -80,9 +98,11 @@ export default function TokenWithID({ network }) {
             </Text>
           )}
         </Flex>
-        <Button type="button" variant="primary">
-          Submit Token
-        </Button>
+        {!disputed && (
+          <Button type="button" variant="primary">
+            {availableAction(token)} Token
+          </Button>
+        )}
         {isResolved(status) && (
           <Button type="button" variant="secondary">
             Add Badge
@@ -203,25 +223,29 @@ export default function TokenWithID({ network }) {
                   value={3}
                 />
               </Flex>
-              <Accordion allowMultipleExpanded allowZeroExpanded>
+              <Accordion
+                allowMultipleExpanded
+                allowZeroExpanded={false}
+                sx={{ padding: 0 }}
+              >
                 {inAppealPeriod && (
                   <AccordionItem>
                     <AccordionItemHeading>Appeal</AccordionItemHeading>
-                    <AccordionItemPanel>
+                    <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
                       <Appeal />
                     </AccordionItemPanel>
                   </AccordionItem>
                 )}
                 <AccordionItem>
                   <AccordionItemHeading>Evidence</AccordionItemHeading>
-                  <AccordionItemPanel>
+                  <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
                     <Evidences evidences={latestRequest.evidences} />
                   </AccordionItemPanel>
                 </AccordionItem>
                 {disputed && (
                   <AccordionItem>
                     <AccordionItemHeading>Voting History</AccordionItemHeading>
-                    <AccordionItemPanel>
+                    <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
                       <VotingHistory />
                     </AccordionItemPanel>
                   </AccordionItem>

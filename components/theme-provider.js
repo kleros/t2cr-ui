@@ -120,6 +120,8 @@ const theme = merge(merge(base, toTheme(typographyTheme)), {
   // Components
   buttons: {
     primary: {
+      textTransform: "capitalize",
+      cursor: "pointer",
       borderRadius: 3,
       fontStyle: "normal",
       fontWeight: 600,
@@ -151,6 +153,7 @@ const theme = merge(merge(base, toTheme(typographyTheme)), {
       borderColor: "skeleton",
       borderStyle: "solid",
       borderWidth: 1,
+      cursor: "pointer",
       color: "text",
       fontSize: 1,
       paddingX: 2,

@@ -3,7 +3,7 @@ import { Box, Card, Flex } from "theme-ui";
 import { Select } from "../../../../components";
 
 export default function VotingHistory() {
-  const votes = [{ justification: "Because yes." }];
+  const votes = [{ justification: "I voted this because XYZ." }];
   return (
     <>
       <Flex sx={{ marginBottom: 2 }}>

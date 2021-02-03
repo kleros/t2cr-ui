@@ -5,3 +5,4 @@ export { default as HamburgerMenu } from "./hamburger-menu";
 export { default as User } from "./user";
 export { default as Number } from "./number";
 export { default as Court } from "./court";
+export { default as File } from "./file";
