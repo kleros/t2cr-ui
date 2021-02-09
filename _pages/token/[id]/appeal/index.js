@@ -21,7 +21,7 @@ import Alert from "../alert";
 function AppealTabPanelCard() {
   return (
     <Card
-      sx={{ minWidth: 480 }}
+      sx={{ minWidth: 200 }}
       header={
         <>
           <Identicon address={zeroAddress} />

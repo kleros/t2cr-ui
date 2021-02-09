@@ -12,6 +12,7 @@ import { EtherscanLogo } from "@kleros/icons/icons";
 import { graphql } from "relay-hooks";
 import { Card, Divider } from "theme-ui";
 import humanizeDuration from "humanize-duration";
+import { BarLoader } from "react-spinners";
 
 import {
   Button,
@@ -48,9 +49,19 @@ const availableAction = (item) => {
 
 export default function TokenWithID({ network }) {
   const { props } = useQuery();
-  const { token } = props || {};
+  const { token } = props || {};  
 
-  if (!token) return "Loading...";
+  if (!token) return (
+    <Flex sx={{ 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        width: '100%', 
+        minHeight: '400px'
+      }}
+    >
+      <BarLoader loading size={150} color="#4d00b4" />
+    </Flex>
+  );
 
   const {
     name,
@@ -67,6 +78,8 @@ export default function TokenWithID({ network }) {
   const inAppealPeriod =
     Date.now() / 1000 > appealPeriodStart &&
     Date.now() / 1000 < appealPeriodEnd;
+  
+  const challengePeriodEnd = 3.5 * 24 * 60 * 60 * 1000
 
   return (
     <PageContent>
@@ -94,7 +107,7 @@ export default function TokenWithID({ network }) {
           />
           {!isResolved(status) && !disputed && (
             <Text sx={{ fontSize: ["10px", "12px", "14px"] }}>
-              {humanizeDuration(3.5 * 24 * 60 * 60 * 1000)}
+              {humanizeDuration(challengePeriodEnd)}
             </Text>
           )}
         </Flex>
