@@ -1,3 +1,4 @@
+import { Flex } from "@kleros/components/components";
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   RelayNetworkLayer,
@@ -5,14 +6,13 @@ import {
   retryMiddleware,
   urlMiddleware,
 } from "react-relay-network-modern";
+import { BarLoader } from "react-spinners";
 import {
   RelayEnvironmentProvider,
   loadQuery,
   usePreloadedQuery,
 } from "relay-hooks";
 import { Environment, RecordSource, Store } from "relay-runtime";
-import { BarLoader } from "react-spinners";
-import { Flex } from "@kleros/components/components";
 
 const createEnvironment = (endpoint) => {
   const environment = new Environment({
@@ -53,17 +53,18 @@ export default function RelayProvider({
       });
       setInitialized(true);
     }
-  }, [environment, connectToRouteChange, queries, prefetch]);  
+  }, [environment, connectToRouteChange, queries, prefetch]);
   return initialized ? (
     <RelayEnvironmentProvider environment={environment}>
       <Context.Provider value={prefetch}>{children}</Context.Provider>
     </RelayEnvironmentProvider>
   ) : (
-    <Flex sx={{ 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        width: '100%', 
-        minHeight: '600px' 
+    <Flex
+      sx={{
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        minHeight: "500px",
       }}
     >
       <BarLoader loading size={150} color="#4d00b4" />

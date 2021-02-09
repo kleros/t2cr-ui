@@ -62,16 +62,16 @@ const {
 export default function TokenWithID({ network }) {
   const { props } = useQuery();
   const { web3 } = useWeb3();
-  const { token } = props || {};  
+  const { token, registries } = props || {};    
 
   const getDisputeInfo = useDisputeInfo();
 
-  if (!token) return (
+  if (!token || !registries) return (
     <Flex sx={{ 
         justifyContent: 'center', 
         alignItems: 'center', 
         width: '100%', 
-        minHeight: '400px'
+        minHeight: '500px'
       }}
     >
       <BarLoader loading size={150} color="#4d00b4" />
@@ -88,13 +88,19 @@ export default function TokenWithID({ network }) {
     appealPeriodEnd,
   } = token;
 
+  const t2cr = registries[0]
+  const { challengePeriodDuration } = t2cr || {}
+
   const latestRequest = requests[requests.length - 1];
-  const { disputed, disputeID, numberOfRounds, arbitrator } = latestRequest;
+  const { disputed, disputeID, numberOfRounds, arbitrator, submissionTime } = latestRequest;
   const inAppealPeriod =
     Date.now() / 1000 > appealPeriodStart &&
     Date.now() / 1000 < appealPeriodEnd;
   
-  const challengePeriodEnd = 3.5 * 24 * 60 * 60 * 1000
+  const submissionTimeMili = submissionTime * 1000
+  const challengePeriodDurationMili = challengePeriodDuration * 1000
+  const challengePeriodEndMili = submissionTimeMili + challengePeriodDurationMili
+  const timeRemaining = challengePeriodEndMili - Date.now()
 
   const disputeInfo =
     web3.contracts?.klerosLiquid &&
@@ -131,13 +137,13 @@ export default function TokenWithID({ network }) {
           />
           {!isResolved(status) && !disputed && (
             <Text sx={{ fontSize: ["10px", "12px", "14px"] }}>
-              {humanizeDuration(challengePeriodEnd)}
+              {humanizeDuration(timeRemaining, { largest: 2 })}
             </Text>
           )}
         </Flex>
         {!disputed && (
           <Button type="button" variant="primary">
-            {availableAction(token)} Token
+            {availableAction(token)}
           </Button>
         )}
         {isResolved(status) && (
@@ -342,6 +348,9 @@ export const IdQuery = graphql`
           evidenceURI
         }
       }
+    }
+    registries(first: 1) {
+      challengePeriodDuration
     }
   }
 `;

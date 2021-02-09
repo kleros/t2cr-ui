@@ -51,12 +51,27 @@ export const indexQuery = graphql`
 export default function Index() {
   const router = useRouter();
   const { props } = useQuery();
+  const [firstLoad, setFirstLoad] = useState()
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [fetching, setFetching] = useState();
   const { tokens: tokenPreviewFragments, tokenSearch: tokenSearchFragments } =
     props || {};
   const { query } = router || {};
   const { search } = query || {};
+
+  useEffect(() => {
+    if (firstLoad) return
+    
+    setFirstLoad(true)
+    setLoadedTokens([]);
+
+    const query = { ...router.query };
+    delete query.skip;
+    
+    router.push({
+      query,
+    });
+  }, [])
 
   const onLoadMore = useCallback(() => {
     if (fetching || search) return;
