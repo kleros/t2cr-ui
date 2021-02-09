@@ -18,14 +18,19 @@ import { slide as Menu } from "react-burger-menu";
 import { indexQuery } from "../_pages/index";
 import { IdQuery } from "../_pages/token/[id]";
 import {
+  ArchonProvider,
   Button,
   Layout,
   RelayProvider,
   ThemeProvider,
   Title,
+  Web3Provider,
 } from "../components";
 import { queryEnums } from "../data";
 import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "../icons";
+import KlerosLiquidABI from "../subgraph/abis/kleros-liquid";
+import T2CRABI from "../subgraph/abis/t2cr";
+import { klerosLiquidAddress, t2crAddress } from "../subgraph/config/mainnet";
 import { navigation } from "../utils";
 
 const queries = {
@@ -33,6 +38,18 @@ const queries = {
   "/token/:id": IdQuery,
 };
 const wrapConnection = createWrapConnection(queries, queryEnums);
+const contracts = [
+  {
+    name: "t2cr",
+    abi: T2CRABI,
+    address: { mainnet: t2crAddress },
+  },
+  {
+    name: "klerosLiquid",
+    abi: KlerosLiquidABI,
+    address: { mainnet: klerosLiquidAddress },
+  },
+];
 
 const header = {
   left: (
@@ -102,6 +119,22 @@ export default function App({ Component, pageProps }) {
     wrappedConnection(location.pathname + location.search);
     setRouteChangeConnection(() => wrappedConnection);
   }, []);
+
+  const onNetworkChange = useCallback(
+    ({ name: _network }) => {
+      if (router.query.network !== _network) {
+        const query = new URLSearchParams(location.search);
+        if (!_network) query.delete("network");
+        else query.set("network", _network);
+        router.replace({
+          pathname: location.pathname,
+          query: query.toString(),
+        });
+      }
+    },
+    [router]
+  );
+
   useEffect(() => {
     if (routeChangeConnection) {
       router.events.on("routeChangeStart", routeChangeConnection);
@@ -142,27 +175,40 @@ export default function App({ Component, pageProps }) {
         connectToRouteChange={connectToRouteChange}
       >
         <ThemeProvider>
-          <Menu
-            right
-            customBurgerIcon={false}
-            isOpen={sideBarOpen}
-            onClose={onSideBarClose}
+          <Web3Provider
+            providerURL={`wss://${network}.infura.io/ws/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`}
+            contracts={contracts}
+            onNetworkChange={onNetworkChange}
           >
-            <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
-              <List sx={{ paddingTop: "24px", listStyle: "none" }}>
-                {navigation.map(({ to, label }, index) => (
-                  <ListItem key={index}>
-                    <NextLink href={to}>
-                      <Link variant="navigation">{label}</Link>
-                    </NextLink>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </Menu>
-          <Layout header={{ ...header, right: hamburgerMenu }} footer={footer}>
-            <Component {...pageProps} />
-          </Layout>
+            <ArchonProvider>
+              <>
+                <Menu
+                  right
+                  customBurgerIcon={false}
+                  isOpen={sideBarOpen}
+                  onClose={onSideBarClose}
+                >
+                  <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
+                    <List sx={{ paddingTop: "24px", listStyle: "none" }}>
+                      {navigation.map(({ to, label }, index) => (
+                        <ListItem key={index}>
+                          <NextLink href={to}>
+                            <Link variant="navigation">{label}</Link>
+                          </NextLink>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                </Menu>
+                <Layout
+                  header={{ ...header, right: hamburgerMenu }}
+                  footer={footer}
+                >
+                  <Component {...pageProps} />
+                </Layout>
+              </>
+            </ArchonProvider>
+          </Web3Provider>
         </ThemeProvider>
       </RelayProvider>
     </>

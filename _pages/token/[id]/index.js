@@ -16,10 +16,12 @@ import { BarLoader } from "react-spinners";
 
 import {
   Button,
+  createUseDataloaders,
   Evidences,
   PageContent,
   Status,
   useQuery,
+  useWeb3,
 } from "../../../components";
 import { Number, Court, User } from "../../../icons";
 import { isResolved } from "../../../utils";
@@ -47,9 +49,22 @@ const availableAction = (item) => {
   }
 };
 
+const {
+  getDisputeInfo: useDisputeInfo,
+} = createUseDataloaders({
+  async getDisputeInfo({ web3 }, arbitrator, disputeID) {
+    const klerosLiquid = web3.contracts.klerosLiquid.clone();
+    klerosLiquid.options.address = arbitrator;
+    return await klerosLiquid.methods.getDispute(disputeID).call();
+  },
+});
+
 export default function TokenWithID({ network }) {
   const { props } = useQuery();
+  const { web3 } = useWeb3();
   const { token } = props || {};  
+
+  const getDisputeInfo = useDisputeInfo();
 
   if (!token) return (
     <Flex sx={{ 
@@ -73,13 +88,22 @@ export default function TokenWithID({ network }) {
     appealPeriodEnd,
   } = token;
 
-  const latestRequest = requests[0];
-  const { disputed } = latestRequest;
+  const latestRequest = requests[requests.length - 1];
+  const { disputed, disputeID, numberOfRounds, arbitrator } = latestRequest;
   const inAppealPeriod =
     Date.now() / 1000 > appealPeriodStart &&
     Date.now() / 1000 < appealPeriodEnd;
   
   const challengePeriodEnd = 3.5 * 24 * 60 * 60 * 1000
+
+  const disputeInfo =
+    web3.contracts?.klerosLiquid &&
+    web3.ETHNet?.name && 
+    disputed && 
+    disputeID &&
+    getDisputeInfo(arbitrator, disputeID);
+
+  const jurorCount = disputeInfo && disputeInfo.votesLengths[disputeInfo.votesLengths.length - 1]
 
   return (
     <PageContent>
@@ -232,8 +256,8 @@ export default function TokenWithID({ network }) {
                 <DisputeInfo
                   sx={{ flexGrow: 1 }}
                   label="Jurors"
-                  icon={<User />}
-                  value={3}
+                  icon={<r />}
+                  value={jurorCount}
                 />
               </Flex>
               <Accordion
@@ -259,7 +283,11 @@ export default function TokenWithID({ network }) {
                   <AccordionItem>
                     <AccordionItemHeading>Voting History</AccordionItemHeading>
                     <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
-                      <VotingHistory />
+                      <VotingHistory 
+                        challenge={{ disputeID, numberOfRounds }}
+                        arbitrable={web3.contracts?.proofOfHumanity?.options?.address}
+                        arbitrator={arbitrator} 
+                      />
                     </AccordionItemPanel>
                   </AccordionItem>
                 )}
@@ -289,7 +317,9 @@ export const IdQuery = graphql`
         submissionTime
         result
         resolutionTime
+        numberOfRounds
         requester
+        arbitrator
         challenger
         disputed
         disputeID
