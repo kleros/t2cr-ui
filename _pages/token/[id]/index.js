@@ -291,7 +291,7 @@ export default function TokenWithID({ network }) {
                     <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
                       <VotingHistory 
                         challenge={{ disputeID, numberOfRounds }}
-                        arbitrable={web3.contracts?.proofOfHumanity?.options?.address}
+                        arbitrable={web3.contracts?.t2cr?.options?.address}
                         arbitrator={arbitrator} 
                       />
                     </AccordionItemPanel>

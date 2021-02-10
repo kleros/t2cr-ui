@@ -16,6 +16,7 @@
     "lint:fix": "npm run lint:eslint:fix && npm run lint:prettier:fix"
   },
   "dependencies": {
+    "@kleros/archon": "^1.2.1",
     "@kleros/components": "^1.0.0-beta.1",
     "@kleros/icons": "^1.0.0-beta.1",
     "humanize-duration": "^3.25.1",

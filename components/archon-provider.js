@@ -1,6 +1,5 @@
 import { Buffer } from "buffer";
 
-import Archon from "@kleros/archon";
 import Dataloader from "dataloader";
 import {
   createContext,
@@ -10,6 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
+
+import Archon from "../archon";
 
 import { useWeb3 } from "./web3-provider";
 
@@ -98,8 +99,8 @@ export function createUseDataloaders(fetchers) {
         return loadedRef.current[key]
           ? state[key]
           : dataloaders[name]
-            .load([{ web3, archon }, ...args])
-            .then(cacheResult, cacheResult) && undefined;
+              .load([{ web3, archon }, ...args])
+              .then(cacheResult, cacheResult) && undefined;
       };
     };
     return acc;

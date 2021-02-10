@@ -4,10 +4,10 @@ import { Box, Card, Flex } from "theme-ui";
 import { Select, createUseDataloaders, useWeb3 } from "../../../../components";
 
 const {
-  getRulingDescriptions: useRulingDescriptions,
+  getRulingTitles: useRulingTitles,
   getVotes: useVotes,
 } = createUseDataloaders({
-  async getRulingDescriptions(
+  async getRulingTitles(
     {
       archon: {
         arbitrable: { getDispute, getMetaEvidence },
@@ -34,7 +34,7 @@ const {
         strictHashes: true,
       }
     );
-    return metaEvidence.metaEvidenceJSON.rulingOptions.descriptions;
+    return metaEvidence.metaEvidenceJSON.rulingOptions.titles;
   },
   async getVotes({ web3 }, arbitrator, disputeID, appeal) {
     const klerosLiquid = web3.contracts.klerosLiquid.clone();
@@ -76,9 +76,9 @@ function VotingHistoryTabPanel({
   const [round, setRound] = useState(0);
   const [ruling, setRuling] = useState(0);
 
-  const getRulingDescriptions = useRulingDescriptions();
-  const rulingDescriptions =
-    arbitrable && getRulingDescriptions(arbitrable, arbitrator, disputeID);
+  const getRulingTitles = useRulingTitles();
+  const rulingTitles =
+    arbitrable && getRulingTitles(arbitrable, arbitrator, disputeID);
 
   const { web3 } = useWeb3();
   const getVotes = useVotes();
@@ -92,22 +92,34 @@ function VotingHistoryTabPanel({
 
   return (
     <>
-      <Flex sx={{ marginBottom: 2 }}>
-        <Select
-          items={[...new Array(numberOfRounds)].map((_, index) => index)}
-          onChange={(value) => setRound(value)}
-          value={round}
-          label="Choose a round:"
-        />
-        {rulingDescriptions && (
-          <Box sx={{ flex: 1, marginLeft: 2 }}>
-            <Select
-              items={rulingDescriptions}
-              onChange={(value) => setRuling(rulingDescriptions.indexOf(value))}
-              value={rulingDescriptions[ruling]}
-              label="Choose a voting option:"
-            />
-          </Box>
+      <Flex sx={{ marginBottom: 2, flexDirection: ["column", "row", "row"] }}>
+        <Flex sx={{ alignItems: "center" }}>
+          Choose a round:{" "}
+          <Select
+            items={[...new Array(numberOfRounds)].map((_, index) => index)}
+            onChange={(value) => setRound(value)}
+            value={round}
+            label="Choose a round:"
+          />
+        </Flex>
+        {rulingTitles && (
+          <Flex
+            sx={{
+              alignItems: "center",
+              marginLeft: [0, "12px", "12px"],
+              marginTop: ["12px", 0, 0],
+            }}
+          >
+            Voting Option:
+            <Box sx={{ flex: 1, marginLeft: 2 }}>
+              <Select
+                items={rulingTitles}
+                onChange={(value) => setRuling(rulingTitles.indexOf(value))}
+                value={rulingTitles[ruling]}
+                label="Choose a voting option:"
+              />
+            </Box>
+          </Flex>
         )}
       </Flex>
       {votes && votes.length === 0
