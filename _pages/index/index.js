@@ -80,7 +80,7 @@ export default function Index() {
   }, [firstLoad, router]);
 
   const onLoadMore = useCallback(() => {
-    if (fetching || search) return;
+    if (fetching || search || firstLoad) return;
 
     setFetching(true);
     const routerQuery = { ...router.query };
@@ -88,7 +88,7 @@ export default function Index() {
     routerQuery.skip = skip + PAGE_SIZE;
 
     router.push({ query: routerQuery });
-  }, [fetching, router, search]);
+  }, [fetching, firstLoad, router, search]);
 
   useEffect(() => {
     setLoadedTokens((previousTokens) =>

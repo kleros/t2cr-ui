@@ -12,23 +12,23 @@ import { EtherscanLogo } from "@kleros/icons/icons";
 import humanizeDuration from "humanize-duration";
 import { BarLoader } from "react-spinners";
 import { graphql } from "relay-hooks";
-import { Card, Divider } from "theme-ui";
+import { Box, Card, Divider } from "theme-ui";
 
 import {
   Button,
-  Evidences,
   PageContent,
   Status,
   createUseDataloaders,
   useQuery,
   useWeb3,
 } from "../../../components";
-import { itemStatusEnum } from "../../../data";
-import { Court, Number } from "../../../icons";
+import { itemStatusEnum, useEvidenceFile } from "../../../data";
+import { Court, Number, User } from "../../../icons";
 import { isResolved } from "../../../utils";
 
 import Appeal from "./appeal";
 import DisputeInfo from "./dispute-info";
+import Evidences from "./evidences";
 import InfoBox from "./info-box";
 import Step from "./step";
 import VotingHistory from "./voting-history";
@@ -89,6 +89,7 @@ export default function TokenWithID({ network }) {
     appealPeriodStart,
     appealPeriodEnd,
     id,
+    status,
   } = token;
 
   const t2cr = registries[0];
@@ -163,16 +164,22 @@ export default function TokenWithID({ network }) {
             </Text>
           )}
         </Flex>
-        {!disputed && (
-          <Button type="button" variant="primary">
-            {availableAction(token)}
-          </Button>
-        )}
-        {isResolved(status) && (
-          <Button type="button" variant="secondary">
-            Add Badge
-          </Button>
-        )}
+        <Box>
+          {!disputed && (
+            <Button type="button" variant="primary" sx={{ height: "45px" }}>
+              {availableAction(token)}
+            </Button>
+          )}
+          {isResolved(status) && (
+            <Button
+              type="button"
+              variant="secondary"
+              sx={{ marginLeft: "24px", height: "45px" }}
+            >
+              Add Badge
+            </Button>
+          )}
+        </Box>
       </Flex>
       <Flex
         sx={{
@@ -284,7 +291,7 @@ export default function TokenWithID({ network }) {
                 <DisputeInfo
                   sx={{ flexGrow: 1 }}
                   label="Jurors"
-                  icon={<r />}
+                  icon={<User />}
                   value={jurorCount}
                 />
               </Flex>
@@ -320,7 +327,12 @@ export default function TokenWithID({ network }) {
                 <AccordionItem>
                   <AccordionItemHeading>Evidence</AccordionItemHeading>
                   <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
-                    <Evidences evidences={latestRequest.evidences} />
+                    <Evidences
+                      evidences={latestRequest.evidences}
+                      contract="t2cr"
+                      args={[id]}
+                      useEvidenceFile={useEvidenceFile}
+                    />
                   </AccordionItemPanel>
                 </AccordionItem>
                 {disputed && (

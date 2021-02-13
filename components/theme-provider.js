@@ -148,14 +148,15 @@ const theme = merge(merge(base, toTheme(typographyTheme)), {
       svg: { fill: "background" },
     },
     secondary: {
-      backgroundColor: "transparent",
+      backgroundColor: "#fff !important",
       backgroundImage: "none !important",
-      borderColor: "skeleton",
+      borderColor: "primary",
       borderStyle: "solid",
       borderWidth: 1,
       cursor: "pointer",
-      color: "text",
+      color: "primary",
       fontSize: 1,
+      fontWeight: 600,
       paddingX: 2,
       paddingY: 1,
       ":disabled:not([data-loading=true])": {
@@ -233,7 +234,7 @@ const theme = merge(merge(base, toTheme(typographyTheme)), {
       borderStyle: "dashed",
       borderWidth: 1,
       padding: 2,
-      paddingRight: 6,
+      textAlign: "center",
     },
     input: {
       borderColor: "skeleton",

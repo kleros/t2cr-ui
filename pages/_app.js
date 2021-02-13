@@ -193,7 +193,9 @@ export default function App({ Component, pageProps }) {
                       {navigation.map(({ to, label }, index) => (
                         <ListItem key={index}>
                           <NextLink href={to}>
-                            <Link variant="navigation">{label}</Link>
+                            <Link variant="navigation" onClick={onSideBarClose}>
+                              {label}
+                            </Link>
                           </NextLink>
                         </ListItem>
                       ))}

@@ -6,3 +6,4 @@ export { default as User } from "./user";
 export { default as Number } from "./number";
 export { default as Court } from "./court";
 export { default as File } from "./file";
+export { default as Trash } from "./trash";

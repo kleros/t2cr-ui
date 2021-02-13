@@ -20,7 +20,8 @@ export const navigation = [
 ];
 
 export const isResolved = (status) =>
-  status === itemStatusEnum.Registered || status === itemStatusEnum.Absent;
+  status === itemStatusEnum.Registered.key ||
+  status === itemStatusEnum.Absent.key;
 
 export const truncateEthAddr = (ethAddr) => {
   const start = ethAddr.slice(0, 6);

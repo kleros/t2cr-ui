@@ -3,13 +3,11 @@ import { DownArrow, UpArrow } from "@kleros/icons";
 import { useEffect, useState } from "react";
 import { Box, Flex } from "theme-ui";
 
-import { File } from "../icons";
-import { truncateEthAddr } from "../utils";
+import { Identicon, ScrollArea, ScrollTo } from "../../../../components";
+import { File } from "../../../../icons";
+import { truncateEthAddr } from "../../../../utils";
 
-import Identicon from "./identicon";
-import ScrollTo, { ScrollArea } from "./scroll-to";
-
-import { Button } from ".";
+import SubmitEvidenceButton from "./submit-button";
 
 const intlDateTimeFormat = new Intl.DateTimeFormat("default", {
   year: "numeric",
@@ -111,7 +109,7 @@ function EvidenceItem({
   );
 }
 
-export default function Evidences({ evidences }) {
+export default function Evidences({ evidences, contract, args }) {
   return (
     <ScrollTo>
       {({ scroll }) => (
@@ -123,7 +121,7 @@ export default function Evidences({ evidences }) {
               marginBottom: 3,
             }}
           >
-            <Button>Submit Evidence</Button>
+            <SubmitEvidenceButton contract={contract} args={args} />
             <Text
               sx={{ color: "primary" }}
               role="button"

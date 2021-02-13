@@ -35,7 +35,6 @@ function AppealTabPanelCard({
   const totalContribution = web3.utils.toBN(paidFees);
   const card = (
     <Card
-      sx={{ minWidth: 480 }}
       header={
         <>
           <Identicon address={address} />
