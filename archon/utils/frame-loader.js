@@ -1,18 +1,16 @@
-import iframe from 'iframe'
+import iframe from "iframe";
 
 const fetchDataFromScript = async (scriptString, scriptParameters) => {
   // Only works in the browser atm
-  if (!window) return {}
-  let resolver
-  const returnPromise = new Promise(resolve => {
-    resolver = resolve
-  })
+  if (!window) return {};
+  let resolver;
+  const returnPromise = new Promise((resolve) => {
+    resolver = resolve;
+  });
 
-  window.onmessage = message => {
-    if (message.data.target === 'script') {
-      resolver(message.data.result)
-    }
-  }
+  window.onmessage = (message) => {
+    if (message.data.target === "script") resolver(message.data.result);
+  };
 
   const frameBody = `<script type='text/javascript'>
     const scriptParameters = ${JSON.stringify(scriptParameters)}
@@ -33,14 +31,14 @@ const fetchDataFromScript = async (scriptString, scriptParameters) => {
 
     ${scriptString}
     getMetaEvidence()
-  </script>`
+  </script>`;
 
   const _ = iframe({
     body: frameBody,
-    sandboxAttributes: ['allow-same-origin', 'allow-scripts']
-  })
-  _.iframe.style.display = 'none'
-  return returnPromise
-}
+    sandboxAttributes: ["allow-same-origin", "allow-scripts"],
+  });
+  _.iframe.style.display = "none";
+  return returnPromise;
+};
 
-export default fetchDataFromScript
+export default fetchDataFromScript;

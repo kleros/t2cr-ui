@@ -1,4 +1,4 @@
-import Arbitrator from './Arbitrator'
-import Arbitrable from './Arbitrable'
+import Arbitrable from "./arbitrable";
+import Arbitrator from "./arbitrable";
 
-export { Arbitrator, Arbitrable }
+export { Arbitrator, Arbitrable };

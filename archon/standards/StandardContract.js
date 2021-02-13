@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import Web3 from "web3";
 
 class StandardContract {
   /**
@@ -7,17 +7,17 @@ class StandardContract {
    * @param {string} ipfsGateway IPFS gateway URI.
    */
   constructor(web3Provider, ipfsGateway) {
-    this.web3 = new Web3(web3Provider)
-    this.ipfsGateway = ipfsGateway
+    this.web3 = new Web3(web3Provider);
+    this.ipfsGateway = ipfsGateway;
   }
 
-  setProvider = newProvider => {
-    this.web3.setProvider(newProvider)
-  }
+  setProvider = (newProvider) => {
+    this.web3.setProvider(newProvider);
+  };
 
-  setIpfsGateway = newGateway => {
-    this.ipfsGateway = newGateway
-  }
+  setIpfsGateway = (newGateway) => {
+    this.ipfsGateway = newGateway;
+  };
 }
 
-export default StandardContract
+export default StandardContract;

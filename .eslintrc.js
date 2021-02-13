@@ -40,7 +40,7 @@ module.exports = {
     // MDX Plugin
     "plugin:mdx/recommended",
   ],
-  plugins: ["regex", "graphql"],
+  plugins: ["regex"],
 
   rules: {
     // Core
@@ -135,7 +135,7 @@ module.exports = {
     ],
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
-    "unicorn/no-reduce": "off",
+    "unicorn/no-array-reduce": "off",
     "unicorn/catch-error-name": [
       "error",
       {
@@ -315,16 +315,6 @@ module.exports = {
         "Style[d]", // Don't use "styled" components.
         ",\\s+&", // Don't use spaces between comma separated selectors.
       ],
-    ],
-
-    // GraphQL Plugin
-    "graphql/template-strings": [
-      "error",
-      {
-        env: "relay",
-        schemaJsonFilepath: "subgraph/build/full-schema.json",
-        tagName: "graphql",
-      },
     ],
   },
 

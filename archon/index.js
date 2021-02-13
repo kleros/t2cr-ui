@@ -1,3 +1,3 @@
-import Archon from './Archon.js'
+import Archon from "./archon";
 
-export default Archon
+export default Archon;

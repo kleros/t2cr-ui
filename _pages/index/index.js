@@ -45,55 +45,64 @@ export const indexQuery = graphql`
     tokenSearch(text: $search) {
       ...tokenPreviewCard
     }
+    registries(first: 1) {
+      numberOfSubmissions
+    }
   }
 `;
 
 export default function Index() {
   const router = useRouter();
   const { props } = useQuery();
-  const [firstLoad, setFirstLoad] = useState()
+  const [firstLoad, setFirstLoad] = useState();
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [fetching, setFetching] = useState();
-  const { tokens: tokenPreviewFragments, tokenSearch: tokenSearchFragments } =
-    props || {};
+  const {
+    tokens: tokenPreviewFragments,
+    tokenSearch: tokenSearchFragments,
+    registries: registryFragments,
+  } = props || {};
   const { query } = router || {};
   const { search } = query || {};
 
   useEffect(() => {
-    if (firstLoad) return
-    
-    setFirstLoad(true)
+    if (firstLoad) return;
+
+    setFirstLoad(true);
     setLoadedTokens([]);
 
-    const query = { ...router.query };
-    delete query.skip;
-    
+    const routerQuery = { ...router.query };
+    delete routerQuery.skip;
+
     router.push({
-      query,
+      query: routerQuery,
     });
-  }, [])
+  }, [firstLoad, router]);
 
   const onLoadMore = useCallback(() => {
     if (fetching || search) return;
 
     setFetching(true);
-    const query = { ...router.query };
-    const skip = query.skip ? Number(query.skip) : 0;
-    query.skip = skip + PAGE_SIZE;
+    const routerQuery = { ...router.query };
+    const skip = routerQuery.skip ? Number(routerQuery.skip) : 0;
+    routerQuery.skip = skip + PAGE_SIZE;
 
-    router.push({ query });
-  }, [fetching, router]);
+    router.push({ query: routerQuery });
+  }, [fetching, router, search]);
 
   useEffect(() => {
-    setLoadedTokens((previousTokens) => {
-      return search
+    setLoadedTokens((previousTokens) =>
+      search
         ? tokenSearchFragments
         : tokenPreviewFragments
         ? previousTokens.concat(tokenPreviewFragments)
-        : previousTokens;
-    });
+        : previousTokens
+    );
     setFetching(false);
   }, [tokenPreviewFragments, tokenSearchFragments, search]);
+
+  const registry = registryFragments && registryFragments[0];
+  const { numberOfSubmissions } = registry || {};
 
   return (
     <>
@@ -151,12 +160,12 @@ export default function Index() {
             items={itemStatusEnum.array}
             onChange={({ kebabCase }) => {
               setLoadedTokens([]);
-              const query = { ...router.query };
-              delete query.skip;
-              if (!kebabCase) delete query.status;
-              else query.status = kebabCase;
+              const routerQuery = { ...router.query };
+              delete routerQuery.skip;
+              if (!kebabCase) delete routerQuery.status;
+              else routerQuery.status = kebabCase;
               router.push({
-                query,
+                query: routerQuery,
               });
             }}
             value={itemStatusEnum.array.find(
@@ -174,7 +183,10 @@ export default function Index() {
           }}
         >
           <Flex sx={{ display: "flex" }}>
-            <ItemCountLabel itemName="Tokens curated" count={4024} />
+            <ItemCountLabel
+              itemName="Tokens curated"
+              count={numberOfSubmissions}
+            />
             <Text sx={{ marginX: "8px" }}>|</Text>
             <ItemCountLabel itemName="Badges submitted" count={264} />
           </Flex>

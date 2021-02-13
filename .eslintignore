@@ -3,6 +3,7 @@
 
 # Build
 /out/
+out/**/*
 
 # Storybook
 !/components/.storybook/
@@ -10,3 +11,5 @@
 subgraph/**/*
 
 .relay/**/*
+
+archon/

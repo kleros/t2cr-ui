@@ -16,14 +16,7 @@ import {
 } from "react-share";
 import { Box, Card, Flex, Progress } from "theme-ui";
 
-import {
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  useContract,
-  useWeb3,
-} from "../../../../components";
+import { useContract, useWeb3 } from "../../../../components";
 import Identicon from "../../../../components/identicon";
 import Alert from "../alert";
 
@@ -102,7 +95,7 @@ function AppealTabPanelCard({
     cost &&
     deadline &&
     !deadline.eq(web3.utils.toBN(0)) &&
-    deadline.lt(web3.utils.toBN(Date.now() / 1000))
+    deadline.lt(web3.utils.toBN(Math.floor(Date.now() / 1000)))
   )
     return (
       <FundButton
@@ -117,6 +110,7 @@ function AppealTabPanelCard({
     );
   return card;
 }
+
 function AppealTabPanel({
   sharedStakeMultiplier,
   winnerStakeMultiplier,
@@ -125,13 +119,19 @@ function AppealTabPanel({
   challenge: {
     disputeID,
     parties: [party1, party2],
-    rounds: [{ paidFees, hasPaid }],
+    rounds,
     id,
   },
   arbitratorExtraData,
   contract,
   args,
 }) {
+  const {
+    amountPaidChallenger,
+    amountPaidRequester,
+    hasPaidChallenger,
+    hasPaidRequester,
+  } = rounds[rounds.length - 1];
   const { web3 } = useWeb3();
   sharedStakeMultiplier = web3.utils.toBN(sharedStakeMultiplier);
   winnerStakeMultiplier = web3.utils.toBN(winnerStakeMultiplier);
@@ -208,16 +208,16 @@ function AppealTabPanel({
         <AppealTabPanelCard
           address={party1}
           {...[undecided, winner, loser][currentRuling]}
-          paidFees={paidFees[0]}
-          hasPaid={hasPaid[0]}
+          paidFees={amountPaidRequester}
+          hasPaid={hasPaidRequester}
           contract={contract}
           args={[...args, id, 1]}
         />
         <AppealTabPanelCard
           address={party2}
           {...[undecided, loser, winner][currentRuling]}
-          paidFees={paidFees[1]}
-          hasPaid={hasPaid[1]}
+          paidFees={amountPaidChallenger}
+          hasPaid={hasPaidChallenger}
           contract={contract}
           args={[...args, id, 2]}
         />
@@ -242,7 +242,7 @@ function AppealTabPanel({
   );
 }
 export default function Appeal({
-  challenges,
+  challenge,
   sharedStakeMultiplier,
   winnerStakeMultiplier,
   loserStakeMultiplier,
@@ -252,26 +252,15 @@ export default function Appeal({
   args,
 }) {
   return (
-    <Tabs>
-      <TabList>
-        {challenges.map(({ id, reason: { startCase } }) => (
-          <Tab key={id}>{startCase}</Tab>
-        ))}
-      </TabList>
-      {challenges.map((challenge) => (
-        <TabPanel key={challenge.id}>
-          <AppealTabPanel
-            sharedStakeMultiplier={sharedStakeMultiplier}
-            winnerStakeMultiplier={winnerStakeMultiplier}
-            loserStakeMultiplier={loserStakeMultiplier}
-            arbitrator={arbitrator}
-            challenge={challenge}
-            arbitratorExtraData={arbitratorExtraData}
-            contract={contract}
-            args={args}
-          />
-        </TabPanel>
-      ))}
-    </Tabs>
+    <AppealTabPanel
+      sharedStakeMultiplier={sharedStakeMultiplier}
+      winnerStakeMultiplier={winnerStakeMultiplier}
+      loserStakeMultiplier={loserStakeMultiplier}
+      arbitrator={arbitrator}
+      challenge={challenge}
+      arbitratorExtraData={arbitratorExtraData}
+      contract={contract}
+      args={args}
+    />
   );
 }

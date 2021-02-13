@@ -1,4 +1,4 @@
-import isRequired from '../utils/isRequired'
+import isRequired from "./isRequired";
 
 /**
  * EventListener is used to watch events on the blockchain for a set of contracts.
@@ -16,17 +16,17 @@ class EventListener {
    * @returns {Promise} All events in block range.
    */
   static getEventLogs = async (
-    contractInstance = isRequired('contractInstance'),
-    eventName = isRequired('eventName'),
+    contractInstance = isRequired("contractInstance"),
+    eventName = isRequired("eventName"),
     fromBlock = 0,
-    toBlock = 'latest',
+    toBlock = "latest",
     filters = {}
   ) =>
     contractInstance.getPastEvents(eventName, {
       filter: filters,
       fromBlock,
-      toBlock
-    })
+      toBlock,
+    });
 }
 
-export default EventListener
+export default EventListener;

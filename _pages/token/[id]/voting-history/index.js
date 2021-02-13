@@ -68,7 +68,7 @@ const {
     );
   },
 });
-function VotingHistoryTabPanel({
+function VotingHistoryPanel({
   arbitrable,
   arbitrator,
   challenge: { disputeID, numberOfRounds },
@@ -100,6 +100,7 @@ function VotingHistoryTabPanel({
             onChange={(value) => setRound(value)}
             value={round}
             label="Choose a round:"
+            sx={{ marginLeft: [0, "12px", "12px"] }}
           />
         </Flex>
         {rulingTitles && (
@@ -138,7 +139,7 @@ function VotingHistoryTabPanel({
 }
 export default function VotingHistory({ challenge, arbitrable, arbitrator }) {
   return (
-    <VotingHistoryTabPanel
+    <VotingHistoryPanel
       arbitrable={arbitrable}
       arbitrator={arbitrator}
       challenge={challenge}
