@@ -58,7 +58,8 @@ module.exports = {
     "no-return-await": "error",
     "no-shadow": "error",
     "no-unneeded-ternary": ["error", { defaultAssignment: false }],
-    "no-unused-expressions": "error",
+    "no-unused-expressions": "warn",
+    "no-unused-vars": "warn",
     "no-use-before-define": "error",
     "no-useless-computed-key": "error",
     "no-useless-concat": "error",
@@ -161,7 +162,7 @@ module.exports = {
     "react/jsx-curly-brace-presence": "error",
     // Force platform agnostic use of the design system.
     "react/forbid-elements": [
-      "error",
+      "warn",
       {
         forbid: [
           "!--...--",

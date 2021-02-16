@@ -27,9 +27,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-subgraph/build/**/*
-.relay/**/*
-
 .vscode
 
 .env

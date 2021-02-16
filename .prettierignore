@@ -5,10 +5,5 @@ internals/scripts/
 package-lock.json
 yarn.lock
 package.json
-.next
 gitignore
 README.md
-subgraph/**/*
-.relay/**/*
-archon/**/*
-out/**/*
