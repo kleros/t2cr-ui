@@ -1,6 +1,7 @@
-import { Text } from "@kleros/components/components";
-import { Info } from "@kleros/icons";
 import { Box, Flex } from "theme-ui";
+
+import { Text } from "../../../components";
+import { Info } from "../../../icons";
 
 export default function Alert({ type = "info", title, children, sx }) {
   const Icon = { info: Info }[type];

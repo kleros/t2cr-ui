@@ -1,4 +1,4 @@
-import { SVG } from "@kleros/components";
+import { SVG } from "../components";
 
 function HamburgerMenu() {
   return (

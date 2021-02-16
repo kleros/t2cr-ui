@@ -5,14 +5,14 @@ import { SkeletonTheme } from "react-loading-skeleton";
 import { ThemeProvider as _ThemeProvider, merge } from "theme-ui";
 import typographyThemeSutro from "typography-theme-sutro";
 
-const typographyTheme = {
+export const typographyTheme = {
   ...typographyThemeSutro,
   bodyFontFamily: typographyThemeSutro.headerFontFamily,
   boldWeight: 600,
   googleFonts: [{ name: "Open Sans", styles: [300, "300i", 600, "600i"] }],
   headerWeight: 600,
 };
-const theme = merge(merge(base, toTheme(typographyTheme)), {
+export const theme = merge(merge(base, toTheme(typographyTheme)), {
   // Settings
   initialColorModeName: "light",
   useColorSchemeMediaQuery: true,
@@ -341,6 +341,23 @@ const theme = merge(merge(base, toTheme(typographyTheme)), {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
+    },
+  },
+});
+export const klerosTheme = merge(theme, {
+  // Colors
+  colors: {
+    primary: "#009aff",
+    secondary: "#009aff",
+    accent: "#4d00b4",
+    accentComplement: "#4d00b4",
+    muted: "#fbf9fe",
+  },
+
+  // Components
+  buttons: {
+    primary: {
+      borderRadius: 3,
     },
   },
 });

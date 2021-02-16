@@ -16,15 +16,15 @@ import usePromise from "react-use-promise";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 
-export const createWeb3 = (providerURL) => {
-  const web3 = new Web3(providerURL);
+export const createWeb3 = (infuraURL) => {
+  const web3 = new Web3(infuraURL);
   web3.modal = new Web3Modal({
     cacheProvider: true,
     providerOptions: {
       walletconnect: {
         package: WalletConnectWeb3Provider,
         options: {
-          infuraId: providerURL.slice(providerURL.lastIndexOf("/") + 1),
+          infuraId: infuraURL.slice(infuraURL.lastIndexOf("/") + 1),
         },
       },
       authereum: {
@@ -35,37 +35,32 @@ export const createWeb3 = (providerURL) => {
       },
     },
   });
-  web3.providerURL = providerURL;
+  web3.infuraURL = infuraURL;
   return web3;
 };
-
-export const createWeb3FromModal = async (modal, providerURL) => {
+export const createWeb3FromModal = async (modal, infuraURL) => {
   const web3 = new Web3(await modal.connect());
   web3.modal = modal;
-  web3.providerURL = providerURL;
+  web3.infuraURL = infuraURL;
   return web3;
 };
-
 const Context = createContext();
-
 export default function Web3Provider({
-  providerURL,
+  infuraURL,
   contracts,
   onNetworkChange,
   children,
 }) {
-  const [web3, setWeb3] = useState(() => createWeb3(providerURL));
-
+  const [web3, setWeb3] = useState(() => createWeb3(infuraURL));
   useEffect(() => {
-    if (providerURL !== web3.providerURL) setWeb3(createWeb3(providerURL));
-  }, [providerURL, web3.providerURL]);
-
+    if (infuraURL !== web3.infuraURL) setWeb3(createWeb3(infuraURL));
+  }, [infuraURL, web3.infuraURL]);
   useEffect(() => {
     (async () => {
       if (web3.modal.cachedProvider)
-        setWeb3(await createWeb3FromModal(web3.modal, web3.providerURL));
+        setWeb3(await createWeb3FromModal(web3.modal, web3.infuraURL));
     })();
-  }, [web3.modal, web3.providerURL]);
+  }, [web3.modal, web3.infuraURL]);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,34 +75,37 @@ export default function Web3Provider({
         if (onNetworkChange) onNetworkChange(web3.ETHNet);
       }
 
-      if (cancelled) return;
-      if (contracts === web3._contracts) return;
-
-      const [account] = await web3.eth.getAccounts();
-
-      web3.contracts = contracts.reduce(
-        (acc, { name, abi, address, options }) => {
-          acc[name] = new web3.eth.Contract(abi, address[web3.ETHNet.name], {
-            from: account,
-            ...options,
-          });
-          acc[name].jsonInterfaceMap = acc[name]._jsonInterface.reduce(
-            (_acc, method) => {
-              _acc[method.name] = method;
-              return _acc;
+      if (contracts !== web3._contracts) {
+        const [account] = await web3.eth.getAccounts();
+        if (!cancelled) {
+          web3.contracts = contracts.reduce(
+            (acc, { name, abi, address, options }) => {
+              acc[name] = new web3.eth.Contract(
+                abi,
+                address[web3.ETHNet.name],
+                {
+                  from: account,
+                  ...options,
+                }
+              );
+              acc[name].jsonInterfaceMap = acc[name]._jsonInterface.reduce(
+                (_acc, method) => {
+                  _acc[method.name] = method;
+                  return _acc;
+                },
+                {}
+              );
+              return acc;
             },
             {}
           );
-          return acc;
-        },
-        {}
-      );
-      web3._contracts = contracts;
-      setWeb3({ ...web3 });
+          web3._contracts = contracts;
+          setWeb3({ ...web3 });
+        }
+      }
     })();
     return () => (cancelled = true);
   }, [web3, onNetworkChange, contracts]);
-
   return (
     <Context.Provider
       value={useMemo(
@@ -116,7 +114,7 @@ export default function Web3Provider({
           setWeb3,
           async connect() {
             web3.modal.clearCachedProvider();
-            setWeb3(await createWeb3FromModal(web3.modal, web3.providerURL));
+            setWeb3(await createWeb3FromModal(web3.modal, web3.infuraURL));
           },
         }),
         [web3, setWeb3]
@@ -160,14 +158,12 @@ const sendStateReducer = (
       return { ...state, error };
   }
 };
-
 const parseRes = (value, web3) =>
   typeof value === "boolean" ||
   Number.isNaN(Number(value)) ||
   value.startsWith("0x")
     ? value
     : web3.utils.toBN(value);
-
 export function useContract(
   contract,
   method,
@@ -175,7 +171,6 @@ export function useContract(
 ) {
   const { web3, connect } = useWeb3();
   const contractName = contract;
-
   contract = useMemo(() => {
     let _contract = web3.contracts?.[contract];
     if (_contract && address && _contract.options.address !== address) {
@@ -186,13 +181,11 @@ export function useContract(
     }
     return _contract;
   }, [web3.contracts, contract, address]);
-
   type =
     type ||
     (contract &&
       method &&
       (contract.jsonInterfaceMap[method].constant ? "call" : "send"));
-
   const run = useCallback(
     (_args, _options) =>
       contract &&
@@ -206,7 +199,6 @@ export function useContract(
       }),
     [contract, method, args, type, options]
   );
-
   const isSend = type === "send";
 
   const [sendState, dispatch] = useStorageReducer(
@@ -215,7 +207,6 @@ export function useContract(
     sendStateReducer,
     {}
   );
-
   const send = useCallback(
     async (...__args) => {
       if (!contract.options.from) await connect();
@@ -246,7 +237,6 @@ export function useContract(
     },
     [contract, connect, run, dispatch]
   );
-
   const [receipt] = usePromise(
     () =>
       sendState.transactionHash &&

@@ -1,19 +1,10 @@
 /* eslint-disable unicorn/import-index */
 /* eslint-disable import/no-useless-path-segments */
-import {
-  Box,
-  Link,
-  List,
-  ListItem,
-  NextLink,
-  SocialIcons,
-  Text,
-  createWrapConnection,
-} from "@kleros/components";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
+import { Box } from "theme-ui";
 
 import { indexQuery } from "../_pages/index";
 import { IdQuery } from "../_pages/token/[id]";
@@ -21,10 +12,17 @@ import {
   ArchonProvider,
   Button,
   Layout,
+  Link,
+  List,
+  ListItem,
+  NextLink,
   RelayProvider,
+  SocialIcons,
+  Text,
   ThemeProvider,
   Title,
   Web3Provider,
+  createWrapConnection,
 } from "../components";
 import { queryEnums } from "../data";
 import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "../icons";
@@ -169,14 +167,16 @@ export default function App({ Component, pageProps }) {
       <Head>
         <Title>Kleros · Tokens</Title>
       </Head>
-      <RelayProvider
-        endpoint={JSON.parse(process.env.NEXT_PUBLIC_GRAPH_ENDPOINTS)[network]}
-        queries={queries}
-        connectToRouteChange={connectToRouteChange}
-      >
-        <ThemeProvider>
+      <ThemeProvider>
+        <RelayProvider
+          endpoint={
+            JSON.parse(process.env.NEXT_PUBLIC_GRAPH_ENDPOINTS)[network]
+          }
+          queries={queries}
+          connectToRouteChange={connectToRouteChange}
+        >
           <Web3Provider
-            providerURL={`wss://${network}.infura.io/ws/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`}
+            infuraURL={`wss://${network}.infura.io/ws/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`}
             contracts={contracts}
             onNetworkChange={onNetworkChange}
           >
@@ -211,8 +211,8 @@ export default function App({ Component, pageProps }) {
               </>
             </ArchonProvider>
           </Web3Provider>
-        </ThemeProvider>
-      </RelayProvider>
+        </RelayProvider>
+      </ThemeProvider>
     </>
   );
 }

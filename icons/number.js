@@ -1,4 +1,4 @@
-import { SVG } from "@kleros/components";
+import { SVG } from "../components";
 
 export default function Number(props) {
   return (

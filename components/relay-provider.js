@@ -1,4 +1,3 @@
-import { Flex } from "@kleros/components/components";
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   RelayNetworkLayer,
@@ -13,6 +12,7 @@ import {
   usePreloadedQuery,
 } from "relay-hooks";
 import { Environment, RecordSource, Store } from "relay-runtime";
+import { Flex } from "theme-ui";
 
 const createEnvironment = (endpoint) => {
   const environment = new Environment({

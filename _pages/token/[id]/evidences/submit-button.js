@@ -12,7 +12,9 @@ import {
 } from "../../../../components";
 
 const createValidationSchema = ({ string, file }) => ({
-  name: string().max(50, "Must be 50 characters or less.").required("Required"),
+  title: string()
+    .max(50, "Must be 50 characters or less.")
+    .required("Required"),
   description: string()
     .max(300, "Must be 300 characters or less.")
     .required("Required"),
@@ -29,17 +31,21 @@ export default function SubmitEvidenceButton({ contract, args }) {
           sx={{ padding: 2 }}
           createValidationSchema={createValidationSchema}
           onSubmit={async ({ name, description, file }) => {
-            let evidence = { name, description };
-            if (file)
-              evidence.fileURI = (
-                await upload(file.name, file.content)
-              ).pathname;
-            ({ pathname: evidence } = await upload(
-              "evidence.json",
-              JSON.stringify(evidence)
-            ));
-            await send(...args, evidence);
-            close();
+            try {
+              let evidence = { name, description };
+              if (file)
+                evidence.fileURI = (
+                  await upload(file.name, file.content)
+                ).pathname;
+              ({ pathname: evidence } = await upload(
+                "evidence.json",
+                JSON.stringify(evidence)
+              ));
+              await send(...args, evidence);
+              close();
+            } catch (err) {
+              console.error("error", err);
+            }
           }}
         >
           {({ isSubmitting }) => (

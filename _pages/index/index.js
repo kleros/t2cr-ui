@@ -1,14 +1,17 @@
-import { Flex, Grid, Image, Text } from "@kleros/components";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { graphql } from "relay-hooks";
+import { Flex } from "theme-ui";
 
 import {
   Button,
+  Grid,
+  Image,
   PageContent,
   SearchBar,
   Select,
+  Text,
   useQuery,
 } from "../../components";
 import { itemStatusEnum } from "../../data";

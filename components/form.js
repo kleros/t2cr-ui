@@ -1,5 +1,3 @@
-import { Input, Text } from "@kleros/components";
-import { X } from "@kleros/icons";
 import { alpha } from "@theme-ui/color";
 import {
   ErrorMessage,
@@ -14,8 +12,12 @@ import { Box } from "theme-ui";
 import Web3 from "web3";
 import { boolean, object, reach, string } from "yup";
 
+import { X } from "../icons";
+
 import Label from "./label";
 import { useWeb3 } from "./web3-provider";
+
+import { Input, Text } from ".";
 
 function ETH(...args) {
   string.apply(this, args);

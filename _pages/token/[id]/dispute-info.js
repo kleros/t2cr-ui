@@ -1,4 +1,6 @@
-import { Card, Flex, Text } from "@kleros/components/components";
+import { Flex } from "theme-ui";
+
+import { Card, Text } from "../../../components";
 
 export default function DisputeInfo({ label, icon, value, sx }) {
   return (

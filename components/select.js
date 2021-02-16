@@ -1,4 +1,3 @@
-import { List, ListItem } from "@kleros/components";
 import { alpha } from "@theme-ui/color";
 import { useSelect } from "downshift";
 import { useRef } from "react";
@@ -9,6 +8,8 @@ import { Box } from "theme-ui";
 
 import Button from "./button";
 import Label from "./label";
+
+import { List, ListItem } from ".";
 
 const popperOptions = {
   modifiers: [

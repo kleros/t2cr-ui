@@ -1,8 +1,9 @@
-import { Popup, Text } from "@kleros/components";
 import { forwardRef, useRef } from "react";
 import ReactRipples from "react-ripples";
 import { MoonLoader } from "react-spinners";
 import { Box, Button as _Button } from "theme-ui";
+
+import { Popup, Text } from ".";
 
 const Button = forwardRef(
   (
@@ -51,7 +52,7 @@ const Button = forwardRef(
         >
           {children}
           {loading && (
-            <Box variant="buttons.primary.spinner">
+            <Box variant="buttons.primary.spinner" sx={{ marginLeft: "12px" }}>
               <MoonLoader size={16} />
             </Box>
           )}

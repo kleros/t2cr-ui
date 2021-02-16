@@ -1,6 +1,3 @@
-const withTM = require("next-transpile-modules")([
-  "@kleros/icons",
-  "@kleros/components",
-]);
+const withTM = require("next-transpile-modules")();
 
 module.exports = withTM();

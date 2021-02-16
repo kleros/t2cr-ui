@@ -1,29 +1,25 @@
+import humanizeDuration from "humanize-duration";
+import { BarLoader } from "react-spinners";
+import { graphql } from "relay-hooks";
+import { Box, Card, Divider, Flex } from "theme-ui";
+
 import {
   Accordion,
   AccordionItem,
   AccordionItemHeading,
   AccordionItemPanel,
-  Flex,
+  Button,
   Image,
   Link,
-  Text,
-} from "@kleros/components";
-import { EtherscanLogo } from "@kleros/icons/icons";
-import humanizeDuration from "humanize-duration";
-import { BarLoader } from "react-spinners";
-import { graphql } from "relay-hooks";
-import { Box, Card, Divider } from "theme-ui";
-
-import {
-  Button,
   PageContent,
   Status,
+  Text,
   createUseDataloaders,
   useQuery,
   useWeb3,
 } from "../../../components";
 import { itemStatusEnum, useEvidenceFile } from "../../../data";
-import { Court, Number, User } from "../../../icons";
+import { Court, EtherscanLogo, Number, User } from "../../../icons";
 import { isResolved } from "../../../utils";
 
 import Appeal from "./appeal";

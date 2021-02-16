@@ -1,8 +1,10 @@
-import { Card, Input } from "@kleros/components";
-import { Search } from "@kleros/icons";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+
+import { Search } from "../icons";
+
+import { Card, Input } from ".";
 
 export default function SearchBar({ sx }) {
   const router = useRouter();

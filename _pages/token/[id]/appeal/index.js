@@ -1,10 +1,3 @@
-import {
-  FundButton,
-  Grid,
-  NextETHLink,
-  Text,
-  TimeAgo,
-} from "@kleros/components/components";
 import { useMemo } from "react";
 import {
   RedditIcon,
@@ -16,9 +9,18 @@ import {
 } from "react-share";
 import { Box, Card, Flex, Progress } from "theme-ui";
 
-import { useContract, useWeb3 } from "../../../../components";
-import Identicon from "../../../../components/identicon";
+import {
+  Grid,
+  Identicon,
+  NextETHLink,
+  Text,
+  TimeAgo,
+  useContract,
+  useWeb3,
+} from "../../../../components";
 import Alert from "../alert";
+
+import FundButton from "./fund-button";
 
 function AppealTabPanelCard({
   address,

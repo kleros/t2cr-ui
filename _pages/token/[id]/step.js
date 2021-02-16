@@ -1,5 +1,7 @@
-import { Flex, Text } from "@kleros/components";
 import humanizeDuration from "humanize-duration";
+import { Flex } from "theme-ui";
+
+import { Text } from "../../../components";
 
 export default function Step({ number, title, duration }) {
   return (

@@ -1,4 +1,4 @@
-import { createUseDataloaders } from "@kleros/components";
+import { createUseDataloaders } from "../components/archon-provider";
 
 const { getEvidenceFile: useEvidenceFile } = createUseDataloaders({
   async getEvidenceFile(

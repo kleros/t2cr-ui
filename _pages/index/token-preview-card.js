@@ -1,10 +1,9 @@
-import { Box, Flex, Image, Link, NextLink, Text } from "@kleros/components";
-import { EtherscanLogo } from "@kleros/icons";
 import { graphql, useFragment } from "relay-hooks";
-import { Card } from "theme-ui";
+import { Box, Card, Flex } from "theme-ui";
 
-import { Status } from "../../components";
+import { Image, Link, NextLink, Status, Text } from "../../components";
 import { itemStatusEnum } from "../../data";
+import { EtherscanLogo } from "../../icons";
 
 const tokenPreviewCardFragment = graphql`
   fragment tokenPreviewCard on Token {

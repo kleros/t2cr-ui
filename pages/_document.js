@@ -1,6 +1,8 @@
-import { Box, InitializeColorMode, typographyTheme } from "@kleros/components";
 import NextDocument, { Head, Html, Main, NextScript } from "next/document";
 import { GoogleFont } from "react-typography";
+import { Box } from "theme-ui";
+
+import { InitializeColorMode, typographyTheme } from "../components";
 
 const typography = { options: typographyTheme };
 export default class Document extends NextDocument {

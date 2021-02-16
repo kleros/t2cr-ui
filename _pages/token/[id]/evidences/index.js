@@ -1,10 +1,16 @@
-import { Card, Link, NextETHLink, Text } from "@kleros/components";
-import { DownArrow, UpArrow } from "@kleros/icons";
 import { useEffect, useState } from "react";
 import { Box, Flex } from "theme-ui";
 
-import { Identicon, ScrollArea, ScrollTo } from "../../../../components";
-import { File } from "../../../../icons";
+import {
+  Card,
+  Identicon,
+  Link,
+  NextETHLink,
+  ScrollArea,
+  ScrollTo,
+  Text,
+} from "../../../../components";
+import { DownArrow, File, UpArrow } from "../../../../icons";
 import { truncateEthAddr } from "../../../../utils";
 
 import SubmitEvidenceButton from "./submit-button";

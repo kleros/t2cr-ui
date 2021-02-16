@@ -1,4 +1,4 @@
-import { Flex } from "@kleros/components";
+import { Flex } from "theme-ui";
 
 function PageContent({ children }) {
   return (

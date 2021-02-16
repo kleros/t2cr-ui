@@ -1,8 +1,10 @@
-import { Image, Input, Text, Video } from "@kleros/components";
-import { Trash } from "@kleros/icons";
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Box } from "theme-ui";
+
+import { Trash } from "../icons";
+
+import { Image, Input, Text } from ".";
 
 export default function FileUpload({
   value,
@@ -79,19 +81,7 @@ export default function FileUpload({
               key={file.path || file.name}
               sx={{ marginTop: 1, position: "relative", width: "fit-content" }}
             >
-              {file.type.startsWith("video") ? (
-                <Video
-                  variant="thumbnail"
-                  url={file.preview}
-                  controls={false}
-                  playing
-                  loop
-                  muted
-                  playsinline
-                />
-              ) : (
-                <Image variant="thumbnail" src={file.preview} />
-              )}
+              <Image variant="thumbnail" src={file.preview} />
               <Trash
                 sx={{
                   fill: "text",
