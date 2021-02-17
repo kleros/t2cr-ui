@@ -79,7 +79,12 @@ const Card = forwardRef(
         {...rest}
         {...hoverAnimationProps}
       >
-        <Flex sx={{ flexDirection: "column" }}>
+        <Flex
+          sx={{
+            flexDirection: "column",
+            width: "100%",
+          }}
+        >
           {header && (
             <Flex
               variant="card.header"

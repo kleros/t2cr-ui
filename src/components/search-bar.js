@@ -13,9 +13,18 @@ export default function SearchBar({ sx }) {
   const [userQuery, setUserQuery] = useState("");
   const debounced = useDebouncedCallback((value) => {
     const query = { ...routeParameters };
-    if (!value) delete query.search;
-    else query.search = value.replaceAll(" ", " & ");
-    history.push({ query });
+    if (!value) {
+      delete query.search;
+      history.push({
+        pathname: "",
+      });
+    } else {
+      query.search = value.replaceAll(" ", " & ");
+      history.push({
+        pathname: "",
+        search: `?${new URLSearchParams(query).toString()}`,
+      });
+    }
   }, 300);
   const queryChanged = useCallback(
     (event) => {
@@ -33,7 +42,11 @@ export default function SearchBar({ sx }) {
         border: "1px solid #ccc",
         ...sx,
       }}
-      mainSx={{ paddingX: 2, paddingY: 0 }}
+      mainSx={{
+        paddingX: 2,
+        paddingY: 0,
+        width: "100%",
+      }}
     >
       <Input
         variant="mutedInput"

@@ -2,6 +2,7 @@
 /* eslint-disable unicorn/import-index */
 /* eslint-disable import/no-useless-path-segments */
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { createBrowserHistory } from "history";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -174,13 +175,15 @@ function App() {
   );
 }
 
+const history = createBrowserHistory();
+
 export default function RoutedApp() {
   return (
     <HelmetProvider>
       <Helmet>
         <title>Kleros · Tokens</title>
       </Helmet>
-      <Router>
+      <Router history={history}>
         <App />
       </Router>
     </HelmetProvider>

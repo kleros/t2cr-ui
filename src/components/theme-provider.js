@@ -192,6 +192,9 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
         border: 0,
         minWidth: "120px",
       },
+      list: {
+        minWidth: "310px",
+      },
     },
   },
   cards: {

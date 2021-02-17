@@ -1,5 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
-import { useHistory, useParams } from "react-router-dom";
+import queryString from "query-string";
+import { useCallback, useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useHistory, useLocation } from "react-router-dom";
 import { Flex } from "theme-ui";
 
 import {
@@ -24,8 +27,8 @@ function ItemCountLabel({ itemName, count }) {
   );
 }
 
-const indexQuery = gql`
-  fragment tokenPreviewCard on Token {
+const tokenPreviewFragment = gql`
+  fragment tokenPreviewFragment on Token {
     id
     status
     name
@@ -36,12 +39,14 @@ const indexQuery = gql`
     appealPeriodStart
     appealPeriodEnd
   }
+`;
+
+const indexQuery = gql`
   query indexQuery(
     $skip: Int = 0
     $first: Int = 16
     $where: Token_filter = { status_not: Absent }
     $orderDirection: OrderDirection = desc
-    $search: String = ""
   ) {
     tokens(
       skip: $skip
@@ -50,24 +55,108 @@ const indexQuery = gql`
       orderBy: lastStatusChangeTime
       orderDirection: $orderDirection
     ) {
-      ...tokenPreviewCard
+      ...tokenPreviewFragment
     }
-    tokenSearch(text: $search) {
-      ...tokenPreviewCard
-    }
+  }
+  ${tokenPreviewFragment}
+`;
+
+const registryQuery = gql`
+  query registryQuery {
     registries(first: 1) {
       numberOfSubmissions
     }
   }
 `;
 
-export default function Index() {
-  const routerParameters = useParams();
-  const history = useHistory();
-  const { data } = useQuery(indexQuery);
+const searchQuery = gql`
+  query searchQuery($search: String = "") {
+    tokenSearch(text: $search) {
+      ...tokenPreviewFragment
+    }
+  }
+  ${tokenPreviewFragment}
+`;
 
-  const loadedTokens = data?.tokens || [];
-  const numberOfSubmissions = data?.registries[0].numberOfSubmissions || 0;
+export default function Index() {
+  const history = useHistory();
+  const routerParameters = queryString.parse(useLocation().search) || {};
+  const { search, status } = routerParameters || {};
+  const [loadedTokens, setLoadedTokens] = useState([]);
+  const [loadedSearchTokens, setLoadedSearchTokens] = useState([]);
+
+  // We use two queries: One to populate tokens on the infinite
+  // scroll and one for text searches.
+  const [indexVariables, setIndexVariables] = useState({});
+  const [searchVariables, setSearchVariables] = useState({});
+  const { data: tokensData, loading: tokensLoading } = useQuery(indexQuery, {
+    variables: indexVariables,
+  });
+  const { data: searchData, loading: searchLoading } = useQuery(searchQuery, {
+    variables: searchVariables,
+  });
+
+  // Fetch the number of submissions.
+  const { data: registryData } = useQuery(registryQuery);
+
+  // Runs when the user reaches the end of the page (infinite scroll).
+  const fetchMore = useCallback(() => {
+    setIndexVariables((previousVariables) => ({
+      ...previousVariables,
+      skip: previousVariables.skip ? previousVariables.skip + 16 : 16,
+    }));
+  }, []);
+
+  // Add newly fetched tokens to the grid.
+  useEffect(() => {
+    const { tokens } = tokensData || {};
+    if (!tokens) return;
+    setLoadedTokens((previousTokens) => previousTokens.concat(tokens));
+  }, [tokensData]);
+
+  // Add search results
+  useEffect(() => {
+    const { tokenSearch } = searchData || {};
+
+    if (!tokenSearch) return;
+    setLoadedSearchTokens(tokenSearch);
+  }, [searchData]);
+
+  // Update search query string from navigation bar.
+  useEffect(() => {
+    setSearchVariables((previousVariables) => ({
+      ...previousVariables,
+      search,
+      status,
+    }));
+  }, [search, status]);
+
+  // Update tokens display from new status
+  useEffect(() => {
+    if (!status) return;
+
+    setLoadedTokens([]); // Clear results.
+    setIndexVariables((previousVariables) => {
+      const newVariables = {
+        ...previousVariables,
+        skip: 0,
+      };
+
+      if (!status || status === itemStatusEnum.None.key)
+        delete newVariables.where;
+      else newVariables.where = { status };
+
+      return newVariables;
+    });
+  }, [status]);
+
+  const numberOfSubmissions =
+    registryData?.registries[0].numberOfSubmissions || 0;
+
+  const displayTokens =
+    loadedSearchTokens && loadedSearchTokens.length > 0
+      ? loadedSearchTokens
+      : loadedTokens;
 
   return (
     <>
@@ -107,7 +196,7 @@ export default function Index() {
           <SearchBar
             sx={{
               flexGrow: 1,
-              marginLeft: [0, 0, 0, "24px"],
+              marginLeft: [0, 0, 0, 8],
               marginY: [8, 8, 8, 0],
               borderRadius: "3px",
               alignItems: "center",
@@ -116,25 +205,26 @@ export default function Index() {
           />
           <Select
             sx={{
-              marginLeft: [0, 0, 0, 1],
+              marginLeft: [0, 0, 0, 8],
               marginY: [8, 8, 8, 0],
-              minWidth: 270,
+              minWidth: 320,
               border: "1px solid #ccc;",
               borderRadius: "3px",
             }}
             items={itemStatusEnum.array}
-            onChange={({ kebabCase }) => {
-              const routerQuery = { ...routerParameters };
-              delete routerQuery.skip;
-              if (!kebabCase) delete routerQuery.status;
-              else routerQuery.status = kebabCase;
+            onChange={({ key }) => {
+              const newParameters = { ...routerParameters };
+              if (!key) delete newParameters.status;
+              else newParameters.status = key;
               history.push({
-                query: routerQuery,
+                pathname: "",
+                search: `?${new URLSearchParams(newParameters).toString()}`,
               });
             }}
-            value={itemStatusEnum.array.find(
-              ({ kebabCase }) => kebabCase === routerParameters.status
-            )}
+            value={
+              itemStatusEnum.array.find(({ key }) => key === status) ||
+              itemStatusEnum.None
+            }
             label="Filter by status:"
             id="filter-by-status"
           />
@@ -155,15 +245,26 @@ export default function Index() {
             <ItemCountLabel itemName="Badges submitted" count={264} />
           </Flex>
         </Flex>
-        <Grid columns={[1, 2, 3, 4]} gap={3} sx={{ marginY: "32px" }}>
-          {loadedTokens?.length > 0 &&
-            loadedTokens?.map((tokenPreview, index) => (
-              <TokenPreviewCard
-                tokenPreview={tokenPreview}
-                key={`grid-item-${index}`}
-              />
-            ))}
-        </Grid>
+        <InfiniteScroll
+          dataLength={displayTokens.length}
+          next={fetchMore}
+          hasMore={displayTokens.length < 50}
+        >
+          <Grid
+            columns={[1, 2, 3, 4]}
+            gap={3}
+            sx={{ marginY: "32px" }}
+            loading={tokensLoading || searchLoading}
+          >
+            {displayTokens?.length > 0 &&
+              displayTokens?.map((tokenPreview, index) => (
+                <TokenPreviewCard
+                  tokenPreview={tokenPreview}
+                  key={`grid-item-${index}`}
+                />
+              ))}
+          </Grid>
+        </InfiniteScroll>
       </PageContent>
     </>
   );
