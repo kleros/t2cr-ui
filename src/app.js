@@ -8,7 +8,6 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import {
   Route,
   BrowserRouter as Router,
-  Link as RouterLink,
   Switch,
   useParams,
 } from "react-router-dom";
@@ -22,10 +21,10 @@ import {
   Layout,
   List,
   ListItem,
+  RouterLink,
   SocialIcons,
   Text,
   ThemeProvider,
-  Title,
   typographyTheme,
 } from "./components";
 import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "./icons";
@@ -39,7 +38,7 @@ injectFonts(typography);
 
 const header = {
   left: (
-    <RouterLink to="/">
+    <RouterLink variant="navigation" to="/">
       <Flex sx={{ alignItems: "center" }}>
         <T2CRLogo />
         <Box sx={{ marginLeft: "8px" }}>
@@ -59,7 +58,9 @@ const header = {
     >
       {navigation.map(({ to, label }, index) => (
         <ListItem key={index}>
-          <RouterLink to={to}>{label}</RouterLink>
+          <RouterLink variant="navigation" to={to}>
+            {label}
+          </RouterLink>
         </ListItem>
       ))}
     </List>
@@ -69,7 +70,7 @@ const footer = {
   left: <SecuredByKleros />,
   right: (
     <>
-      <RouterLink to="/faq">
+      <RouterLink variant="navigation" to="/faq">
         I need help{" "}
         <Info
           color="#fff"
@@ -137,8 +138,12 @@ function App() {
               <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
                 <List sx={{ paddingTop: "24px", listStyle: "none" }}>
                   {navigation.map(({ to, label }, index) => (
-                    <ListItem key={index}>
-                      <RouterLink to={to} onClick={onSideBarClose}>
+                    <ListItem key={index} sx={{ marginLeft: "32px" }}>
+                      <RouterLink
+                        variant="navigation"
+                        to={to}
+                        onClick={onSideBarClose}
+                      >
                         {label}
                       </RouterLink>
                     </ListItem>

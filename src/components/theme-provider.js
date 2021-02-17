@@ -278,18 +278,37 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     },
   },
   links: {
+    "&:hover": {
+      textDecoration: "none",
+    },
     navigation: {
       color: "background",
       textDecoration: "none",
+      "&:hover": {
+        textDecoration: "none",
+      },
+    },
+    tokenPreview: {
+      color: "inherit",
+      textDecoration: "none",
+      "&:hover": {
+        textDecoration: "none",
+      },
     },
     footer: {
       color: "background",
       textDecoration: "none",
       fontWeight: 400,
+      "&:hover": {
+        textDecoration: "none",
+      },
     },
     unstyled: {
       color: "inherit",
       textDecoration: "none",
+      "&:hover": {
+        textDecoration: "none",
+      },
     },
   },
   select: {

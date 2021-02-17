@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Link as RouterLink } from "react-router-dom";
 import {
   RedditIcon,
   RedditShareButton,
@@ -13,6 +12,7 @@ import { Box, Card, Flex, Progress } from "theme-ui";
 import {
   Grid,
   Identicon,
+  RouterLink,
   Text,
   TimeAgo,
   useContract,

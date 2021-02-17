@@ -1,24 +1,8 @@
-import { gql } from "@apollo/client";
-import { Link as RouterLink } from "react-router-dom";
 import { Box, Card, Flex } from "theme-ui";
 
-import { Image, Link, Status, Text } from "../../components";
+import { Image, Link, RouterLink, Status, Text } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { EtherscanLogo } from "../../icons";
-
-const tokenPreviewCardFragment = gql`
-  fragment tokenPreviewCard on Token {
-    id
-    status
-    name
-    ticker
-    address
-    symbolMultihash
-    disputed
-    appealPeriodStart
-    appealPeriodEnd
-  }
-`;
 
 function TokenPreviewCard({ tokenPreview, network }) {
   const { name, ticker, address, symbolMultihash, id } = tokenPreview;
@@ -45,7 +29,7 @@ function TokenPreviewCard({ tokenPreview, network }) {
       >
         <Status item={tokenPreview} />
       </Box>
-      <RouterLink to={`/token/${id}`}>
+      <RouterLink variant="tokenPreview" to={`/token/${id}`}>
         <Flex
           sx={{
             alignItems: "center",

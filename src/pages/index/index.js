@@ -64,11 +64,7 @@ const indexQuery = gql`
 export default function Index() {
   const routerParameters = useParams();
   const history = useHistory();
-  const { loading, error, data } = useQuery(indexQuery);
-
-  if (loading) console.info("loading:", loading);
-  if (error) console.info("error:", error);
-  if (data) console.info("data:", data);
+  const { data } = useQuery(indexQuery);
 
   const loadedTokens = data?.tokens || [];
   const numberOfSubmissions = data?.registries[0].numberOfSubmissions || 0;

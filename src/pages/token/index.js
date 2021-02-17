@@ -115,9 +115,6 @@ export default function TokenWithID({ network }) {
   });
   const { token, registries } = data || {};
   // const { web3 } = useWeb3();
-
-  console.info(data);
-
   // const getDisputeInfo = useDisputeInfo();
 
   if (!token || !registries)
