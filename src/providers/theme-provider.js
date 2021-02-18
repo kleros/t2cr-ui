@@ -228,6 +228,12 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       padding: 0,
       cursor: "pointer",
     },
+    invisible: {
+      background: "transparent",
+      padding: 0,
+      cursor: "pointer",
+      margin: 0,
+    },
   },
   wallet: {
     backgroundColor: "transparent !important",
@@ -366,6 +372,7 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       borderRadius: 3,
       listStyle: "none",
       padding: 0,
+      fontSize: "16px",
       zIndex: 1000,
       ":focus": { outline: "none" },
       item: {

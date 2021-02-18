@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Label } from "theme-ui";
+import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
 
 import {
   Button,
@@ -10,7 +10,18 @@ import {
   Popup,
   Text,
 } from "./components";
-import { HamburgerMenu, MetaMask } from "./icons";
+import {
+  Bell,
+  Book,
+  Bug,
+  Chat,
+  Cog,
+  EthSymbol,
+  HamburgerMenu,
+  MetaMask,
+  Question,
+  Telegram,
+} from "./icons";
 import { chainIdToColor, truncateEthAddr } from "./utils";
 
 function WalletButton({ title, icon: WalletIcon, activate }) {
@@ -48,6 +59,23 @@ function HamburgerButton({ openSidebar }) {
   );
 }
 
+function HelpListItem({ label, icon: Icon }) {
+  const { theme } = useThemeUI();
+  return (
+    <ListItem
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        marginY: "12px",
+        cursor: "pointer",
+      }}
+    >
+      <Icon color={theme.colors.accent} />
+      <Text sx={{ fontSize: "16px", marginLeft: "8px" }}>{label}</Text>
+    </ListItem>
+  );
+}
+
 export default function Controls({
   openSidebar,
   web3ReactContext,
@@ -70,10 +98,14 @@ export default function Controls({
         <ListItem>
           {!active ? (
             <Popup
-              trigger={<Button variant="dark">Connect</Button>}
+              trigger={
+                <Button variant="dark" sx={{ marginX: "8px" }}>
+                  Connect
+                </Button>
+              }
               position="bottom right"
               contentStyle={{ minWidth: "380px" }}
-              offsetY={14}
+              offsetY={18}
             >
               <Flex
                 sx={{
@@ -111,15 +143,19 @@ export default function Controls({
               </Flex>
             </Popup>
           ) : (
-            <Network chainId={chainId} />
+            <Network sx={{ marginRight: "16px" }} chainId={chainId} />
           )}
         </ListItem>
         <ListItem>
           <Popup
-            trigger={<Button>B</Button>}
+            trigger={
+              <Button variant="invisible" sx={{ marginX: "8px" }}>
+                <Bell />
+              </Button>
+            }
             position="bottom right"
             contentStyle={{ minWidth: "380px" }}
-            offsetY={14}
+            offsetY={18}
           >
             <Flex
               sx={{
@@ -146,10 +182,14 @@ export default function Controls({
         </ListItem>
         <ListItem>
           <Popup
-            trigger={<Button>G</Button>}
+            trigger={
+              <Button variant="invisible" sx={{ marginX: "8px" }}>
+                <Cog />
+              </Button>
+            }
             position="bottom right"
             contentStyle={{ minWidth: "380px" }}
-            offsetY={14}
+            offsetY={18}
           >
             <Flex
               sx={{
@@ -210,6 +250,36 @@ export default function Controls({
                 Any Doubts? Visit our FAQ
               </Link>
             </Flex>
+          </Popup>
+        </ListItem>
+        <ListItem>
+          <Popup
+            trigger={
+              <Button variant="invisible" sx={{ marginLeft: "8px" }}>
+                <Question />
+              </Button>
+            }
+            position="bottom right"
+            contentStyle={{
+              minWidth: "248px",
+            }}
+            offsetY={18}
+          >
+            <List
+              sx={{
+                listStyle: "none",
+                width: "100%",
+                paddingX: "16px",
+                paddingY: "8px",
+              }}
+            >
+              <HelpListItem label="Get Help" icon={Telegram} />
+              <HelpListItem label="Report a Bug" icon={Bug} />
+              <HelpListItem label="Give Feedback" icon={Chat} />
+              <HelpListItem label="Dapp Guide" icon={Book} />
+              <HelpListItem label="Crypto Begginner's Guide" icon={EthSymbol} />
+              <HelpListItem label="FAQ" icon={Question} />
+            </List>
           </Popup>
         </ListItem>
       </List>

@@ -186,7 +186,7 @@ export default function Index() {
             type="button"
             variant="primary"
             sx={{
-              minWidth: "171px",
+              minWidth: "210px",
               marginY: [8, 8, 8, 0],
               height: ["60px", "60px", "60px", "auto"],
             }}
@@ -207,7 +207,8 @@ export default function Index() {
             sx={{
               marginLeft: [0, 0, 0, 8],
               marginY: [8, 8, 8, 0],
-              minWidth: 320,
+              minWidth: 280,
+              fontSize: "16px",
               border: "1px solid #ccc;",
               borderRadius: "3px",
             }}
