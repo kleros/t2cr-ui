@@ -32,6 +32,7 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     success: "#00c851",
     warning: "#ffbb33",
     danger: "#ff4444",
+    error: "#f60c36",
     info: "#33b5e5",
     registrationRequested: "#009aff",
     clearingRequested: "#ccc",
@@ -218,6 +219,14 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
         color: "white",
         outline: "none",
       },
+    },
+    link: {
+      background: "transparent",
+      color: "primary",
+      textDecoration: "underline",
+      fontSize: "14px",
+      padding: 0,
+      cursor: "pointer",
     },
   },
   wallet: {

@@ -30,6 +30,7 @@ export const truncateEthAddr = (ethAddr) => {
 };
 
 export const chainIdToName = (chainId) => {
+  if (!chainId && chainId !== 0) return "Not connected";
   switch (chainId) {
     case 1:
       return "mainnet";
@@ -41,6 +42,7 @@ export const chainIdToName = (chainId) => {
 };
 
 export const chainIdToColor = (chainId) => {
+  if (!chainId && chainId !== 0) return "#f60c36";
   switch (chainId) {
     case 1:
       return "#29b6af";

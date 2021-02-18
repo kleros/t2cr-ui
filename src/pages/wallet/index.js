@@ -6,15 +6,10 @@ import {
   UserRejectedRequestError as UserRejectedRequestErrorInjected,
 } from "@web3-react/injected-connector";
 import React from "react";
-import { BarLoader } from "react-spinners";
 import { Box, Divider } from "theme-ui";
 
-import { Button, Text } from "../../components";
-import { ConnectorNames, injected, useWallet } from "../../providers";
-
-const connectorsByName = {
-  [ConnectorNames.Injected]: injected,
-};
+import { Text } from "../../components";
+import { useWallet } from "../../providers";
 
 function getErrorMessage(error) {
   if (error instanceof NoEthereumProviderError)
@@ -143,138 +138,47 @@ function Balance() {
 }
 
 function Header() {
-  const { active, error } = useWeb3React();
-
   return (
-    <>
-      <Text style={{ margin: "1rem", textAlign: "right" }}>
-        {active ? "🟢" : error ? "🔴" : "🟠"}
-      </Text>
-      <Text
-        style={{
-          display: "grid",
-          gridGap: "1rem",
-          gridTemplateColumns: "1fr min-content 1fr",
-          maxWidth: "20rem",
-          lineHeight: "2rem",
-          margin: "auto",
-        }}
-      >
-        <ChainId />
-        <BlockNumber />
-        <Account />
-        <Balance />
-      </Text>
-    </>
+    <Text
+      sx={{
+        display: "grid",
+        gridGap: "1rem",
+        gridTemplateColumns: "1fr min-content 1fr",
+        maxWidth: "20rem",
+        lineHeight: "2rem",
+        marginX: "auto",
+        marginY: "32px",
+      }}
+    >
+      <ChainId />
+      <BlockNumber />
+      <Account />
+      <Balance />
+    </Text>
   );
 }
 
 export default function Wallet() {
-  const {
-    connector,
-    activate,
-    deactivate,
-    active,
-    error,
-    activatingConnector,
-    setActivatingConnector,
-    triedEager,
-  } = useWallet();
+  const { error } = useWallet();
 
   return (
     <>
       <Header />
-      <Divider />
       <Box
         as="span"
-        style={{
-          display: "grid",
-          gridGap: "1rem",
-          gridTemplateColumns: "1fr 1fr",
-          maxWidth: "20rem",
-          margin: "auto",
-        }}
-      >
-        {Object.keys(connectorsByName).map((name) => {
-          const currentConnector = connectorsByName[name];
-          const activating = currentConnector === activatingConnector;
-          const connected = currentConnector === connector;
-          const disabled =
-            !triedEager || !!activatingConnector || connected || !!error;
-
-          return (
-            <Button
-              style={{
-                height: "3rem",
-                borderRadius: "1rem",
-                borderColor: activating
-                  ? "orange"
-                  : connected
-                  ? "green"
-                  : "unset",
-                cursor: disabled ? "unset" : "pointer",
-                position: "relative",
-              }}
-              disabled={disabled}
-              key={name}
-              onClick={() => {
-                setActivatingConnector(currentConnector);
-                activate(connectorsByName[name]);
-              }}
-            >
-              <Box
-                style={{
-                  position: "absolute",
-                  top: "0",
-                  left: "0",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  color: "black",
-                  margin: "0 0 0 1rem",
-                }}
-              >
-                {activating && <BarLoader color="black" />}
-                {connected && (
-                  <Box as="span" role="img" aria-label="check">
-                    ✅
-                  </Box>
-                )}
-              </Box>
-              {name}
-            </Button>
-          );
-        })}
-      </Box>
-      <Box
-        as="span"
-        style={{
+        sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
         }}
       >
-        {(active || error) && (
-          <Button
-            style={{
-              height: "3rem",
-              marginTop: "2rem",
-              borderRadius: "1rem",
-              borderColor: "red",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              deactivate();
-            }}
-          >
-            Deactivate
-          </Button>
-        )}
-
         {!!error && (
-          <Text style={{ marginTop: "1rem", marginBottom: "0" }}>
-            {getErrorMessage(error)}
-          </Text>
+          <>
+            <Divider />
+            <Text sx={{ marginTop: "1rem", marginBottom: "0" }}>
+              {getErrorMessage(error)}
+            </Text>
+          </>
         )}
       </Box>
     </>
