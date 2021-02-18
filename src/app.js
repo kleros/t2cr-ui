@@ -1,8 +1,6 @@
-/* eslint-disable react/forbid-elements */
 /* eslint-disable unicorn/import-index */
 /* eslint-disable import/no-useless-path-segments */
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { createBrowserHistory } from "history";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -12,7 +10,7 @@ import {
   Switch,
   useParams,
 } from "react-router-dom";
-import { Box, Flex } from "theme-ui";
+import { Box, Divider, Flex } from "theme-ui";
 import Typography from "typography";
 import injectFonts from "typography-inject-fonts";
 
@@ -20,30 +18,65 @@ import {
   Button,
   InitializeColorMode,
   Layout,
+  Link,
   List,
   ListItem,
+  Network,
+  Popup,
   RouterLink,
   SocialIcons,
   Text,
-  ThemeProvider,
-  typographyTheme,
 } from "./components";
-import { HamburgerMenu, Info, SecuredByKleros, T2CRLogo } from "./icons";
+import {
+  HamburgerMenu,
+  Info,
+  MetaMask,
+  SecuredByKleros,
+  T2CRLogo,
+} from "./icons";
 import Index from "./pages/index";
 import Token from "./pages/token";
+import Wallet from "./pages/wallet";
+import {
+  ThemeProvider,
+  WalletProvider,
+  Web3ReactProvider,
+  typographyTheme,
+  useWallet,
+} from "./providers";
 import { navigation } from "./utils";
 
 const typography = new Typography(typographyTheme);
 typography.injectStyles();
 injectFonts(typography);
 
-const header = {
+function WalletButton({ title, icon: WalletIcon }) {
+  return (
+    <Button variant="wallet">
+      <Flex
+        sx={{
+          backgroundColor: "#fbf9fe",
+          padding: "22px",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ marginBottom: "16px" }}>
+          <WalletIcon />
+        </Box>
+        <Text>{title}</Text>
+      </Flex>
+    </Button>
+  );
+}
+
+const buildHeader = ({ active, chainId }, hamburgerMenu) => ({
   left: (
     <RouterLink variant="navigation" to="/">
       <Flex sx={{ alignItems: "center" }}>
         <T2CRLogo />
         <Box sx={{ marginLeft: "8px" }}>
-          <Text sx={{ fontWeight: "bold" }}>TOKENS</Text>
+          <Text>TOKENS</Text>
         </Box>
       </Flex>
     </RouterLink>
@@ -66,7 +99,57 @@ const header = {
       ))}
     </List>
   ),
-};
+  right: (
+    <Flex>
+      <List
+        sx={{
+          display: ["none", "none", "none", "flex"],
+          justifyContent: "flex-end",
+          alignItems: "center",
+          listStyle: "none",
+          width: "100%",
+        }}
+      >
+        <ListItem key={0}>
+          {!active ? (
+            <Popup
+              trigger={<Button variant="dark">Connect</Button>}
+              position="bottom right"
+              contentStyle={{ minWidth: "380px" }}
+              offsetY={25}
+            >
+              <Flex
+                sx={{
+                  padding: "32px",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: "24px",
+                    marginBottom: "24px",
+                  }}
+                >
+                  Connect a Wallet
+                </Text>
+                <Flex>
+                  <WalletButton title="MetaMask" icon={MetaMask} />
+                </Flex>
+                <Divider sx={{ width: "100%", marginTop: "32px" }} />
+                <Link href="#">New to Ethereum? Learn more about wallets</Link>
+              </Flex>
+            </Popup>
+          ) : (
+            <Network chainId={chainId} />
+          )}
+        </ListItem>
+      </List>
+      {hamburgerMenu}
+    </Flex>
+  ),
+});
 const footer = {
   left: <SecuredByKleros />,
   right: (
@@ -86,14 +169,15 @@ const footer = {
 };
 
 function App() {
-  const { network = "mainnet" } = useParams();
+  const web3Context = useWallet();
+  const { chainId = 1 } = web3Context || {};
   const apolloClient = useMemo(
     () =>
       new ApolloClient({
         cache: new InMemoryCache(),
-        uri: JSON.parse(process.env.REACT_APP_GRAPH_ENDPOINTS)[network],
+        uri: JSON.parse(process.env.REACT_APP_GRAPH_ENDPOINTS)[chainId],
       }),
-    [network]
+    [chainId]
   );
   // Sidebar menu handling.
   const [sideBarOpen, setSideBarOpen] = useState();
@@ -111,18 +195,26 @@ function App() {
     };
   }, []);
 
-  const hamburgerMenu = (
-    <Button
-      sx={{
-        display: ["initial", "initial", "initial", "none"],
-        background: "transparent",
-        cursor: "pointer",
-      }}
-      onClick={openSidebar}
-    >
-      <HamburgerMenu />
-    </Button>
+  const hamburgerMenu = useMemo(
+    () => (
+      <Button
+        sx={{
+          display: ["initial", "initial", "initial", "none"],
+          background: "transparent",
+          cursor: "pointer",
+        }}
+        onClick={openSidebar}
+      >
+        <HamburgerMenu />
+      </Button>
+    ),
+    [openSidebar]
   );
+
+  const header = useMemo(() => buildHeader(web3Context, hamburgerMenu), [
+    hamburgerMenu,
+    web3Context,
+  ]);
 
   return (
     <>
@@ -152,18 +244,18 @@ function App() {
                 </List>
               </Box>
             </Menu>
-            <Layout
-              header={{ ...header, right: hamburgerMenu }}
-              footer={footer}
-            >
+            <Layout header={header} footer={footer}>
               <Switch>
                 <Route exact path="/">
                   <Index />
                 </Route>
-                <Route exact path="/token/:tokenID">
+                <Route path="/token/:tokenID">
                   <Token />
                 </Route>
-                <Route>
+                <Route path="/wallet">
+                  <Wallet />
+                </Route>
+                <Route path="*">
                   <Box>404</Box>
                 </Route>
               </Switch>
@@ -175,16 +267,19 @@ function App() {
   );
 }
 
-const history = createBrowserHistory();
-
 export default function RoutedApp() {
   return (
     <HelmetProvider>
       <Helmet>
+        {/* eslint-disable-next-line react/forbid-elements */}
         <title>Kleros · Tokens</title>
       </Helmet>
-      <Router history={history}>
-        <App />
+      <Router>
+        <Web3ReactProvider>
+          <WalletProvider>
+            <App />
+          </WalletProvider>
+        </Web3ReactProvider>
       </Router>
     </HelmetProvider>
   );

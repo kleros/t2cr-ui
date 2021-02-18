@@ -19,3 +19,4 @@ export { default as Github } from "./github";
 export { default as X } from "./x";
 export { default as Pending } from "./pending";
 export { default as Check } from "./check";
+export { default as MetaMask } from "./metamask";

@@ -8,9 +8,9 @@ import typographyThemeSutro from "typography-theme-sutro";
 export const typographyTheme = {
   ...typographyThemeSutro,
   bodyFontFamily: typographyThemeSutro.headerFontFamily,
-  boldWeight: 600,
-  googleFonts: [{ name: "Open Sans", styles: [300, "300i", 600, "600i"] }],
-  headerWeight: 600,
+  boldWeight: 500,
+  googleFonts: [{ name: "Open Sans", styles: [400, "400i", 500, "500i"] }],
+  headerWeight: 500,
 };
 export const theme = merge(merge(base, toTheme(typographyTheme)), {
   // Settings
@@ -195,6 +195,43 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       list: {
         minWidth: "310px",
       },
+    },
+    dark: {
+      backgroundColor: "transparent !important",
+      backgroundImage: "none !important",
+      borderColor: "white",
+      borderStyle: "solid",
+      borderWidth: 1,
+      cursor: "pointer",
+      color: "white",
+      fontSize: "14px",
+      paddingX: 2,
+      paddingY: "4px",
+      ":disabled:not([data-loading=true])": {
+        color: "skeleton",
+      },
+      ":hover": {
+        opacity: 0.8,
+      },
+      ":focus,&.active": {
+        borderColor: "white",
+        color: "white",
+        outline: "none",
+      },
+    },
+  },
+  wallet: {
+    backgroundColor: "transparent !important",
+    backgroundImage: "none !important",
+    color: "black",
+    padding: 0,
+    cursor: "pointer",
+    ":hover": {
+      opacity: 0.8,
+    },
+    ":focus,&.active": {
+      color: "black",
+      outline: "none",
     },
   },
   cards: {

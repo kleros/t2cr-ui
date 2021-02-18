@@ -1,12 +1,6 @@
 export { default as Button } from "./button";
 export { default as PageContent } from "./page-content";
 export { default as SearchBar } from "./search-bar";
-export {
-  default as ThemeProvider,
-  theme,
-  klerosTheme,
-  typographyTheme,
-} from "./theme-provider";
 export { default as InitializeColorMode } from "./initialize-color-mode";
 export { default as Layout } from "./layout";
 export { default as Select } from "./select";
@@ -14,7 +8,6 @@ export { default as Title } from "./title";
 export { default as Status } from "./status";
 export { default as ScrollTo, ScrollArea } from "./scroll-to";
 export { default as Identicon } from "./identicon";
-export { useWeb3 } from "./web3-provider";
 export { default as FileUpload } from "./file-upload";
 export { default as Popup } from "./popup";
 export { default as Textarea } from "./textarea";
@@ -36,8 +29,4 @@ export {
   AccordionItemPanel,
 } from "./accordion";
 export { default as SVG } from "./svg";
-export {
-  default as ArchonProvider,
-  useArchon,
-  createUseDataloaders,
-} from "./archon-provider";
+export { default as Network } from "./network";

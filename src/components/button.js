@@ -48,6 +48,7 @@ const Button = forwardRef(
           sx={{
             alignItems: "center",
             display: "flex",
+            border: "none",
           }}
         >
           {children}

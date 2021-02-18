@@ -21,7 +21,7 @@ import TokenPreviewCard from "./token-preview-card";
 function ItemCountLabel({ itemName, count }) {
   return (
     <Flex>
-      <Text sx={{ fontWeight: 600, marginRight: "8px" }}>{itemName}</Text>
+      <Text sx={{ fontWeight: 500, marginRight: "8px" }}>{itemName}</Text>
       <Text>{count}</Text>
     </Flex>
   );
@@ -167,7 +167,7 @@ export default function Index() {
             marginTop: "46px",
             marginBottom: "16px",
             fontSize: "24px",
-            fontWeight: "600",
+            fontWeight: "500",
             lineHeight: "33px",
             letterSpacing: "0",
             textAlign: "center",
