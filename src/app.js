@@ -24,10 +24,11 @@ import Index from "./pages/index";
 import Token from "./pages/token";
 import Wallet from "./pages/wallet";
 import {
+  ConnectorNames,
   ThemeProvider,
   WalletProvider,
   Web3ReactProvider,
-  injected,
+  connectorsByName,
   typographyTheme,
   useWallet,
 } from "./providers";
@@ -95,9 +96,21 @@ const footer = {
 function App() {
   const web3Context = useWallet();
   const { chainId = 1, activate } = web3Context || {};
+
+  // Supported wallets.
   const activateInjected = useCallback(() => {
-    activate(injected);
+    activate(connectorsByName[ConnectorNames.Injected]);
   }, [activate]);
+  const activateTorus = useCallback(() => {
+    activate(connectorsByName[ConnectorNames.Torus]);
+  }, [activate]);
+  const activateWalletConnect = useCallback(() => {
+    activate(connectorsByName[ConnectorNames.WalletConnect]);
+  }, [activate]);
+  const activateAuthereum = useCallback(() => {
+    activate(connectorsByName[ConnectorNames.Authereum]);
+  }, [activate]);
+
   const apolloClient = useMemo(
     () =>
       new ApolloClient({
@@ -115,8 +128,25 @@ function App() {
   }, []);
 
   const header = useMemo(
-    () => buildHeader(web3Context, { activateInjected }, openSidebar),
-    [activateInjected, openSidebar, web3Context]
+    () =>
+      buildHeader(
+        web3Context,
+        {
+          activateInjected,
+          activateTorus,
+          activateAuthereum,
+          activateWalletConnect,
+        },
+        openSidebar
+      ),
+    [
+      activateAuthereum,
+      activateInjected,
+      activateTorus,
+      activateWalletConnect,
+      openSidebar,
+      web3Context,
+    ]
   );
 
   return (

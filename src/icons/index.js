@@ -27,3 +27,4 @@ export { default as Bug } from "./bug";
 export { default as Book } from "./book";
 export { default as EthSymbol } from "./eth-symbol";
 export { default as Chat } from "./chat";
+export { default as WalletConnect } from "./walletconnect";

@@ -12,7 +12,7 @@ export {
 export {
   default as WalletProvider,
   Web3ReactProvider,
+  connectorsByName,
   ConnectorNames,
-  injected,
   useWallet,
 } from "./wallet-provider";

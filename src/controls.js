@@ -1,8 +1,11 @@
 import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
 
+import Authereum from "./assets/authereum.png";
+import Torus from "./assets/torus.png";
 import {
   Button,
   Identicon,
+  Image,
   Link,
   List,
   ListItem,
@@ -21,24 +24,34 @@ import {
   MetaMask,
   Question,
   Telegram,
+  WalletConnect,
 } from "./icons";
 import { chainIdToColor, truncateEthAddr } from "./utils";
 
-function WalletButton({ title, icon: WalletIcon, activate }) {
+function WalletButton({ title, icon, activate }) {
   return (
-    <Button variant="wallet" onClick={activate}>
+    <Button
+      variant="wallet"
+      onClick={activate}
+      sx={{
+        margin: "8px",
+      }}
+    >
       <Flex
         sx={{
-          backgroundColor: "#fbf9fe",
-          padding: "22px",
+          width: "90px",
+          height: "120px",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "space-between",
+          backgroundColor: "#fbf9fe",
+          padding: "16px",
+          border: (theme) => `1px solid ${theme.colors.skeleton}`,
+          borderRadius: 3,
         }}
       >
-        <Box sx={{ marginBottom: "16px" }}>
-          <WalletIcon />
-        </Box>
-        <Text>{title}</Text>
+        <Box sx={{ marginBottom: "8px" }}>{icon}</Box>
+        <Text sx={{ fontSize: "12px", lineHeight: "16px" }}>{title}</Text>
       </Flex>
     </Button>
   );
@@ -82,7 +95,13 @@ export default function Controls({
   activateWallet,
 }) {
   const { chainId, deactivate, account, active } = web3ReactContext;
-  const { activateInjected } = activateWallet;
+  const {
+    activateInjected,
+    activateTorus,
+    activateAuthereum,
+    activateWalletConnect,
+  } = activateWallet;
+  const { theme } = useThemeUI();
 
   return (
     <Flex>
@@ -126,8 +145,29 @@ export default function Controls({
                 <Flex>
                   <WalletButton
                     title="MetaMask"
-                    icon={MetaMask}
+                    icon={<MetaMask width={42} />}
                     activate={activateInjected}
+                  />
+                  <WalletButton
+                    title={
+                      <Text>
+                        Wallet
+                        <Box as="br" />
+                        Connect
+                      </Text>
+                    }
+                    icon={<WalletConnect width={42} />}
+                    activate={activateWalletConnect}
+                  />
+                  <WalletButton
+                    title="Torus"
+                    icon={<Image src={Torus} />}
+                    activate={activateTorus}
+                  />
+                  <WalletButton
+                    title="Authereum"
+                    icon={<Image src={Authereum} />}
+                    activate={activateAuthereum}
                   />
                 </Flex>
                 <Divider
@@ -137,8 +177,18 @@ export default function Controls({
                     marginBottom: "14px",
                   }}
                 />
-                <Link sx={{ fontSize: "14px" }} href="#">
+                <Link
+                  sx={{
+                    fontSize: "14px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  href="#"
+                >
                   New to Ethereum? Learn more about wallets
+                  <Flex sx={{ marginLeft: "8px", alignItems: "center" }}>
+                    <Question color={theme.colors.primary} />
+                  </Flex>
                 </Link>
               </Flex>
             </Popup>
@@ -225,7 +275,7 @@ export default function Controls({
                       alignItems: "center",
                       textTransform: "capitalize",
                       fontSize: ["16px", "14px", "12px", "14px"],
-                      color: (theme) => theme.colors.error,
+                      color: theme.colors.error,
                     }}
                   >
                     <Label
@@ -246,8 +296,14 @@ export default function Controls({
               <Divider
                 sx={{ width: "100%", marginTop: "32px", marginBottom: "14px" }}
               />
-              <Link sx={{ fontSize: "14px" }} href="#">
+              <Link
+                sx={{ fontSize: "14px", display: "flex", alignItems: "center" }}
+                href="#"
+              >
                 Any Doubts? Visit our FAQ
+                <Flex sx={{ marginLeft: "8px", alignItems: "center" }}>
+                  <Question color={theme.colors.primary} />
+                </Flex>
               </Link>
             </Flex>
           </Popup>

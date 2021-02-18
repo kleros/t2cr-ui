@@ -5,9 +5,23 @@ import {
 } from "@web3-react/core";
 import React, { createContext, useContext, useEffect, useMemo } from "react";
 
+import {
+  ConnectorNames,
+  authereum,
+  injected,
+  torus,
+  walletconnect,
+} from "./connectors";
 import { useEagerConnect, useInactiveListener } from "./hooks";
 
-export { ConnectorNames, injected } from "./connectors";
+export { ConnectorNames };
+
+export const connectorsByName = {
+  [ConnectorNames.Injected]: injected,
+  [ConnectorNames.WalletConnect]: walletconnect,
+  [ConnectorNames.Authereum]: authereum,
+  [ConnectorNames.Torus]: torus,
+};
 
 function getLibrary(provider) {
   const library = new Web3Provider(provider);
