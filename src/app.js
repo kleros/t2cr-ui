@@ -32,11 +32,29 @@ import {
   typographyTheme,
   useWallet,
 } from "./providers";
-import { navigation } from "./utils";
 
 const typography = new Typography(typographyTheme);
 typography.injectStyles();
 injectFonts(typography);
+
+const navigation = [
+  {
+    to: "/",
+    label: "Tokens",
+  },
+  {
+    to: "/badges",
+    label: "Badges",
+  },
+  {
+    to: "/criteria",
+    label: "Criteria",
+  },
+  {
+    to: "/statistics",
+    label: "Statistics",
+  },
+];
 
 const buildHeader = (web3ReactContext, activateWallet, openSidebar) => ({
   left: (

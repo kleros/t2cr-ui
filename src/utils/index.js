@@ -1,24 +1,5 @@
 import { itemStatusEnum } from "../data";
 
-export const navigation = [
-  {
-    to: "/",
-    label: "Tokens",
-  },
-  {
-    to: "/badges",
-    label: "Badges",
-  },
-  {
-    to: "/criteria",
-    label: "Criteria",
-  },
-  {
-    to: "/statistics",
-    label: "Statistics",
-  },
-];
-
 export const isResolved = (status) =>
   status === itemStatusEnum.Registered.key ||
   status === itemStatusEnum.Absent.key;
@@ -52,3 +33,20 @@ export const chainIdToColor = (chainId) => {
       throw new Error(`Unknown color for chainId ${chainId}`);
   }
 };
+
+export const upload = (fileName, buffer) =>
+  fetch("https://ipfs.kleros.io/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      fileName,
+      buffer: Buffer.from(buffer),
+    }),
+  })
+    .then((res) => res.json())
+    .then(
+      ({ data }) =>
+        new URL(`https://ipfs.kleros.io/ipfs/${data[1].hash}${data[0].path}`)
+    );

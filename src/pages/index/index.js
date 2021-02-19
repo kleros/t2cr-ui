@@ -9,24 +9,21 @@ import { Box, Flex, Link } from "theme-ui";
 
 import {
   Button,
-  Card,
   Field,
   FileUpload,
   Form,
   Grid,
   Image,
-  List,
-  ListItem,
   PageContent,
   Popup,
   SearchBar,
   Select,
   Text,
-  Textarea,
 } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { Info } from "../../icons";
 import { useWallet } from "../../providers";
+import { upload } from "../../utils";
 
 import TokenPreviewCard from "./token-preview-card";
 
@@ -315,7 +312,7 @@ export default function Index() {
           </Flex>
           <Form
             createValidationSchema={useCallback(
-              ({ string, file }) => ({
+              ({ string }) => ({
                 name: string()
                   .max(50, "Must be 50 characters or less.")
                   .required("Required"),
@@ -326,25 +323,23 @@ export default function Index() {
                   .max(42, "Must be 42 characters.")
                   .min(42, "Must be 42 characters.")
                   .required("Required"),
-                symbol: file().required("Required"),
               }),
               []
             )}
+            validate={({ symbol }) => {
+              if (!symbol)
+                return {
+                  symbol: "Required",
+                };
+              return {};
+            }}
             onSubmit={async ({ name, ticker, address, symbol }) => {
-              // [{ pathname: symbol }] = await Promise.all([
-              //   upload(symbol.name, symbol.content),
-              // ]);
-              // const { pathname: fileURI } = await upload(
-              //   "file.json",
-              //   JSON.stringify({ name, ticker, address, photo, video })
-              // );
-              // const { pathname: evidence } = await upload(
-              //   "registration.json",
-              //   JSON.stringify({ fileURI, name: "Registration" })
-              // );
-              // return send(evidence, name, bio, {
-              //   value: String(contribution) === "" ? 0 : contribution,
-              // });
+              const { pathname: symbolMultihash } = await upload(
+                symbol.name,
+                symbol.content
+              );
+              console.info(symbolMultihash);
+              // TODO: contract interaction.
             }}
           >
             {({ isSubmitting }) => (
@@ -402,7 +397,7 @@ export default function Index() {
                     Submission deposit required
                   </Text>
                   <Text sx={{ fontSize: "24px", fontWeight: 600 }}>
-                    0.00 ETH
+                    {formatEther(totalCost)} ETH
                   </Text>
                 </Flex>
                 <Flex

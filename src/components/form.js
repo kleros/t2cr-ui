@@ -16,19 +16,6 @@ import Label from "./label";
 
 import { Input, Text } from ".";
 
-function File(...args) {
-  return object.apply(this, args);
-}
-File.prototype = Object.create(object.prototype, {
-  constructor: {
-    value: File,
-    configurable: true,
-    enumerable: false,
-    writable: true,
-  },
-});
-File.prototype._typeCheck = (value) => value?.toString() === "[object File]";
-
 const ValidationSchemaContext = createContext();
 export default function Form({
   createValidationSchema,
@@ -42,9 +29,6 @@ export default function Form({
       object(
         createValidationSchema({
           boolean,
-          file() {
-            return new File().nullable();
-          },
           string() {
             return string().default("");
           },

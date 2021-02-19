@@ -141,12 +141,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       ":focus": {
         outline: "none",
       },
-      spinner: {
-        "div > div": {
-          backgroundColor: "background",
-          borderColor: "background",
-        },
-      },
       svg: { fill: "background" },
     },
     secondary: {

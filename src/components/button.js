@@ -1,7 +1,7 @@
 import { forwardRef, useRef } from "react";
 import ReactRipples from "react-ripples";
-import { MoonLoader } from "react-spinners";
-import { Box, Button as _Button } from "theme-ui";
+import { PulseLoader } from "react-spinners";
+import { Box, Flex, Button as _Button } from "theme-ui";
 
 import { Popup, Text } from ".";
 
@@ -41,23 +41,25 @@ const Button = forwardRef(
         data-loading={loading}
         {...rest}
       >
-        <Text
-          ref={innerRef}
-          id={id && `${id}-text`}
-          variant={`buttons.${variant}`}
-          sx={{
-            alignItems: "center",
-            display: "flex",
-            border: "none",
-          }}
-        >
-          {children}
+        <Flex>
+          <Text
+            ref={innerRef}
+            id={id && `${id}-text`}
+            variant={`buttons.${variant}`}
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              border: "none",
+            }}
+          >
+            {children}
+          </Text>
           {loading && (
-            <Box variant="buttons.primary.spinner" sx={{ marginLeft: "12px" }}>
-              <MoonLoader size={16} />
+            <Box sx={{ marginLeft: "10px" }}>
+              <PulseLoader size={6} color="white" />
             </Box>
           )}
-        </Text>
+        </Flex>
         <Box
           as={ReactRipples}
           sx={{

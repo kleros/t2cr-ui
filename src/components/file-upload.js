@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Box } from "theme-ui";
+import { Box, Flex } from "theme-ui";
 
 import { Trash } from "../icons";
 
@@ -75,30 +75,36 @@ export default function FileUpload({
           (Max Size: {maxSize}MB | {accept})
         </Text>
         <Text>{placeholder}</Text>
-        {files &&
-          (Array.isArray(files) ? files : [files]).map((file) => (
-            <Box
-              key={file.path || file.name}
-              sx={{ marginTop: 1, position: "relative", width: "fit-content" }}
-            >
-              <Image variant="thumbnail" src={file.preview} />
-              <Trash
+        <Flex sx={{ justifyContent: "center" }}>
+          {files &&
+            (Array.isArray(files) ? files : [files]).map((file) => (
+              <Box
+                key={file.path || file.name}
                 sx={{
-                  fill: "text",
-                  position: "absolute",
-                  right: -1,
-                  top: -1,
+                  marginTop: 1,
+                  position: "relative",
+                  width: "fit-content",
                 }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  event.preventDefault();
-                  onChange(
-                    multiple ? files.filter((_file) => _file !== file) : null
-                  );
-                }}
-              />
-            </Box>
-          ))}
+              >
+                <Image variant="thumbnail" src={file.preview} />
+                <Trash
+                  sx={{
+                    fill: "text",
+                    position: "absolute",
+                    right: -1,
+                    top: -1,
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    onChange(
+                      multiple ? files.filter((_file) => _file !== file) : null
+                    );
+                  }}
+                />
+              </Box>
+            ))}
+        </Flex>
       </Box>
     </Box>
   );
