@@ -1,10 +1,4 @@
 export {
-  default as ArchonProvider,
-  useArchon,
-  createUseDataloaders,
-} from "./archon-provider";
-export { useWeb3 } from "./web3-provider";
-export {
   default as ThemeProvider,
   klerosTheme,
   typographyTheme,

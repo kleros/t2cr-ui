@@ -3,7 +3,15 @@ import {
   Web3ReactProvider as _Web3ReactProvider,
   useWeb3React,
 } from "@web3-react/core";
-import React, { createContext, useContext, useEffect, useMemo } from "react";
+import { ethers } from "ethers";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
   ConnectorNames,
@@ -43,20 +51,42 @@ export function useWallet() {
 
 export default function WalletProvider({ children }) {
   const web3ReactContext = useWeb3React();
-  const { connector } = web3ReactContext;
+  const { connector, account } = web3ReactContext;
 
-  // handle logic to recognize the connector currently being activated
+  // Handle logic to recognize the connector currently being activated.
   const [activatingConnector, setActivatingConnector] = React.useState();
   useEffect(() => {
     if (activatingConnector && activatingConnector === connector)
       setActivatingConnector();
   }, [activatingConnector, connector]);
 
-  // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
+  // Handle logic to eagerly connect to the injected ethereum provider,
+  // if it exists and has granted access already.
   const triedEager = useEagerConnect();
 
-  // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
+  // Handle logic to connect in reaction to certain events on the
+  // injected ethereum provider, if it exists.
   useInactiveListener(!triedEager || !!activatingConnector);
+
+  // This is used for the app-wide wallet modal. When a user
+  // clicks a button to write to the blockchain, we verify that they
+  // have a wallet connecte, if not we display a modal controlled.
+  // by this state.
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const closeWalletModal = useCallback(() => setWalletModalOpen(false), []);
+  const walletModalControls = useMemo(
+    () => ({
+      walletModalOpen,
+      setWalletModalOpen,
+      closeWalletModal,
+    }),
+    [closeWalletModal, walletModalOpen]
+  );
+  // Close modal once we get a connection.
+  useEffect(() => {
+    if (!account) return;
+    closeWalletModal();
+  }, [account, closeWalletModal]);
 
   return (
     <Context.Provider
@@ -66,8 +96,9 @@ export default function WalletProvider({ children }) {
           triedEager,
           activatingConnector,
           setActivatingConnector,
+          walletModalControls,
         }),
-        [activatingConnector, triedEager, web3ReactContext]
+        [activatingConnector, triedEager, walletModalControls, web3ReactContext]
       )}
     >
       {children}

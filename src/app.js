@@ -14,15 +14,15 @@ import {
   Layout,
   List,
   ListItem,
+  Popup,
   RouterLink,
   SocialIcons,
   Text,
 } from "./components";
-import Controls from "./controls";
+import Controls, { WalletSelection } from "./controls";
 import { Info, SecuredByKleros, T2CRLogo } from "./icons";
 import Index from "./pages/index";
 import Token from "./pages/token";
-import Wallet from "./pages/wallet";
 import {
   ConnectorNames,
   ThemeProvider,
@@ -95,7 +95,8 @@ const footer = {
 
 function App() {
   const web3Context = useWallet();
-  const { chainId = 1, activate } = web3Context || {};
+  const { chainId = 1, activate, walletModalControls } = web3Context || {};
+  const { walletModalOpen, closeWalletModal } = walletModalControls;
 
   // Supported wallets.
   const activateInjected = useCallback(() => {
@@ -126,27 +127,19 @@ function App() {
   const openSidebar = useCallback(() => {
     setSideBarOpen(true);
   }, []);
-
-  const header = useMemo(
-    () =>
-      buildHeader(
-        web3Context,
-        {
-          activateInjected,
-          activateTorus,
-          activateAuthereum,
-          activateWalletConnect,
-        },
-        openSidebar
-      ),
-    [
-      activateAuthereum,
+  const activateWallet = useMemo(
+    () => ({
       activateInjected,
       activateTorus,
+      activateAuthereum,
       activateWalletConnect,
-      openSidebar,
-      web3Context,
-    ]
+    }),
+    [activateAuthereum, activateInjected, activateTorus, activateWalletConnect]
+  );
+
+  const header = useMemo(
+    () => buildHeader(web3Context, activateWallet, openSidebar),
+    [activateWallet, openSidebar, web3Context]
   );
 
   return (
@@ -185,14 +178,18 @@ function App() {
                 <Route path="/token/:tokenID">
                   <Token />
                 </Route>
-                <Route path="/wallet">
-                  <Wallet />
-                </Route>
                 <Route path="*">
                   <Box>404</Box>
                 </Route>
               </Switch>
             </Layout>
+            <Popup
+              open={walletModalOpen}
+              closeOnDocumentClick
+              onClose={closeWalletModal}
+            >
+              <WalletSelection activateWallet={activateWallet} />
+            </Popup>
           </>
         </ApolloProvider>
       </ThemeProvider>

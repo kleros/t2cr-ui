@@ -1,20 +1,31 @@
 import { gql, useQuery } from "@apollo/client";
+import { ethers } from "ethers";
+import { formatEther } from "ethers/lib/utils";
 import queryString from "query-string";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useHistory, useLocation } from "react-router-dom";
 import { Flex } from "theme-ui";
 
 import {
   Button,
+  Card,
+  Field,
+  FileUpload,
+  Form,
   Grid,
   Image,
+  List,
+  ListItem,
   PageContent,
+  Popup,
   SearchBar,
   Select,
   Text,
+  Textarea,
 } from "../../components";
 import { itemStatusEnum } from "../../data";
+import { useWallet } from "../../providers";
 
 import TokenPreviewCard from "./token-preview-card";
 
@@ -84,6 +95,8 @@ export default function Index() {
   const { search, status } = routerParameters || {};
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [loadedSearchTokens, setLoadedSearchTokens] = useState([]);
+  const { account, walletModalControls } = useWallet();
+  const { setWalletModalOpen } = walletModalControls;
 
   // We use two queries: One to populate tokens on the infinite
   // scroll and one for text searches.
@@ -158,6 +171,22 @@ export default function Index() {
       ? loadedSearchTokens
       : loadedTokens;
 
+  // Token submission modal.
+  const [tokenSubmissionModalOpen, setTokenSubmissionModalOpen] = useState();
+  const closeTokenSubmissionModal = useCallback(
+    () => setTokenSubmissionModalOpen(false),
+    []
+  );
+  const onSubmitTokenClick = useCallback(() => {
+    if (!account) {
+      setWalletModalOpen(true);
+      return;
+    }
+    setTokenSubmissionModalOpen(true);
+  }, [account, setWalletModalOpen]);
+
+  const totalCost = ethers.BigNumber.from(0); // TODO: Fetch actual data.
+
   return (
     <>
       <Image src="/top-visual.svg" alt="banner" sx={{ width: "100%" }} />
@@ -190,6 +219,7 @@ export default function Index() {
               marginY: [8, 8, 8, 0],
               height: ["60px", "60px", "60px", "auto"],
             }}
+            onClick={onSubmitTokenClick}
           >
             Submit Token
           </Button>
@@ -266,6 +296,81 @@ export default function Index() {
               ))}
           </Grid>
         </InfiniteScroll>
+        <Popup
+          open={tokenSubmissionModalOpen}
+          closeOnDocumentClick
+          onClose={closeTokenSubmissionModal}
+          contentStyle={{
+            maxWidth: "75%",
+            maxHeight: "75%",
+            overflowY: "auto",
+          }}
+        >
+          <Form
+            createValidationSchema={useCallback(
+              ({ string, file }) => ({
+                name: string()
+                  .max(50, "Must be 50 characters or less.")
+                  .required("Required"),
+                ticker: string()
+                  .max(20, "Must be 20 characters or less.")
+                  .required("Required"),
+                address: string()
+                  .max(20, "Must be 20 characters or less.")
+                  .required("Required"),
+                symbol: file().required("Required"),
+              }),
+              []
+            )}
+            onSubmit={async ({ name, ticker, address, symbol }) => {
+              // [{ pathname: symbol }] = await Promise.all([
+              //   upload(symbol.name, symbol.content),
+              // ]);
+              // const { pathname: fileURI } = await upload(
+              //   "file.json",
+              //   JSON.stringify({ name, ticker, address, photo, video })
+              // );
+              // const { pathname: evidence } = await upload(
+              //   "registration.json",
+              //   JSON.stringify({ fileURI, name: "Registration" })
+              // );
+              // return send(evidence, name, bio, {
+              //   value: String(contribution) === "" ? 0 : contribution,
+              // });
+            }}
+          >
+            {({ isSubmitting }) => (
+              <>
+                <Field
+                  name="name"
+                  label="Name"
+                  placeholder="The token name (e.g. Wrapped Ether)."
+                />
+                <Field
+                  name="ticker"
+                  label="Ticker"
+                  placeholder="The token ticker (e.g. WETH)."
+                />
+                <Field
+                  name="address"
+                  label="Address"
+                  placeholder="The address of the token contract."
+                />
+                <Field
+                  as={FileUpload}
+                  name="symbol"
+                  label="The token symbol."
+                  accept="image/png, image/jpeg"
+                  maxSize={2}
+                  photo
+                />
+                <Button type="submit" loading={isSubmitting}>
+                  Submit
+                </Button>
+              </>
+            )}
+          </Form>
+        </Popup>
       </PageContent>
     </>
   );

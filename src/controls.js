@@ -1,3 +1,4 @@
+import { BarLoader } from "react-spinners";
 import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
 
 import Authereum from "./assets/authereum.png";
@@ -26,6 +27,7 @@ import {
   Telegram,
   WalletConnect,
 } from "./icons";
+import { useWallet } from "./providers";
 import { chainIdToColor, truncateEthAddr } from "./utils";
 
 function WalletButton({ title, icon, activate }) {
@@ -89,18 +91,113 @@ function HelpListItem({ label, icon: Icon }) {
   );
 }
 
-export default function Controls({
-  openSidebar,
-  web3ReactContext,
-  activateWallet,
-}) {
-  const { chainId, deactivate, account, active } = web3ReactContext;
+export function WalletSelection({ activateWallet }) {
+  const { activatingConnector } = useWallet();
+  const { theme } = useThemeUI();
   const {
     activateInjected,
     activateTorus,
     activateAuthereum,
     activateWalletConnect,
   } = activateWallet;
+
+  if (activatingConnector)
+    return (
+      <Flex
+        sx={{
+          padding: "32px",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          sx={{
+            fontWeight: 500,
+            fontSize: "24px",
+            marginBottom: "24px",
+          }}
+        >
+          Connecting...
+          <BarLoader />
+        </Text>
+      </Flex>
+    );
+
+  return (
+    <Flex
+      sx={{
+        padding: "32px",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Text
+        sx={{
+          fontWeight: 500,
+          fontSize: "24px",
+          marginBottom: "24px",
+        }}
+      >
+        Connect a Wallet
+      </Text>
+      <Flex sx={{ flexWrap: "wrap", justifyContent: "center" }}>
+        <WalletButton
+          title="MetaMask"
+          icon={<MetaMask width={42} />}
+          activate={activateInjected}
+        />
+        <WalletButton
+          title={
+            <Text>
+              Wallet
+              <Box as="br" />
+              Connect
+            </Text>
+          }
+          icon={<WalletConnect width={42} />}
+          activate={activateWalletConnect}
+        />
+        <WalletButton
+          title="Torus"
+          icon={<Image src={Torus} />}
+          activate={activateTorus}
+        />
+        <WalletButton
+          title="Authereum"
+          icon={<Image src={Authereum} />}
+          activate={activateAuthereum}
+        />
+      </Flex>
+      <Divider
+        sx={{
+          width: "100%",
+          marginTop: "32px",
+          marginBottom: "14px",
+        }}
+      />
+      <Link
+        sx={{
+          fontSize: "14px",
+          display: "flex",
+          alignItems: "center",
+        }}
+        href="#"
+      >
+        New to Ethereum? Learn more about wallets
+        <Flex sx={{ marginLeft: "8px", alignItems: "center" }}>
+          <Question color={theme.colors.primary} />
+        </Flex>
+      </Link>
+    </Flex>
+  );
+}
+
+export default function Controls({
+  openSidebar,
+  web3ReactContext,
+  activateWallet,
+}) {
+  const { chainId, deactivate, account, active } = web3ReactContext;
   const { theme } = useThemeUI();
 
   return (
@@ -126,71 +223,7 @@ export default function Controls({
               contentStyle={{ minWidth: "380px" }}
               offsetY={18}
             >
-              <Flex
-                sx={{
-                  padding: "32px",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  sx={{
-                    fontWeight: 500,
-                    fontSize: "24px",
-                    marginBottom: "24px",
-                  }}
-                >
-                  Connect a Wallet
-                </Text>
-                <Flex>
-                  <WalletButton
-                    title="MetaMask"
-                    icon={<MetaMask width={42} />}
-                    activate={activateInjected}
-                  />
-                  <WalletButton
-                    title={
-                      <Text>
-                        Wallet
-                        <Box as="br" />
-                        Connect
-                      </Text>
-                    }
-                    icon={<WalletConnect width={42} />}
-                    activate={activateWalletConnect}
-                  />
-                  <WalletButton
-                    title="Torus"
-                    icon={<Image src={Torus} />}
-                    activate={activateTorus}
-                  />
-                  <WalletButton
-                    title="Authereum"
-                    icon={<Image src={Authereum} />}
-                    activate={activateAuthereum}
-                  />
-                </Flex>
-                <Divider
-                  sx={{
-                    width: "100%",
-                    marginTop: "32px",
-                    marginBottom: "14px",
-                  }}
-                />
-                <Link
-                  sx={{
-                    fontSize: "14px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                  href="#"
-                >
-                  New to Ethereum? Learn more about wallets
-                  <Flex sx={{ marginLeft: "8px", alignItems: "center" }}>
-                    <Question color={theme.colors.primary} />
-                  </Flex>
-                </Link>
-              </Flex>
+              <WalletSelection activateWallet={activateWallet} />
             </Popup>
           ) : (
             <Network sx={{ marginRight: "16px" }} chainId={chainId} />

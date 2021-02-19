@@ -5,10 +5,6 @@ import { BarLoader } from "react-spinners";
 import { Box, Card, Divider, Flex } from "theme-ui";
 
 import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemPanel,
   Button,
   Image,
   Link,
@@ -39,15 +35,6 @@ const availableAction = (item) => {
       return "";
   }
 };
-
-// const { getDisputeInfo: useDisputeInfo } = createUseDataloaders({
-//   // eslint-disable-next-line require-await
-//   async getDisputeInfo({ web3 }, arbitrator, disputeID) {
-//     const klerosLiquid = web3.contracts.klerosLiquid.clone();
-//     klerosLiquid.options.address = arbitrator;
-//     return klerosLiquid.methods.getDispute(disputeID).call();
-//   },
-// });
 
 const idQuery = gql`
   query IdQuery($id: ID!) {
@@ -125,16 +112,7 @@ export default function TokenWithID({ network }) {
       </Flex>
     );
 
-  const {
-    name,
-    ticker,
-    address,
-    symbolMultihash,
-    requests,
-    appealPeriodStart,
-    appealPeriodEnd,
-    status,
-  } = token;
+  const { name, ticker, address, symbolMultihash, requests, status } = token;
 
   const t2cr = registries[0];
   const { challengePeriodDuration } = t2cr || {};
@@ -142,26 +120,11 @@ export default function TokenWithID({ network }) {
   const latestRequest = requests[requests.length - 1];
   const { disputed, submissionTime } = latestRequest;
 
-  const inAppealPeriod =
-    Date.now() / 1000 > appealPeriodStart &&
-    Date.now() / 1000 < appealPeriodEnd;
-
   const submissionTimeMili = submissionTime * 1000;
   const challengePeriodDurationMili = challengePeriodDuration * 1000;
   const challengePeriodEndMili =
     submissionTimeMili + challengePeriodDurationMili;
   const timeRemaining = challengePeriodEndMili - Date.now();
-
-  // const disputeInfo =
-  //   web3.contracts?.klerosLiquid &&
-  //   web3.ETHNet?.name &&
-  //   disputed &&
-  //   disputeID &&
-  //   getDisputeInfo(arbitrator, disputeID);
-
-  // const jurorCount =
-  //   disputeInfo &&
-  //   disputeInfo.votesLengths[disputeInfo.votesLengths.length - 1];
 
   return (
     <PageContent>
@@ -304,78 +267,6 @@ export default function TokenWithID({ network }) {
                   marginY: "14px",
                 }}
               />
-              <Flex sx={{ marginY: "14px", justifyContent: "space-between" }}>
-                {/* <DisputeInfo
-                  sx={{ flexGrow: 1 }}
-                  label="Dispute"
-                  icon={<Number />}
-                  value={latestRequest.disputeID}
-                />
-                <DisputeInfo
-                  sx={{ flexGrow: 3, marginX: 24 }}
-                  label="Court"
-                  icon={<Court />}
-                  value="Curate"
-                />
-                <DisputeInfo
-                  sx={{ flexGrow: 1 }}
-                  label="Jurors"
-                  icon={<User />}
-                  value={jurorCount}
-                /> */}
-              </Flex>
-              <Accordion
-                allowMultipleExpanded
-                allowZeroExpanded={false}
-                sx={{ padding: 0 }}
-              >
-                {inAppealPeriod && (
-                  <AccordionItem>
-                    <AccordionItemHeading>Appeal</AccordionItemHeading>
-                    <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
-                      {/* <Appeal
-                        challenge={{
-                          disputeID,
-                          numberOfRounds,
-                          parties: [requester, challenger],
-                          rounds,
-                          id,
-                        }}
-                        arbitrable={web3.contracts?.t2cr?.options?.address}
-                        arbitrator={arbitrator}
-                        arbitratorExtraData={arbitratorExtraData}
-                        sharedStakeMultiplier={sharedStakeMultiplier}
-                        winnerStakeMultiplier={winnerStakeMultiplier}
-                        loserStakeMultiplier={loserStakeMultiplier}
-                        contract="t2cr"
-                        args={[id]}
-                      /> */}
-                    </AccordionItemPanel>
-                  </AccordionItem>
-                )}
-                <AccordionItem>
-                  <AccordionItemHeading>Evidence</AccordionItemHeading>
-                  <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
-                    {/* <Evidences
-                      evidences={latestRequest.evidences}
-                      contract="t2cr"
-                      args={[id]}
-                    /> */}
-                  </AccordionItemPanel>
-                </AccordionItem>
-                {disputed && (
-                  <AccordionItem>
-                    <AccordionItemHeading>Voting History</AccordionItemHeading>
-                    <AccordionItemPanel sx={{ padding: 32, margin: 0 }}>
-                      {/* <VotingHistory
-                        challenge={{ disputeID, numberOfRounds }}
-                        arbitrable={web3.contracts?.t2cr?.options?.address}
-                        arbitrator={arbitrator}
-                      /> */}
-                    </AccordionItemPanel>
-                  </AccordionItem>
-                )}
-              </Accordion>
             </Flex>
           </Card>
         </>
