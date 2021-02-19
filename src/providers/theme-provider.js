@@ -25,8 +25,9 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     secondary: "#7bcbff",
     accent: "#4d00b4",
     accentComplement: "#4d00b4",
+    accentMuted: "#fbf9fe",
     highlight: "#009aff",
-    muted: "#fffcf0",
+    muted: "rgba(0, 154, 255, 0.06)",
     skeleton: "#eee",
     skeletonHighlight: "#f5f5f5",
     success: "#00c851",
@@ -267,9 +268,8 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     field: {
       error: {
         color: "danger",
-        fontSize: "0.75em",
+        fontSize: "14px",
         marginLeft: 1,
-        marginTop: "0.5em",
         icon: {
           stroke: "danger",
           ":hover": { opacity: 0.8 },
@@ -278,7 +278,7 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       },
       info: {
         color: "info",
-        fontSize: "0.75em",
+        fontSize: "'14px'",
         marginTop: "0.5em",
       },
     },
@@ -305,7 +305,7 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
     label: {
       display: "flex",
       flexDirection: "column",
-      fontSize: 1,
+      fontSize: "14px",
       marginBottom: 2,
       visuallyHidden: {
         border: 0,
@@ -416,6 +416,10 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
+    },
+    popupTitle: {
+      fontWeight: 500,
+      fontSize: "24px",
     },
   },
 });

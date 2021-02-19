@@ -5,7 +5,7 @@ import queryString from "query-string";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useHistory, useLocation } from "react-router-dom";
-import { Flex } from "theme-ui";
+import { Box, Flex, Link } from "theme-ui";
 
 import {
   Button,
@@ -25,6 +25,7 @@ import {
   Textarea,
 } from "../../components";
 import { itemStatusEnum } from "../../data";
+import { Info } from "../../icons";
 import { useWallet } from "../../providers";
 
 import TokenPreviewCard from "./token-preview-card";
@@ -300,12 +301,18 @@ export default function Index() {
           open={tokenSubmissionModalOpen}
           closeOnDocumentClick
           onClose={closeTokenSubmissionModal}
-          contentStyle={{
-            maxWidth: "75%",
-            maxHeight: "75%",
+          overlayStyle={{ background: "rgba(0, 0, 0, 0.25)" }}
+          sx={{
+            maxWidth: "600px",
             overflowY: "auto",
+            padding: "32px",
+            backgroundColor: "white",
+            maxHeight: "600px",
           }}
         >
+          <Flex sx={{ justifyContent: "center" }}>
+            <Text variant="popupTitle">Submit Token</Text>
+          </Flex>
           <Form
             createValidationSchema={useCallback(
               ({ string, file }) => ({
@@ -313,10 +320,11 @@ export default function Index() {
                   .max(50, "Must be 50 characters or less.")
                   .required("Required"),
                 ticker: string()
-                  .max(20, "Must be 20 characters or less.")
+                  .min(2, "Must be more than 2 characters long.")
                   .required("Required"),
                 address: string()
-                  .max(20, "Must be 20 characters or less.")
+                  .max(42, "Must be 42 characters.")
+                  .min(42, "Must be 42 characters.")
                   .required("Required"),
                 symbol: file().required("Required"),
               }),
@@ -340,7 +348,7 @@ export default function Index() {
             }}
           >
             {({ isSubmitting }) => (
-              <>
+              <Flex sx={{ flexDirection: "column" }}>
                 <Field
                   name="name"
                   label="Name"
@@ -354,20 +362,103 @@ export default function Index() {
                 <Field
                   name="address"
                   label="Address"
-                  placeholder="The address of the token contract."
+                  placeholder="e.g. 0x93ED3FBe21207Ec2E8f2d3c3de6e058Cb73Bc04d"
                 />
                 <Field
                   as={FileUpload}
                   name="symbol"
-                  label="The token symbol."
+                  label="Upload the token logo"
                   accept="image/png, image/jpeg"
-                  maxSize={2}
+                  maxSize={1}
                   photo
                 />
-                <Button type="submit" loading={isSubmitting}>
-                  Submit
-                </Button>
-              </>
+                <Flex sx={{ marginY: "16px" }}>
+                  <Flex
+                    sx={{
+                      minWidth: "24px",
+                      paddingTop: "2px",
+                    }}
+                  >
+                    <Info />
+                  </Flex>
+                  <Text sx={{ fontSize: "14px", lineHeight: "19px" }}>
+                    Important: Make sure the logo is a high-resolution PNG with
+                    transparent background (Max size: 1Mb).
+                  </Text>
+                </Flex>
+                <Flex
+                  sx={{
+                    flexDirection: "column",
+                    backgroundColor: (theme) => theme.colors.accentMuted,
+                    borderRadius: "3px",
+                    border: (theme) => `1px solid ${theme.colors.accent}`,
+                    color: (theme) => theme.colors.accent,
+                    alignItems: "center",
+                    padding: "16px",
+                    marginY: "12px",
+                  }}
+                >
+                  <Text sx={{ fontSize: "14px" }}>
+                    Submission deposit required
+                  </Text>
+                  <Text sx={{ fontSize: "24px", fontWeight: 600 }}>
+                    0.00 ETH
+                  </Text>
+                </Flex>
+                <Flex
+                  sx={{
+                    marginY: "12px",
+                    alignItems: "center",
+                    border: (theme) => `1px solid ${theme.colors.primary}`,
+                    padding: "16px",
+                  }}
+                >
+                  <Flex
+                    sx={{
+                      minWidth: "24px",
+                      paddingTop: "2px",
+                    }}
+                  >
+                    <Info size={24} />
+                  </Flex>
+                  <Flex sx={{ flexDirection: "column", marginLeft: "16px" }}>
+                    <Text
+                      sx={{
+                        color: (theme) => theme.colors.primary,
+                        fontWeight: 600,
+                        fontSize: "16px",
+                      }}
+                    >
+                      Note
+                    </Text>
+                    <Text sx={{ fontSize: "14px", lineHeight: "19px" }}>
+                      The Token must follow the <Link href="#">Criteria</Link>.
+                      Tokens that do not follow the criteria risk being
+                      challenged and removed. Make sure you read and understand
+                      the criteria before proceeding. The deposit required is
+                      reimbursed if the token is registered, the deposit is lost
+                      if the token is removed.
+                    </Text>
+                  </Flex>
+                </Flex>
+                <Flex
+                  sx={{
+                    justifyContent: "space-between",
+                    marginTop: "16px",
+                    marginBottom: "32px",
+                  }}
+                >
+                  <Button
+                    variant="secondary"
+                    onClick={closeTokenSubmissionModal}
+                  >
+                    Return
+                  </Button>
+                  <Button type="submit" loading={isSubmitting}>
+                    Submit
+                  </Button>
+                </Flex>
+              </Flex>
             )}
           </Form>
         </Popup>

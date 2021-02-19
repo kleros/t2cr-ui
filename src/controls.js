@@ -220,7 +220,7 @@ export default function Controls({
                 </Button>
               }
               position="bottom right"
-              contentStyle={{ minWidth: "380px" }}
+              sx={{ minWidth: "380px" }}
               offsetY={18}
             >
               <WalletSelection activateWallet={activateWallet} />
@@ -237,7 +237,7 @@ export default function Controls({
               </Button>
             }
             position="bottom right"
-            contentStyle={{ minWidth: "380px" }}
+            sx={{ minWidth: "380px" }}
             offsetY={18}
           >
             <Flex
@@ -271,7 +271,7 @@ export default function Controls({
               </Button>
             }
             position="bottom right"
-            contentStyle={{ minWidth: "380px" }}
+            sx={{ minWidth: "380px" }}
             offsetY={18}
           >
             <Flex
@@ -349,7 +349,7 @@ export default function Controls({
               </Button>
             }
             position="bottom right"
-            contentStyle={{
+            sx={{
               minWidth: "248px",
             }}
             offsetY={18}
