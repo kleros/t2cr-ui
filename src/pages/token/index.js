@@ -15,19 +15,13 @@ import {
   PageContent,
   Status,
   Text,
-  createUseDataloaders,
-  useWeb3,
 } from "../../components";
 import { itemStatusEnum } from "../../data";
-import { Court, EtherscanLogo, Number, User } from "../../icons";
+import { EtherscanLogo } from "../../icons";
 import { isResolved } from "../../utils";
 
-// import Appeal from "./appeal";
-// import DisputeInfo from "./dispute-info";
-// import Evidences from "./evidences";
 import InfoBox from "./info-box";
 import Step from "./step";
-// import VotingHistory from "./voting-history";
 
 const availableAction = (item) => {
   const status = itemStatusEnum.parse(item).key;
@@ -139,30 +133,14 @@ export default function TokenWithID({ network }) {
     requests,
     appealPeriodStart,
     appealPeriodEnd,
-    id,
     status,
   } = token;
 
   const t2cr = registries[0];
-  const {
-    challengePeriodDuration,
-    sharedStakeMultiplier,
-    winnerStakeMultiplier,
-    loserStakeMultiplier,
-    arbitratorExtraData,
-  } = t2cr || {};
+  const { challengePeriodDuration } = t2cr || {};
 
   const latestRequest = requests[requests.length - 1];
-  const {
-    disputed,
-    disputeID,
-    numberOfRounds,
-    arbitrator,
-    submissionTime,
-    rounds,
-    requester,
-    challenger,
-  } = latestRequest;
+  const { disputed, submissionTime } = latestRequest;
 
   const inAppealPeriod =
     Date.now() / 1000 > appealPeriodStart &&

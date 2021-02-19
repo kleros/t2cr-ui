@@ -1,9 +1,5 @@
 # Don't ignore dotfiles.
 !/.*.js
-
-# Build
-/out/
-out/**/*
-
-# Storybook
-!/components/.storybook/
+.*
+node_modules/
+build/
