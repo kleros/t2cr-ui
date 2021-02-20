@@ -44,43 +44,43 @@ module.exports = {
 
   rules: {
     // Core
-    "arrow-body-style": "error", // Don't use unnecessary curly braces for arrow functions.
-    "new-cap": "error", // Require constructor names to begin with a capital letter.
-    "new-parens": "error",
-    "no-array-constructor": "error",
-    "no-duplicate-imports": ["error", { includeExports: true }],
-    "no-else-return": ["error", { allowElseIf: false }],
-    "no-extra-bind": "error",
-    "no-iterator": "error",
-    "no-lonely-if": "error", // In else blocks.
-    "no-new-wrappers": "error",
-    "no-proto": "error",
-    "no-return-await": "error",
-    "no-shadow": "error",
-    "no-unneeded-ternary": ["error", { defaultAssignment: false }],
+    "arrow-body-style": "warn", // Don't use unnecessary curly braces for arrow functions.
+    "new-cap": "warn", // Require constructor names to begin with a capital letter.
+    "new-parens": "warn",
+    "no-array-constructor": "warn",
+    "no-duplicate-imports": ["warn", { includeExports: true }],
+    "no-else-return": ["warn", { allowElseIf: false }],
+    "no-extra-bind": "warn",
+    "no-iterator": "warn",
+    "no-lonely-if": "warn", // In else blocks.
+    "no-new-wrappers": "warn",
+    "no-proto": "warn",
+    "no-return-await": "warn",
+    "no-shadow": "warn",
+    "no-unneeded-ternary": ["warn", { defaultAssignment: false }],
     "no-unused-expressions": "warn",
     "no-unused-vars": "warn",
-    "no-use-before-define": "error",
-    "no-useless-computed-key": "error",
-    "no-useless-concat": "error",
-    "no-useless-constructor": "error",
-    "no-useless-return": "error",
-    "no-var": "error",
-    "object-shorthand": "error",
-    "one-var": ["error", "never"],
-    "operator-assignment": "error",
-    "prefer-arrow-callback": "error",
-    "prefer-const": "error",
-    "prefer-exponentiation-operator": "error",
-    "prefer-numeric-literals": "error",
-    "prefer-object-spread": "error",
-    "prefer-rest-params": "error",
-    "prefer-spread": "error",
-    "prefer-template": "error",
-    "require-await": "error",
-    "spaced-comment": "error",
-    curly: ["error", "multi"], // Don't use unnecessary curly braces.
-    eqeqeq: "error",
+    "no-use-before-define": "warn",
+    "no-useless-computed-key": "warn",
+    "no-useless-concat": "warn",
+    "no-useless-constructor": "warn",
+    "no-useless-return": "warn",
+    "no-var": "warn",
+    "object-shorthand": "warn",
+    "one-var": ["warn", "never"],
+    "operator-assignment": "warn",
+    "prefer-arrow-callback": "warn",
+    "prefer-const": "warn",
+    "prefer-exponentiation-operator": "warn",
+    "prefer-numeric-literals": "warn",
+    "prefer-object-spread": "warn",
+    "prefer-rest-params": "warn",
+    "prefer-spread": "warn",
+    "prefer-template": "warn",
+    "require-await": "warn",
+    "spaced-comment": "warn",
+    curly: ["warn", "multi"], // Don't use unnecessary curly braces.
+    eqeqeq: "warn",
 
     // Sort named import members alphabetically.
     "sort-imports": [
