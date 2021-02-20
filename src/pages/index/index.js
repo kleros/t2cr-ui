@@ -156,15 +156,23 @@ export default function Index() {
     if (!status) return;
 
     setLoadedTokens([]); // Clear results.
-    setIndexVariables((previousVariables) => {
-      const newVariables = {
-        ...previousVariables,
-        skip: 0,
-      };
+    setIndexVariables(() => {
+      const newVariables = {};
 
       if (!status || status === itemStatusEnum.None.key)
         delete newVariables.where;
-      else newVariables.where = { status };
+      else if (
+        status === itemStatusEnum.ChallengedRegistration.key ||
+        status === itemStatusEnum.ChallengedRemoval.key
+      ) {
+        newVariables.where = { disputed: true };
+        newVariables.where.status =
+          status === itemStatusEnum.ChallengedRegistration.key
+            ? itemStatusEnum.RegistrationRequested.key
+            : itemStatusEnum.ClearingRequested.key;
+      } else newVariables.where = { status, disputed: false };
+
+      newVariables.skip = 0;
 
       return newVariables;
     });
