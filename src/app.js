@@ -87,13 +87,7 @@ const buildHeader = (web3ReactContext, activateWallet, openSidebar) => ({
       ))}
     </List>
   ),
-  right: (
-    <Controls
-      openSidebar={openSidebar}
-      web3ReactContext={web3ReactContext}
-      activateWallet={activateWallet}
-    />
-  ),
+  right: <Controls openSidebar={openSidebar} activateWallet={activateWallet} />,
 });
 const footer = {
   left: <SecuredByKleros />,

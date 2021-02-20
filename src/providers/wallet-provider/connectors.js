@@ -10,7 +10,7 @@ export const ConnectorNames = {
   Torus: "Torus",
 };
 
-export const injected = new InjectedConnector({ supportedChainIds: [1] });
+export const injected = new InjectedConnector({ supportedChainIds: [1, 42] });
 
 export const walletconnect = new WalletConnectConnector({
   rpc: { 1: JSON.parse(process.env.REACT_APP_T2CR_ADDRESSES)[1] },

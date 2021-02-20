@@ -16,6 +16,7 @@ const Button = forwardRef(
       children,
       loading,
       disabledTooltip,
+      centerLabel = true,
       ...rest
     },
     ref
@@ -41,7 +42,7 @@ const Button = forwardRef(
         data-loading={loading}
         {...rest}
       >
-        <Flex>
+        <Flex sx={{ justifyContent: centerLabel ? "center" : "flex-start" }}>
           <Text
             ref={innerRef}
             id={id && `${id}-text`}

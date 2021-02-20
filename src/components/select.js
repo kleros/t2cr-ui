@@ -91,6 +91,7 @@ export default function Select({ items, onChange, value, label, id, ...rest }) {
         {label}
       </Label>
       <Button
+        centerLabel={false}
         {...getToggleButtonProps({
           ref: toggleButtonRef,
           variant: "select",

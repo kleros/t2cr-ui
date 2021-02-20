@@ -116,7 +116,7 @@ export default function WalletProvider({ children }) {
   // Periodically check if any pending transactions were mined.
   const [pollingActivity, setPollingActivity] = useState(false);
   useEffect(() => {
-    if (pollingActivity) return;
+    if (pollingActivity || !t2cr) return;
     setPollingActivity(true);
     setInterval(() => {
       // Update mined transactions.
@@ -149,7 +149,7 @@ export default function WalletProvider({ children }) {
           }));
         });
     }, 5 * 1000);
-  }, [library, pollingActivity, setTxes, t2cr.interface, txes]);
+  }, [library, pollingActivity, setTxes, t2cr, txes]);
   const txManagement = useMemo(() => ({ newTx, txes }), [newTx, txes]);
 
   return (

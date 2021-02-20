@@ -2,10 +2,10 @@ import { gql, useQuery } from "@apollo/client";
 import { ethers } from "ethers";
 import { formatEther } from "ethers/lib/utils";
 import queryString from "query-string";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useHistory, useLocation } from "react-router-dom";
-import { Box, Flex, Link } from "theme-ui";
+import { Flex, Link } from "theme-ui";
 
 import {
   Button,
@@ -93,7 +93,16 @@ export default function Index() {
   const { search, status } = routerParameters || {};
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [loadedSearchTokens, setLoadedSearchTokens] = useState([]);
-  const { account, walletModalControls, t2cr, newTx } = useWallet();
+  const [currentChainId, setCurrentChainId] = useState(1);
+  const {
+    account,
+    walletModalControls,
+    t2cr,
+    newTx,
+    active,
+    error: walletError,
+    chainId = 1,
+  } = useWallet();
   const { setWalletModalOpen } = walletModalControls;
 
   // We use two queries: One to populate tokens on the infinite
@@ -160,6 +169,31 @@ export default function Index() {
       return newVariables;
     });
   }, [status]);
+
+  // Clear results if the user changes the chain.
+  useEffect(() => {
+    const { ethereum } = window;
+    if (!active || walletError) return;
+
+    const handleChainChanged = () => {
+      setIndexVariables({});
+      setLoadedSearchTokens([]);
+      setLoadedTokens([]);
+    };
+    ethereum.on("chainChanged", handleChainChanged);
+    return () => {
+      if (ethereum.removeListener)
+        ethereum.removeListener("chainChanged", handleChainChanged);
+    };
+  }, [active, walletError]);
+  // Also clear it if the default network is not mainnet.
+  useEffect(() => {
+    if (currentChainId === chainId) return;
+    setCurrentChainId(chainId);
+    setIndexVariables({});
+    setLoadedSearchTokens([]);
+    setLoadedTokens([]);
+  }, [chainId, currentChainId]);
 
   const numberOfSubmissions =
     registryData?.registries[0].numberOfSubmissions || 0;

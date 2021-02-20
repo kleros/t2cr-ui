@@ -199,11 +199,7 @@ const chainIdToEtherscanName = {
   42: "kovan.",
 };
 
-export default function Controls({
-  openSidebar,
-  web3ReactContext,
-  activateWallet,
-}) {
+export default function Controls({ openSidebar, activateWallet }) {
   const { theme } = useThemeUI();
   const { chainId, deactivate, account, active, txManagement } = useWallet();
   const { txes } = txManagement;
@@ -266,7 +262,7 @@ export default function Controls({
               </Text>
               <Divider sx={{ width: "100%" }} />
               <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-                {Object.key(txes).length === 0 && "Nothing here yet."}
+                {Object.keys(txes).length === 0 && "Nothing here yet."}
                 <List>
                   {Object.entries(txes).map(([txHash, tx]) => {
                     const pending = tx.confirmations && tx.confirmations > 0;
