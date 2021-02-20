@@ -5,9 +5,11 @@ import { useCallback, useMemo, useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { Box, Flex } from "theme-ui";
 import Typography from "typography";
 import injectFonts from "typography-inject-fonts";
+import "react-toastify/dist/ReactToastify.min.css";
 
 import {
   InitializeColorMode,
@@ -229,6 +231,7 @@ export default function RoutedApp() {
           </WalletProvider>
         </Web3ReactProvider>
       </Router>
+      <ToastContainer />
     </HelmetProvider>
   );
 }

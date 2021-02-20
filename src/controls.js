@@ -1,4 +1,4 @@
-import { BarLoader } from "react-spinners";
+import { BarLoader, MoonLoader } from "react-spinners";
 import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
 
 import Authereum from "./assets/authereum.png";
@@ -12,6 +12,7 @@ import {
   ListItem,
   Network,
   Popup,
+  RouterLink,
   Text,
 } from "./components";
 import {
@@ -22,6 +23,7 @@ import {
   Cog,
   EthSymbol,
   HamburgerMenu,
+  Info,
   MetaMask,
   Question,
   Telegram,
@@ -192,13 +194,19 @@ export function WalletSelection({ activateWallet }) {
   );
 }
 
+const chainIdToEtherscanName = {
+  1: "",
+  42: "kovan.",
+};
+
 export default function Controls({
   openSidebar,
   web3ReactContext,
   activateWallet,
 }) {
-  const { chainId, deactivate, account, active } = web3ReactContext;
   const { theme } = useThemeUI();
+  const { chainId, deactivate, account, active, txManagement } = useWallet();
+  const { txes } = txManagement;
 
   return (
     <Flex>
@@ -258,7 +266,35 @@ export default function Controls({
               </Text>
               <Divider sx={{ width: "100%" }} />
               <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-                Nothing here yet.
+                {Object.key(txes).length === 0 && "Nothing here yet."}
+                <List>
+                  {Object.entries(txes).map(([txHash, tx]) => {
+                    const pending = tx.confirmations && tx.confirmations > 0;
+                    const { tokenID } = tx;
+                    return (
+                      <ListItem key={txHash} sx={{ display: "flex" }}>
+                        {pending ? <MoonLoader /> : <Info />}
+                        <Flex sx={{ flexDirection: "column" }}>
+                          <Text>
+                            {pending
+                              ? "Transaction pending..."
+                              : "Transaction confirmed"}
+                          </Text>
+                          <Link
+                            href={`https://${chainIdToEtherscanName[chainId]}etherscan.io/tx/${txHash}`}
+                          >
+                            View on Etherscan.
+                          </Link>
+                          {!pending && tokenID && (
+                            <RouterLink to={`/tokens/${tokenID}`}>
+                              View Token
+                            </RouterLink>
+                          )}
+                        </Flex>
+                      </ListItem>
+                    );
+                  })}
+                </List>
               </Flex>
             </Flex>
           </Popup>

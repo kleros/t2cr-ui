@@ -12,6 +12,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useStorageState } from "react-storage-hooks";
+
+import _t2crABI from "../../assets/t2crABI";
 
 import {
   ConnectorNames,
@@ -51,7 +54,19 @@ export function useWallet() {
 
 export default function WalletProvider({ children }) {
   const web3ReactContext = useWeb3React();
-  const { connector, account } = web3ReactContext;
+  const { connector, account, chainId, library } = web3ReactContext;
+  const t2cr = useMemo(() => {
+    if (!account) return;
+    const signer = library.getSigner();
+    const t2crAddress = JSON.parse(process.env.REACT_APP_T2CR_ADDRESSES)[
+      chainId
+    ];
+    return new ethers.Contract(
+      t2crAddress,
+      _t2crABI,
+      signer.connectUnchecked()
+    );
+  }, [account, chainId, library]);
 
   // Handle logic to recognize the connector currently being activated.
   const [activatingConnector, setActivatingConnector] = React.useState();
@@ -88,6 +103,55 @@ export default function WalletProvider({ children }) {
     closeWalletModal();
   }, [account, closeWalletModal]);
 
+  // Transaction state management.
+  const TX_STORAGE_KEY = "TX_STORAGE_KEY";
+  const [txes, setTxes] = useStorageState(localStorage, TX_STORAGE_KEY, {});
+  const newTx = useCallback(
+    (tx) => {
+      setTxes((previousState) => ({ ...previousState, tx }));
+      // TODO: Trigger new notification popup.
+    },
+    [setTxes]
+  );
+  // Periodically check if any pending transactions were mined.
+  const [pollingActivity, setPollingActivity] = useState(false);
+  useEffect(() => {
+    if (pollingActivity) return;
+    setPollingActivity(true);
+    setInterval(() => {
+      // Update mined transactions.
+      Object.entries(txes)
+        .filter(([, tx]) => tx.confirmations && tx.confirmations <= 0)
+        .forEach(async ([txHash]) => {
+          const latestTxReceipt = await library.getTransaction(txHash);
+
+          // Some providers may return null if the tx was not
+          // mined yet.
+          if (!latestTxReceipt) return;
+          if (
+            !latestTxReceipt.confirmations ||
+            latestTxReceipt.confirmations <= 0
+          )
+            return;
+
+          // Transaction mined. Dispatch update.
+          // If tx includes a log with a tokenID,
+          // include it the tx object.
+          const statusChangeLogs = latestTxReceipt.logs
+            .map((log) => t2cr.interface.parseLog(log))
+            .filter((log) => log.name === "TokenStatusChange");
+          if (statusChangeLogs.length > 0)
+            latestTxReceipt.tokenID = statusChangeLogs[0].args._tokenID;
+
+          setTxes((previousState) => ({
+            ...previousState,
+            [txHash]: latestTxReceipt,
+          }));
+        });
+    }, 5 * 1000);
+  }, [library, pollingActivity, setTxes, t2cr.interface, txes]);
+  const txManagement = useMemo(() => ({ newTx, txes }), [newTx, txes]);
+
   return (
     <Context.Provider
       value={useMemo(
@@ -97,8 +161,17 @@ export default function WalletProvider({ children }) {
           activatingConnector,
           setActivatingConnector,
           walletModalControls,
+          t2cr,
+          txManagement,
         }),
-        [activatingConnector, triedEager, walletModalControls, web3ReactContext]
+        [
+          activatingConnector,
+          t2cr,
+          triedEager,
+          txManagement,
+          walletModalControls,
+          web3ReactContext,
+        ]
       )}
     >
       {children}

@@ -93,7 +93,7 @@ export default function Index() {
   const { search, status } = routerParameters || {};
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [loadedSearchTokens, setLoadedSearchTokens] = useState([]);
-  const { account, walletModalControls } = useWallet();
+  const { account, walletModalControls, t2cr, newTx } = useWallet();
   const { setWalletModalOpen } = walletModalControls;
 
   // We use two queries: One to populate tokens on the infinite
@@ -338,8 +338,19 @@ export default function Index() {
                 symbol.name,
                 symbol.content
               );
-              console.info(symbolMultihash);
-              // TODO: contract interaction.
+
+              try {
+                const tx = await t2cr.requestStatusChange(
+                  name,
+                  ticker,
+                  address,
+                  symbolMultihash,
+                  { from: account, value: totalCost }
+                );
+                newTx(tx);
+              } catch (err) {
+                console.error("Error submitting tx", err);
+              }
             }}
           >
             {({ isSubmitting }) => (

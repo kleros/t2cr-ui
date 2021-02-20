@@ -3,10 +3,6 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 import { TorusConnector } from "@web3-react/torus-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
-const RPC_URLS = {
-  1: process.env.REACT_APP_RPC_URL_1,
-};
-
 export const ConnectorNames = {
   Injected: "Injected",
   WalletConnect: "WalletConnect",
@@ -17,7 +13,7 @@ export const ConnectorNames = {
 export const injected = new InjectedConnector({ supportedChainIds: [1] });
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: RPC_URLS[1] },
+  rpc: { 1: JSON.parse(process.env.REACT_APP_T2CR_ADDRESSES)[1] },
   bridge: "https://bridge.walletconnect.org",
   qrcode: true,
   pollingInterval: 12000,
