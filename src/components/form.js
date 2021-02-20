@@ -32,6 +32,7 @@ export default function Form({
           string() {
             return string().default("");
           },
+          object,
         })
       ),
     [createValidationSchema]
@@ -105,6 +106,8 @@ export function Field({ label, as = Input, name, info, ...rest }) {
       {info && <Text variant="forms.field.info">{info}</Text>}
       <Text variant="forms.field.error">
         <ErrorMessage name={name} />
+        {name === "symbol" && error}{" "}
+        {/* Work around field not getting marked as touched */}
       </Text>
     </Label>
   );

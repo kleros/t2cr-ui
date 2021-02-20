@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { ethers } from "ethers";
 import { formatEther } from "ethers/lib/utils";
 import queryString from "query-string";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useHistory, useLocation } from "react-router-dom";
 import { Flex, Link } from "theme-ui";
@@ -22,7 +22,7 @@ import {
 } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { Info } from "../../icons";
-import { useWallet } from "../../providers";
+import { useActivity, useContracts, useWallet } from "../../providers";
 import { upload } from "../../utils";
 
 import TokenPreviewCard from "./token-preview-card";
@@ -74,6 +74,9 @@ const registryQuery = gql`
   query registryQuery {
     registries(first: 1) {
       numberOfSubmissions
+      sharedStakeMultiplier
+      requesterBaseDeposit
+      arbitratorExtraData
     }
   }
 `;
@@ -94,11 +97,11 @@ export default function Index() {
   const [loadedTokens, setLoadedTokens] = useState([]);
   const [loadedSearchTokens, setLoadedSearchTokens] = useState([]);
   const [currentChainId, setCurrentChainId] = useState(1);
+  const { t2cr, arbitrator } = useContracts();
+  const { newTx } = useActivity();
   const {
     account,
     walletModalControls,
-    t2cr,
-    newTx,
     active,
     error: walletError,
     chainId = 1,
@@ -203,9 +206,6 @@ export default function Index() {
     setLoadedTokens([]);
   }, [chainId, currentChainId]);
 
-  const numberOfSubmissions =
-    registryData?.registries[0].numberOfSubmissions || 0;
-
   const displayTokens =
     loadedSearchTokens && loadedSearchTokens.length > 0
       ? loadedSearchTokens
@@ -225,7 +225,40 @@ export default function Index() {
     setTokenSubmissionModalOpen(true);
   }, [account, setWalletModalOpen]);
 
-  const totalCost = ethers.BigNumber.from(0); // TODO: Fetch actual data.
+  // Registry data and submission cost.
+  const registry = (registryData && registryData.registries[0]) || {};
+  const {
+    sharedStakeMultiplier,
+    requesterBaseDeposit,
+    arbitratorExtraData,
+    numberOfSubmissions,
+  } = registry || {};
+  const [arbitrationCost, setArbitrationCost] = useState();
+  useEffect(() => {
+    if (!arbitrator || !arbitratorExtraData) return;
+    (async () => {
+      setArbitrationCost(await arbitrator.arbitrationCost(arbitratorExtraData));
+    })();
+  }, [arbitrator, arbitratorExtraData]);
+
+  // totalCost = requesterBaseDeposit + arbitrationCost + feeStake
+  // feeStake = arbitrationCost * stakeMultiplier
+  // We divide the fee stake by 10000 because the stake multiplier is given in
+  // basis points.
+  const totalCost = useMemo(() => {
+    if (!arbitrationCost || !requesterBaseDeposit || !sharedStakeMultiplier)
+      return;
+
+    const { BigNumber } = ethers;
+    const MULTIPLIER_DIVISOR = BigNumber.from(10000); // Basis points.
+    return arbitrationCost
+      .add(
+        arbitrationCost
+          .mul(BigNumber.from(sharedStakeMultiplier))
+          .div(MULTIPLIER_DIVISOR)
+      )
+      .add(BigNumber.from(requesterBaseDeposit));
+  }, [arbitrationCost, requesterBaseDeposit, sharedStakeMultiplier]);
 
   return (
     <>
@@ -252,6 +285,7 @@ export default function Index() {
           }}
         >
           <Button
+            id="openSubmitTokenModal"
             type="button"
             variant="primary"
             sx={{
@@ -341,12 +375,14 @@ export default function Index() {
           closeOnDocumentClick
           onClose={closeTokenSubmissionModal}
           overlayStyle={{ background: "rgba(0, 0, 0, 0.25)" }}
+          contentStyle={{
+            maxWidth: "75%",
+          }}
           sx={{
-            maxWidth: "600px",
             overflowY: "auto",
             padding: "32px",
+            maxHeight: "90vh",
             backgroundColor: "white",
-            maxHeight: "600px",
           }}
         >
           <Flex sx={{ justifyContent: "center" }}>
@@ -360,6 +396,7 @@ export default function Index() {
                   .required("Required"),
                 ticker: string()
                   .min(2, "Must be more than 2 characters long.")
+                  .max(7, "Must be less than 10 characters long.")
                   .required("Required"),
                 address: string()
                   .max(42, "Must be 42 characters.")
@@ -376,26 +413,26 @@ export default function Index() {
               return {};
             }}
             onSubmit={async ({ name, ticker, address, symbol }) => {
-              const { pathname: symbolMultihash } = await upload(
-                symbol.name,
-                symbol.content
-              );
-
               try {
+                const { pathname: symbolMultihash } = await upload(
+                  symbol.name,
+                  symbol.content
+                );
                 const tx = await t2cr.requestStatusChange(
                   name,
                   ticker,
                   address,
                   symbolMultihash,
-                  { from: account, value: totalCost }
+                  { from: account, value: totalCost.toString() }
                 );
                 newTx(tx);
+                closeTokenSubmissionModal();
               } catch (err) {
                 console.error("Error submitting tx", err);
               }
             }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, handleSubmit, setSubmitting, errors }) => (
               <Flex sx={{ flexDirection: "column" }}>
                 <Field
                   name="name"
@@ -419,6 +456,7 @@ export default function Index() {
                   accept="image/png, image/jpeg"
                   maxSize={1}
                   photo
+                  error-={errors.symbol}
                 />
                 <Flex sx={{ marginY: "16px" }}>
                   <Flex
@@ -450,7 +488,8 @@ export default function Index() {
                     Submission deposit required
                   </Text>
                   <Text sx={{ fontSize: "24px", fontWeight: 600 }}>
-                    {formatEther(totalCost)} ETH
+                    {totalCost &&
+                      `${Number(formatEther(totalCost)).toFixed(3)} ETH`}
                   </Text>
                 </Flex>
                 <Flex
@@ -502,7 +541,15 @@ export default function Index() {
                   >
                     Return
                   </Button>
-                  <Button type="submit" loading={isSubmitting}>
+                  <Button
+                    loading={isSubmitting}
+                    disabled={!totalCost || !account}
+                    onClick={() => {
+                      if (isSubmitting) return;
+                      setSubmitting(true);
+                      handleSubmit();
+                    }}
+                  >
                     Submit
                   </Button>
                 </Flex>

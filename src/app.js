@@ -26,7 +26,9 @@ import { Info, SecuredByKleros, T2CRLogo } from "./icons";
 import Index from "./pages/index";
 import Token from "./pages/token";
 import {
+  ActivityProvider,
   ConnectorNames,
+  ContractsProvider,
   ThemeProvider,
   WalletProvider,
   Web3ReactProvider,
@@ -58,7 +60,7 @@ const navigation = [
   },
 ];
 
-const buildHeader = (web3ReactContext, activateWallet, openSidebar) => ({
+const buildHeader = (activateWallet, openSidebar) => ({
   left: (
     <RouterLink variant="navigation" to="/">
       <Flex sx={{ alignItems: "center" }}>
@@ -151,60 +153,65 @@ function App() {
     [activateAuthereum, activateInjected, activateTorus, activateWalletConnect]
   );
 
-  const header = useMemo(
-    () => buildHeader(web3Context, activateWallet, openSidebar),
-    [activateWallet, openSidebar, web3Context]
-  );
+  const header = useMemo(() => buildHeader(activateWallet, openSidebar), [
+    activateWallet,
+    openSidebar,
+  ]);
 
   return (
     <>
       <InitializeColorMode />
       <ThemeProvider>
         <ApolloProvider client={apolloClient}>
-          <>
-            <Menu
-              right
-              customBurgerIcon={false}
-              isOpen={sideBarOpen}
-              onClose={onSideBarClose}
-            >
-              <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
-                <List sx={{ paddingTop: "24px", listStyle: "none" }}>
-                  {navigation.map(({ to, label }, index) => (
-                    <ListItem key={index} sx={{ marginLeft: "32px" }}>
-                      <RouterLink
-                        variant="navigation"
-                        to={to}
-                        onClick={onSideBarClose}
-                      >
-                        {label}
-                      </RouterLink>
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            </Menu>
-            <Layout header={header} footer={footer}>
-              <Switch>
-                <Route exact path="/">
-                  <Index />
-                </Route>
-                <Route path="/token/:tokenID">
-                  <Token />
-                </Route>
-                <Route path="*">
-                  <Box>404</Box>
-                </Route>
-              </Switch>
-            </Layout>
-            <Popup
-              open={walletModalOpen}
-              closeOnDocumentClick
-              onClose={closeWalletModal}
-            >
-              <WalletSelection activateWallet={activateWallet} />
-            </Popup>
-          </>
+          <ContractsProvider>
+            <ActivityProvider>
+              <>
+                <Menu
+                  right
+                  customBurgerIcon={false}
+                  isOpen={sideBarOpen}
+                  onClose={onSideBarClose}
+                >
+                  <Box sx={{ backgroundColor: "#4d00b4", height: "100%" }}>
+                    <List sx={{ paddingTop: "24px", listStyle: "none" }}>
+                      {navigation.map(({ to, label }, index) => (
+                        <ListItem key={index} sx={{ marginLeft: "32px" }}>
+                          <RouterLink
+                            variant="navigation"
+                            to={to}
+                            onClick={onSideBarClose}
+                          >
+                            {label}
+                          </RouterLink>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                </Menu>
+                <Layout header={header} footer={footer}>
+                  <Switch>
+                    <Route exact path="/">
+                      <Index />
+                    </Route>
+                    <Route path="/token/:tokenID">
+                      <Token />
+                    </Route>
+                    <Route path="*">
+                      <Box>404</Box>
+                    </Route>
+                  </Switch>
+                </Layout>
+                <Popup
+                  open={walletModalOpen}
+                  closeOnDocumentClick
+                  onClose={closeWalletModal}
+                >
+                  <WalletSelection activateWallet={activateWallet} />
+                </Popup>
+              </>
+              <ToastContainer />
+            </ActivityProvider>
+          </ContractsProvider>
         </ApolloProvider>
       </ThemeProvider>
     </>
@@ -225,7 +232,6 @@ export default function RoutedApp() {
           </WalletProvider>
         </Web3ReactProvider>
       </Router>
-      <ToastContainer />
     </HelmetProvider>
   );
 }

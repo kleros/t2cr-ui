@@ -1,8 +1,8 @@
 import { BarLoader, MoonLoader } from "react-spinners";
 import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
 
-import Authereum from "./assets/authereum.png";
-import Torus from "./assets/torus.png";
+import Authereum from "./assets/images/authereum.png";
+import Torus from "./assets/images/torus.png";
 import {
   Button,
   Identicon,
@@ -14,6 +14,7 @@ import {
   Popup,
   RouterLink,
   Text,
+  TransactionToast,
 } from "./components";
 import {
   Bell,
@@ -29,7 +30,7 @@ import {
   Telegram,
   WalletConnect,
 } from "./icons";
-import { useWallet } from "./providers";
+import { useActivity, useWallet } from "./providers";
 import { chainIdToColor, truncateEthAddr } from "./utils";
 
 function WalletButton({ title, icon, activate }) {
@@ -194,15 +195,12 @@ export function WalletSelection({ activateWallet }) {
   );
 }
 
-const chainIdToEtherscanName = {
-  1: "",
-  42: "kovan.",
-};
-
 export default function Controls({ openSidebar, activateWallet }) {
-  const { theme } = useThemeUI();
-  const { chainId, deactivate, account, active, txManagement } = useWallet();
-  const { txes } = txManagement;
+  const walletContext = useWallet();
+  const themeContext = useThemeUI();
+  const { theme } = themeContext;
+  const { chainId, deactivate, account, active } = walletContext;
+  const { txes } = useActivity();
 
   return (
     <Flex>
@@ -224,7 +222,7 @@ export default function Controls({ openSidebar, activateWallet }) {
                 </Button>
               }
               position="bottom right"
-              sx={{ minWidth: "380px" }}
+              contentStyle={{ minWidth: "380px" }}
               offsetY={18}
             >
               <WalletSelection activateWallet={activateWallet} />
@@ -241,7 +239,7 @@ export default function Controls({ openSidebar, activateWallet }) {
               </Button>
             }
             position="bottom right"
-            sx={{ minWidth: "380px" }}
+            contentStyle={{ minWidth: "380px" }}
             offsetY={18}
           >
             <Flex
@@ -261,35 +259,27 @@ export default function Controls({ openSidebar, activateWallet }) {
                 Activity
               </Text>
               <Divider sx={{ width: "100%" }} />
-              <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
+              <Flex
+                sx={{
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
                 {Object.keys(txes).length === 0 && "Nothing here yet."}
-                <List>
-                  {Object.entries(txes).map(([txHash, tx]) => {
-                    const pending = tx.confirmations && tx.confirmations > 0;
-                    const { tokenID } = tx;
-                    return (
-                      <ListItem key={txHash} sx={{ display: "flex" }}>
-                        {pending ? <MoonLoader /> : <Info />}
-                        <Flex sx={{ flexDirection: "column" }}>
-                          <Text>
-                            {pending
-                              ? "Transaction pending..."
-                              : "Transaction confirmed"}
-                          </Text>
-                          <Link
-                            href={`https://${chainIdToEtherscanName[chainId]}etherscan.io/tx/${txHash}`}
-                          >
-                            View on Etherscan.
-                          </Link>
-                          {!pending && tokenID && (
-                            <RouterLink to={`/tokens/${tokenID}`}>
-                              View Token
-                            </RouterLink>
-                          )}
-                        </Flex>
-                      </ListItem>
-                    );
-                  })}
+                <List
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                    listStyle: "none",
+                  }}
+                >
+                  {Object.entries(txes).map(([, tx]) => (
+                    <ListItem key={tx.hash}>
+                      <TransactionToast tx={tx} />
+                    </ListItem>
+                  ))}
                 </List>
               </Flex>
             </Flex>
@@ -303,7 +293,7 @@ export default function Controls({ openSidebar, activateWallet }) {
               </Button>
             }
             position="bottom right"
-            sx={{ minWidth: "380px" }}
+            contentStyle={{ minWidth: "380px" }}
             offsetY={18}
           >
             <Flex
@@ -381,9 +371,7 @@ export default function Controls({ openSidebar, activateWallet }) {
               </Button>
             }
             position="bottom right"
-            sx={{
-              minWidth: "248px",
-            }}
+            contentStyle={{ minWidth: "380px" }}
             offsetY={18}
           >
             <List
