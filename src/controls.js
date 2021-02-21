@@ -1,8 +1,6 @@
-import { BarLoader, MoonLoader } from "react-spinners";
+import { BarLoader } from "react-spinners";
 import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
 
-import Authereum from "./assets/images/authereum.png";
-import Torus from "./assets/images/torus.png";
 import {
   Button,
   Identicon,
@@ -12,10 +10,10 @@ import {
   ListItem,
   Network,
   Popup,
-  RouterLink,
   Text,
   TransactionToast,
 } from "./components";
+import { WalletSelection } from "./components/wallet-selection";
 import {
   Bell,
   Book,
@@ -24,7 +22,6 @@ import {
   Cog,
   EthSymbol,
   HamburgerMenu,
-  Info,
   MetaMask,
   Question,
   Telegram,
@@ -32,35 +29,6 @@ import {
 } from "./icons";
 import { useActivity, useWallet } from "./providers";
 import { chainIdToColor, truncateEthAddr } from "./utils";
-
-function WalletButton({ title, icon, activate }) {
-  return (
-    <Button
-      variant="wallet"
-      onClick={activate}
-      sx={{
-        margin: "8px",
-      }}
-    >
-      <Flex
-        sx={{
-          width: "90px",
-          height: "120px",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "space-between",
-          backgroundColor: "#fbf9fe",
-          padding: "16px",
-          border: (theme) => `1px solid ${theme.colors.skeleton}`,
-          borderRadius: 3,
-        }}
-      >
-        <Box sx={{ marginBottom: "8px" }}>{icon}</Box>
-        <Text sx={{ fontSize: "12px", lineHeight: "16px" }}>{title}</Text>
-      </Flex>
-    </Button>
-  );
-}
 
 function HamburgerButton({ openSidebar }) {
   return (
@@ -91,107 +59,6 @@ function HelpListItem({ label, icon: Icon }) {
       <Icon color={theme.colors.accent} />
       <Text sx={{ fontSize: "16px", marginLeft: "8px" }}>{label}</Text>
     </ListItem>
-  );
-}
-
-export function WalletSelection({ activateWallet }) {
-  const { activatingConnector } = useWallet();
-  const { theme } = useThemeUI();
-  const {
-    activateInjected,
-    activateTorus,
-    activateAuthereum,
-    activateWalletConnect,
-  } = activateWallet;
-
-  if (activatingConnector)
-    return (
-      <Flex
-        sx={{
-          padding: "32px",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Text
-          sx={{
-            fontWeight: 500,
-            fontSize: "24px",
-            marginBottom: "24px",
-          }}
-        >
-          Connecting...
-          <BarLoader />
-        </Text>
-      </Flex>
-    );
-
-  return (
-    <Flex
-      sx={{
-        padding: "32px",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Text
-        sx={{
-          fontWeight: 500,
-          fontSize: "24px",
-          marginBottom: "24px",
-        }}
-      >
-        Connect a Wallet
-      </Text>
-      <Flex sx={{ flexWrap: "wrap", justifyContent: "center" }}>
-        <WalletButton
-          title="MetaMask"
-          icon={<MetaMask width={42} />}
-          activate={activateInjected}
-        />
-        <WalletButton
-          title={
-            <Text>
-              Wallet
-              <Box as="br" />
-              Connect
-            </Text>
-          }
-          icon={<WalletConnect width={42} />}
-          activate={activateWalletConnect}
-        />
-        <WalletButton
-          title="Torus"
-          icon={<Image src={Torus} />}
-          activate={activateTorus}
-        />
-        <WalletButton
-          title="Authereum"
-          icon={<Image src={Authereum} />}
-          activate={activateAuthereum}
-        />
-      </Flex>
-      <Divider
-        sx={{
-          width: "100%",
-          marginTop: "32px",
-          marginBottom: "14px",
-        }}
-      />
-      <Link
-        sx={{
-          fontSize: "14px",
-          display: "flex",
-          alignItems: "center",
-        }}
-        href="#"
-      >
-        New to Ethereum? Learn more about wallets
-        <Flex sx={{ marginLeft: "8px", alignItems: "center" }}>
-          <Question color={theme.colors.primary} />
-        </Flex>
-      </Link>
-    </Flex>
   );
 }
 
@@ -316,10 +183,12 @@ export default function Controls({ openSidebar, activateWallet }) {
                 {active ? (
                   <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
                     <Network chainId={chainId} sx={{ marginBottom: "30px" }} />
-                    <Identicon address={account} />
-                    <Text sx={{ fontSize: "14px", marginTop: "8px" }}>
-                      {truncateEthAddr(account)}
-                    </Text>
+                    {account && <Identicon address={account} />}
+                    {account && (
+                      <Text sx={{ fontSize: "14px", marginTop: "8px" }}>
+                        {truncateEthAddr(account)}
+                      </Text>
+                    )}
                     <Button variant="link" onClick={deactivate}>
                       Disconnect
                     </Button>

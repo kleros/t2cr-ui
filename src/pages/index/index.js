@@ -191,9 +191,9 @@ export default function Index() {
       setLoadedSearchTokens([]);
       setLoadedTokens([]);
     };
-    ethereum.on("chainChanged", handleChainChanged);
+    if (ethereum) ethereum.on("chainChanged", handleChainChanged);
     return () => {
-      if (ethereum.removeListener)
+      if (ethereum && ethereum.removeListener)
         ethereum.removeListener("chainChanged", handleChainChanged);
     };
   }, [active, walletError]);

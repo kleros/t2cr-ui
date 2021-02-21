@@ -11,11 +11,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useStorageState } from "react-storage-hooks";
 
 import {
   ConnectorNames,
   authereum,
+  frame,
   injected,
   torus,
   walletconnect,
@@ -29,6 +29,7 @@ export const connectorsByName = {
   [ConnectorNames.WalletConnect]: walletconnect,
   [ConnectorNames.Authereum]: authereum,
   [ConnectorNames.Torus]: torus,
+  [ConnectorNames.Frame]: frame,
 };
 
 function getLibrary(provider) {

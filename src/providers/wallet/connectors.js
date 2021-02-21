@@ -1,4 +1,5 @@
 import { AuthereumConnector } from "@web3-react/authereum-connector";
+import { FrameConnector } from "@web3-react/frame-connector";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { TorusConnector } from "@web3-react/torus-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
@@ -8,6 +9,7 @@ export const ConnectorNames = {
   WalletConnect: "WalletConnect",
   Authereum: "Authereum",
   Torus: "Torus",
+  Frame: "Frame",
 };
 
 export const injected = new InjectedConnector({ supportedChainIds: [1, 42] });
@@ -22,3 +24,5 @@ export const walletconnect = new WalletConnectConnector({
 export const authereum = new AuthereumConnector({ chainId: 1 });
 
 export const torus = new TorusConnector({ chainId: 1 });
+
+export const frame = new FrameConnector({ supportedChainIds: [1] });

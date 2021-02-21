@@ -21,7 +21,8 @@ import {
   SocialIcons,
   Text,
 } from "./components";
-import Controls, { WalletSelection } from "./controls";
+import { WalletSelection } from "./components/wallet-selection";
+import Controls from "./controls";
 import { Info, SecuredByKleros, T2CRLogo } from "./icons";
 import Index from "./pages/index";
 import Token from "./pages/token";
@@ -114,20 +115,6 @@ function App() {
   const { chainId = 1, activate, walletModalControls } = web3Context || {};
   const { walletModalOpen, closeWalletModal } = walletModalControls;
 
-  // Supported wallets.
-  const activateInjected = useCallback(() => {
-    activate(connectorsByName[ConnectorNames.Injected]);
-  }, [activate]);
-  const activateTorus = useCallback(() => {
-    activate(connectorsByName[ConnectorNames.Torus]);
-  }, [activate]);
-  const activateWalletConnect = useCallback(() => {
-    activate(connectorsByName[ConnectorNames.WalletConnect]);
-  }, [activate]);
-  const activateAuthereum = useCallback(() => {
-    activate(connectorsByName[ConnectorNames.Authereum]);
-  }, [activate]);
-
   const apolloClient = useMemo(
     () =>
       new ApolloClient({
@@ -145,12 +132,16 @@ function App() {
   }, []);
   const activateWallet = useMemo(
     () => ({
-      activateInjected,
-      activateTorus,
-      activateAuthereum,
-      activateWalletConnect,
+      activateInjected: () =>
+        activate(connectorsByName[ConnectorNames.Injected]),
+      activateTorus: () => activate(connectorsByName[ConnectorNames.Torus]),
+      activateAuthereum: () =>
+        activate(connectorsByName[ConnectorNames.WalletConnect]),
+      activateWalletConnect: () =>
+        activate(connectorsByName[ConnectorNames.Authereum]),
+      activateFrame: () => activate(connectorsByName[ConnectorNames.Frame]),
     }),
-    [activateAuthereum, activateInjected, activateTorus, activateWalletConnect]
+    [activate]
   );
 
   const header = useMemo(() => buildHeader(activateWallet, openSidebar), [
