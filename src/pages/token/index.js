@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import humanizeDuration from "humanize-duration";
+import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import { Box, Card, Divider, Flex } from "theme-ui";
@@ -14,10 +15,11 @@ import {
 } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { EtherscanLogo } from "../../icons";
+import { useWallet } from "../../providers";
 import { isResolved } from "../../utils";
 
-import InfoBox from "./info-box";
-import Step from "./step";
+import Dispute from "./dispute";
+import { ChallengePopup } from "./popups";
 
 const availableAction = (item) => {
   const status = itemStatusEnum.parse(item).key;
@@ -53,6 +55,7 @@ const idQuery = gql`
         submissionTime
         result
         resolutionTime
+        type
         numberOfRounds
         requester
         arbitrator
@@ -81,22 +84,31 @@ const idQuery = gql`
     }
     registries(first: 1) {
       challengePeriodDuration
-      sharedStakeMultiplier
-      winnerStakeMultiplier
-      loserStakeMultiplier
-      arbitratorExtraData
     }
   }
 `;
 
 export default function TokenWithID({ network }) {
   const { tokenID } = useParams() || {};
+  const { account, walletModalControls } = useWallet();
+  const { setWalletModalOpen } = walletModalControls;
   const { data } = useQuery(idQuery, {
     variables: { id: tokenID },
   });
   const { token, registries } = data || {};
-  // const { web3 } = useWeb3();
-  // const getDisputeInfo = useDisputeInfo();
+  // Token submission modal state.
+  const [challengeModalOpen, setChallengeModalOpen] = useState();
+  const closeTokenChallengeModal = useCallback(
+    () => setChallengeModalOpen(false),
+    []
+  );
+  const onChallengeClick = useCallback(() => {
+    if (!account) {
+      setWalletModalOpen(true);
+      return;
+    }
+    setChallengeModalOpen(true);
+  }, [account, setWalletModalOpen]);
 
   if (!token || !registries)
     return (
@@ -118,7 +130,7 @@ export default function TokenWithID({ network }) {
   const { challengePeriodDuration } = t2cr || {};
 
   const latestRequest = requests[requests.length - 1];
-  const { disputed, submissionTime } = latestRequest;
+  const { disputed, submissionTime, type: requestType } = latestRequest;
 
   const submissionTimeMili = submissionTime * 1000;
   const challengePeriodDurationMili = challengePeriodDuration * 1000;
@@ -158,7 +170,12 @@ export default function TokenWithID({ network }) {
         </Flex>
         <Box>
           {!disputed && (
-            <Button type="button" variant="primary" sx={{ height: "45px" }}>
+            <Button
+              type="button"
+              onClick={onChallengeClick}
+              variant="primary"
+              sx={{ height: "45px" }}
+            >
               {availableAction(token)}
             </Button>
           )}
@@ -207,70 +224,13 @@ export default function TokenWithID({ network }) {
           </Link>
         </Flex>
       </Flex>
-      {!isResolved(status) && disputed && (
-        <>
-          <InfoBox sx={{ marginY: "24px" }} item={token} />
-          <Card
-            sx={{
-              alignContent: "center",
-              flexDirection: "column",
-              boxShadow: "0 6px 24px rgba(77, 0, 180, 0.25)",
-              borderRadius: "18px",
-              padding: "32px",
-              marginY: "24px",
-            }}
-          >
-            <Flex sx={{ flexDirection: "column" }}>
-              <Flex
-                sx={{
-                  justifyContent: "space-between",
-                  marginBottom: "14px",
-                  alignItems: ["flex-start", "center"],
-                  flexDirection: ["column", "row"],
-                }}
-              >
-                <Step
-                  number={1}
-                  title="Evidence Period"
-                  duration={3.25 * 24 * 60 * 60 * 1000}
-                />
-                <Divider
-                  sx={{
-                    flexGrow: 1,
-                    marginTop: 0,
-                    marginX: "24px",
-                    marginBottom: "14px",
-                  }}
-                />
-                <Step
-                  number={2}
-                  title="Voting Period"
-                  duration={3 * 24 * 60 * 60 * 1000}
-                />
-                <Divider
-                  sx={{
-                    flexGrow: 1,
-                    marginTop: 0,
-                    marginX: "24px",
-                    marginBottom: "14px",
-                  }}
-                />
-                <Step
-                  number={3}
-                  title="Appeal Period"
-                  duration={3 * 24 * 60 * 60 * 1000}
-                />
-              </Flex>
-              <Divider
-                sx={{
-                  borderBottom: "2px solid #4d00b4",
-                  marginY: "14px",
-                }}
-              />
-            </Flex>
-          </Card>
-        </>
-      )}
+      {!isResolved(status) && disputed && <Dispute item={token} />}
+      <ChallengePopup
+        isOpen={challengeModalOpen}
+        close={closeTokenChallengeModal}
+        itemID={tokenID}
+        requestType={requestType}
+      />
     </PageContent>
   );
 }

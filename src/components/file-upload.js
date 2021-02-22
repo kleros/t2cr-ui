@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Box, Flex } from "theme-ui";
 
-import { Trash } from "../icons";
+import { Info, Trash } from "../icons";
 
-import { Image, Input, Text } from ".";
+import { Image, Input, Link, Text } from ".";
 
 export default function FileUpload({
   value,
@@ -86,7 +86,13 @@ export default function FileUpload({
                   width: "fit-content",
                 }}
               >
-                <Image variant="thumbnail" src={file.preview} />
+                {file.type.startsWith("image/") ? (
+                  <Image variant="thumbnail" src={file.preview} />
+                ) : (
+                  <Link href={file.preview} download>
+                    <Info size={32} />
+                  </Link>
+                )}
                 <Trash
                   sx={{
                     fill: "text",

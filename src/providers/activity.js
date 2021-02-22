@@ -61,48 +61,53 @@ export default function ActivityProvider({ children }) {
   useInterval(() => {
     if (!t2cr) return;
 
-    Object.entries(txes)
-      .filter(([, tx]) => !tx.confirmations || tx.confirmations <= 0)
-      .forEach(async ([, tx]) => {
-        const latestTxReceipt = await library.getTransactionReceipt(tx.hash);
+    try {
+      Object.entries(txes)
+        .filter(([, tx]) => !tx.confirmations || tx.confirmations <= 0)
+        .forEach(async ([, tx]) => {
+          const latestTxReceipt = await library.getTransactionReceipt(tx.hash);
 
-        // Some providers may return null if the tx was not
-        // mined yet.
-        if (!latestTxReceipt) return;
-        if (
-          !latestTxReceipt.confirmations ||
-          latestTxReceipt.confirmations <= 0
-        )
-          return;
+          // Some providers may return null if the tx was not
+          // mined yet.
+          if (!latestTxReceipt) return;
+          if (
+            !latestTxReceipt.confirmations ||
+            latestTxReceipt.confirmations <= 0
+          )
+            return;
 
-        const newTxObject = {
-          ...tx,
-          confirmations: latestTxReceipt.confirmations,
-        };
-        // Transaction mined. Dispatch update.
-        // If tx includes a log with a tokenID,
-        // include it the tx object.
-        const statusChangeLogs = latestTxReceipt.logs
-          .map((log) => t2cr.interface.parseLog(log))
-          .filter((log) => log.name === "TokenStatusChange");
-        if (statusChangeLogs.length > 0)
-          newTxObject.tokenID = statusChangeLogs[0].args._tokenID;
+          const newTxObject = {
+            ...tx,
+            confirmations: latestTxReceipt.confirmations,
+          };
+          console.info(
+            latestTxReceipt.logs.map((log) => t2cr.interface.parseLog(log))
+          );
+          // Transaction mined. Dispatch update.
+          // If tx includes a log with a tokenID,
+          // include it the tx object.
+          // const statusChangeLogs = latestTxReceipt.logs.filter((log) => log.name === "TokenStatusChange");
+          // if (statusChangeLogs.length > 0)
+          //   newTxObject.tokenID = statusChangeLogs[0].args._tokenID;
 
-        setTxes((previousState) => ({
-          ...previousState,
-          [tx.hash]: newTxObject,
-        }));
-        toast.update(tx.hash, {
-          // eslint-disable-next-line react/display-name
-          render: () => <TransactionToast tx={newTxObject} />,
-          position: "top-right",
-          hideProgressBar: false,
-          autoClose: 10 * 1000,
-          closeOnClick: true,
-          draggable: true,
-          progress: undefined,
+          // setTxes((previousState) => ({
+          //   ...previousState,
+          //   [tx.hash]: newTxObject,
+          // }));
+          // toast.update(tx.hash, {
+          //   // eslint-disable-next-line react/display-name
+          //   render: () => <TransactionToast tx={newTxObject} />,
+          //   position: "top-right",
+          //   hideProgressBar: false,
+          //   autoClose: 10 * 1000,
+          //   closeOnClick: true,
+          //   draggable: true,
+          //   progress: undefined,
+          // });
         });
-      });
+    } catch (err) {
+      console.error("Error polling activity txes", err);
+    }
   }, 5 * 1000);
 
   return (
