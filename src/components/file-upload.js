@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Box, Flex } from "theme-ui";
 
-import { Info, Trash } from "../icons";
+import { PDF, Trash } from "../icons";
 
 import { Image, Input, Link, Text } from ".";
 
@@ -90,7 +90,7 @@ export default function FileUpload({
                   <Image variant="thumbnail" src={file.preview} />
                 ) : (
                   <Link href={file.preview} download>
-                    <Info size={32} />
+                    <PDF size={64} />
                   </Link>
                 )}
                 <Trash

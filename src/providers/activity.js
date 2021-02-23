@@ -1,14 +1,6 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { useStorageState } from "react-storage-hooks";
 import { toast } from "react-toastify";
-import { useThemeUI } from "theme-ui";
 
 import { TransactionToast } from "../components";
 import { useInterval } from "../utils";
@@ -80,30 +72,37 @@ export default function ActivityProvider({ children }) {
             ...tx,
             confirmations: latestTxReceipt.confirmations,
           };
-          console.info(
-            latestTxReceipt.logs.map((log) => t2cr.interface.parseLog(log))
-          );
+
           // Transaction mined. Dispatch update.
           // If tx includes a log with a tokenID,
           // include it the tx object.
-          // const statusChangeLogs = latestTxReceipt.logs.filter((log) => log.name === "TokenStatusChange");
-          // if (statusChangeLogs.length > 0)
-          //   newTxObject.tokenID = statusChangeLogs[0].args._tokenID;
+          const t2crLogs = latestTxReceipt.logs.filter(
+            (log) => log.address.toLowerCase() === t2cr.address.toLowerCase()
+          );
+          const parsedLogs = t2crLogs.map((log) =>
+            t2cr.interface.parseLog(log)
+          );
+          const statusChangeLogs = parsedLogs.filter(
+            (log) => log.name === "TokenStatusChange"
+          );
 
-          // setTxes((previousState) => ({
-          //   ...previousState,
-          //   [tx.hash]: newTxObject,
-          // }));
-          // toast.update(tx.hash, {
-          //   // eslint-disable-next-line react/display-name
-          //   render: () => <TransactionToast tx={newTxObject} />,
-          //   position: "top-right",
-          //   hideProgressBar: false,
-          //   autoClose: 10 * 1000,
-          //   closeOnClick: true,
-          //   draggable: true,
-          //   progress: undefined,
-          // });
+          if (statusChangeLogs.length > 0)
+            newTxObject.tokenID = statusChangeLogs[0].args._tokenID;
+
+          setTxes((previousState) => ({
+            ...previousState,
+            [tx.hash]: newTxObject,
+          }));
+          toast.update(tx.hash, {
+            // eslint-disable-next-line react/display-name
+            render: () => <TransactionToast tx={newTxObject} />,
+            position: "top-right",
+            hideProgressBar: false,
+            autoClose: 10 * 1000,
+            closeOnClick: true,
+            draggable: true,
+            progress: undefined,
+          });
         });
     } catch (err) {
       console.error("Error polling activity txes", err);
