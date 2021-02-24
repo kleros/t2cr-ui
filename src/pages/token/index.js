@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import humanizeDuration from "humanize-duration";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import { Box, Card, Divider, Flex } from "theme-ui";
@@ -15,7 +15,7 @@ import {
 } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { EtherscanLogo } from "../../icons";
-import { useWallet } from "../../providers";
+import { useContracts, useWallet } from "../../providers";
 import { isResolved } from "../../utils";
 
 import Dispute from "./dispute";
@@ -91,11 +91,28 @@ const idQuery = gql`
 export default function TokenWithID({ network }) {
   const { tokenID } = useParams() || {};
   const { account, walletModalControls } = useWallet();
+  const { t2cr } = useContracts();
   const { setWalletModalOpen } = walletModalControls;
-  const { data } = useQuery(idQuery, {
+  const { data, refetch } = useQuery(idQuery, {
     variables: { id: tokenID },
   });
   const { token, registries } = data || {};
+
+  // Event listeners
+  useEffect(() => {
+    if (!t2cr) return;
+
+    // eslint-disable-next-line new-cap
+    const tokenStatusChangeFilter = t2cr.filters.TokenStatusChange();
+    t2cr.on(
+      tokenStatusChangeFilter,
+      () => setTimeout(() => refetch(), 5000) // Delay to let subgraph sync.
+    );
+    return () => {
+      t2cr.removeAllListeners(tokenStatusChangeFilter);
+    };
+  }, [refetch, t2cr]);
+
   // Token submission modal state.
   const [challengeModalOpen, setChallengeModalOpen] = useState();
   const closeTokenChallengeModal = useCallback(
@@ -126,8 +143,8 @@ export default function TokenWithID({ network }) {
 
   const { name, ticker, address, symbolMultihash, requests, status } = token;
 
-  const t2cr = registries[0];
-  const { challengePeriodDuration } = t2cr || {};
+  const t2crData = registries[0];
+  const { challengePeriodDuration } = t2crData || {};
 
   const latestRequest = requests[requests.length - 1];
   const { disputed, submissionTime, type: requestType } = latestRequest;

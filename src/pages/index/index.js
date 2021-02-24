@@ -15,7 +15,7 @@ import {
   Text,
 } from "../../components";
 import { itemStatusEnum } from "../../data";
-import { useWallet } from "../../providers";
+import { useContracts, useWallet } from "../../providers";
 
 import { SubmissionPopup } from "./popups";
 import TokenPreviewCard from "./token-preview-card";
@@ -85,6 +85,7 @@ const searchQuery = gql`
 
 export default function Index() {
   const history = useHistory();
+  const { t2cr } = useContracts();
   const routerParameters = queryString.parse(useLocation().search) || {};
   const { search, status } = routerParameters || {};
   const [loadedTokens, setLoadedTokens] = useState([]);
@@ -219,6 +220,23 @@ export default function Index() {
   // Registry data.
   const registry = (registryData && registryData.registries[0]) || {};
   const { numberOfSubmissions } = registry || {};
+
+  // Event listeners
+  useEffect(() => {
+    if (!t2cr) return;
+
+    // eslint-disable-next-line new-cap
+    const tokenStatusChangeFilter = t2cr.filters.TokenStatusChange();
+    t2cr.on(tokenStatusChangeFilter, () => {
+      setTimeout(() => {
+        setLoadedTokens([]);
+        setIndexVariables({});
+      }, 5000); // Delay to let subgraph sync.
+    });
+    return () => {
+      t2cr.removeAllListeners(tokenStatusChangeFilter);
+    };
+  }, [t2cr]);
 
   return (
     <>
