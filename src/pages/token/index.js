@@ -3,7 +3,7 @@ import humanizeDuration from "humanize-duration";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
-import { Box, Card, Divider, Flex } from "theme-ui";
+import { Box, Flex } from "theme-ui";
 
 import {
   Button,

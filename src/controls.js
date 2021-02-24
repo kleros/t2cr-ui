@@ -1,10 +1,8 @@
-import { BarLoader } from "react-spinners";
-import { Box, Divider, Flex, Label, useThemeUI } from "theme-ui";
+import { Divider, Flex, Label, useThemeUI } from "theme-ui";
 
 import {
   Button,
   Identicon,
-  Image,
   Link,
   List,
   ListItem,
@@ -22,10 +20,8 @@ import {
   Cog,
   EthSymbol,
   HamburgerMenu,
-  MetaMask,
   Question,
   Telegram,
-  WalletConnect,
 } from "./icons";
 import { useActivity, useWallet } from "./providers";
 import { chainIdToColor, truncateEthAddr } from "./utils";
