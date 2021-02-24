@@ -115,14 +115,19 @@ function ChallengePopup({ isOpen, close, requestType, itemID }) {
         )}
         onSubmit={async ({ title, description, attachment }) => {
           try {
-            const { pathname: fileURI } = await upload(
-              attachment.name,
-              attachment.content
-            );
+            let fileURI;
+            if (attachment)
+              fileURI = (await upload(attachment.name, attachment.content))
+                .pathname;
+
+            const evidence = { name: title, description };
+            if (fileURI) evidence.fileURI = fileURI;
+
             const { pathname: evidenceURI } = await upload(
               "evidence.json",
-              JSON.stringify({ fileURI, name: title, description })
+              JSON.stringify(evidence)
             );
+
             const tx = await t2cr.challengeRequest(itemID, evidenceURI, {
               from: account,
               value: totalCost.toString(),
