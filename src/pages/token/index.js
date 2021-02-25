@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import humanizeDuration from "humanize-duration";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import { Box, Flex } from "theme-ui";
@@ -15,14 +15,19 @@ import {
 } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { EtherscanLogo } from "../../icons";
-import { useContracts, useWallet } from "../../providers";
+import { useActivity, useContracts, useWallet } from "../../providers";
 import { isResolved } from "../../utils";
 
 import Dispute from "./dispute";
 import { ChallengePopup } from "./popups";
 
-const availableAction = (item) => {
+const availableAction = (item, timeRemaining) => {
   const status = itemStatusEnum.parse(item).key;
+  const { requests } = item;
+  const latestRequest = requests[requests.length - 1];
+  const { resolutionTime } = latestRequest;
+
+  if (timeRemaining <= 0 && Number(resolutionTime) === 0) return "execute";
 
   switch (status) {
     case itemStatusEnum.Registered.key:
@@ -92,6 +97,7 @@ export default function TokenWithID({ network }) {
   const { tokenID } = useParams() || {};
   const { account, walletModalControls } = useWallet();
   const { t2cr } = useContracts();
+  const { newTx } = useActivity();
   const { setWalletModalOpen } = walletModalControls;
   const { data, refetch } = useQuery(idQuery, {
     variables: { id: tokenID },
@@ -106,7 +112,11 @@ export default function TokenWithID({ network }) {
     const tokenStatusChangeFilter = t2cr.filters.TokenStatusChange();
     t2cr.on(
       tokenStatusChangeFilter,
-      () => setTimeout(() => refetch(), 5000) // Delay to let subgraph sync.
+      () =>
+        setTimeout(() => {
+          console.info("refetching");
+          refetch();
+        }, 5000) // Delay to let subgraph sync.
     );
     return () => {
       t2cr.removeAllListeners(tokenStatusChangeFilter);
@@ -126,6 +136,28 @@ export default function TokenWithID({ network }) {
     }
     setChallengeModalOpen(true);
   }, [account, setWalletModalOpen]);
+
+  const onExecuteClick = useCallback(() => {
+    if (!t2cr) return;
+    if (!account) {
+      setWalletModalOpen(true);
+      return;
+    }
+
+    (async () => {
+      const tx = await t2cr.executeRequest(tokenID, { from: account });
+      newTx(tx);
+    })();
+  }, [account, newTx, setWalletModalOpen, t2cr, tokenID]);
+
+  const actionNameToCallback = useMemo(
+    () => ({
+      "challenge registration": onChallengeClick,
+      "challenge removal": onChallengeClick,
+      execute: onExecuteClick,
+    }),
+    [onChallengeClick, onExecuteClick]
+  );
 
   if (!token || !registries)
     return (
@@ -179,7 +211,7 @@ export default function TokenWithID({ network }) {
             item={token}
             sx={{ marginLeft: "32px", marginRight: "8px" }}
           />
-          {!isResolved(status) && !disputed && (
+          {!isResolved(status) && !disputed && timeRemaining > 0 && (
             <Text sx={{ fontSize: ["10px", "12px", "14px"] }}>
               {humanizeDuration(timeRemaining, { largest: 2 })}
             </Text>
@@ -189,11 +221,13 @@ export default function TokenWithID({ network }) {
           {!disputed && (
             <Button
               type="button"
-              onClick={onChallengeClick}
+              onClick={
+                actionNameToCallback[availableAction(token, timeRemaining)]
+              }
               variant="primary"
               sx={{ height: "45px" }}
             >
-              {availableAction(token)}
+              {availableAction(token, timeRemaining)}
             </Button>
           )}
           {isResolved(status) && (
