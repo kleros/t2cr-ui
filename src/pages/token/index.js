@@ -1,25 +1,31 @@
 import { gql, useQuery } from "@apollo/client";
 import humanizeDuration from "humanize-duration";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Accordion, AccordionItem } from "react-accessible-accordion";
 import { useParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import { Box, Flex } from "theme-ui";
 
 import {
+  AccordionItemHeading,
+  AccordionItemPanel,
   Button,
   Image,
   Link,
   PageContent,
+  ScrollArea,
+  ScrollTo,
   Status,
   Text,
 } from "../../components";
 import { itemStatusEnum } from "../../data";
-import { EtherscanLogo } from "../../icons";
+import { DownArrow, EtherscanLogo, UpArrow } from "../../icons";
 import { useActivity, useContracts, useWallet } from "../../providers";
 import { isResolved } from "../../utils";
 
 import Dispute from "./dispute";
-import { ChallengePopup } from "./popups";
+import EvidenceItem from "./evidence-item";
+import { ChallengePopup, EvidencePopup } from "./popups";
 
 const availableAction = (item, timeRemaining) => {
   const status = itemStatusEnum.parse(item).key;
@@ -96,9 +102,9 @@ const idQuery = gql`
 export default function TokenWithID({ network }) {
   const { tokenID } = useParams() || {};
   const { account, walletModalControls } = useWallet();
+  const { setWalletModalOpen } = walletModalControls;
   const { t2cr } = useContracts();
   const { newTx } = useActivity();
-  const { setWalletModalOpen } = walletModalControls;
   const { data, refetch } = useQuery(idQuery, {
     variables: { id: tokenID },
   });
@@ -108,24 +114,31 @@ export default function TokenWithID({ network }) {
   useEffect(() => {
     if (!t2cr) return;
 
-    // eslint-disable-next-line new-cap
-    const tokenStatusChangeFilter = t2cr.filters.TokenStatusChange();
     t2cr.on(
-      tokenStatusChangeFilter,
+      // eslint-disable-next-line new-cap
+      t2cr.filters.TokenStatusChange(),
       () =>
         setTimeout(() => {
-          console.info("refetching");
+          refetch();
+        }, 5000) // Delay to let subgraph sync.
+    );
+    t2cr.on(
+      // eslint-disable-next-line new-cap
+      t2cr.filters.Evidence(),
+      () =>
+        setTimeout(() => {
+          console.info("refetching due to evidence");
           refetch();
         }, 5000) // Delay to let subgraph sync.
     );
     return () => {
-      t2cr.removeAllListeners(tokenStatusChangeFilter);
+      t2cr.removeAllListeners();
     };
   }, [refetch, t2cr]);
 
-  // Token submission modal state.
+  // Token submission modal management.
   const [challengeModalOpen, setChallengeModalOpen] = useState();
-  const closeTokenChallengeModal = useCallback(
+  const closeChallengeModal = useCallback(
     () => setChallengeModalOpen(false),
     []
   );
@@ -137,6 +150,18 @@ export default function TokenWithID({ network }) {
     setChallengeModalOpen(true);
   }, [account, setWalletModalOpen]);
 
+  // Evidence submission modal management.
+  const [evidenceModalOpen, setEvidenceModalOpen] = useState();
+  const closeEvidenceModal = useCallback(() => setEvidenceModalOpen(false), []);
+  const onSubmitEvidenceClick = useCallback(() => {
+    if (!account) {
+      setWalletModalOpen(true);
+      return;
+    }
+    setEvidenceModalOpen(true);
+  }, [account, setWalletModalOpen]);
+
+  // Request execution.
   const onExecuteClick = useCallback(() => {
     if (!t2cr) return;
     if (!account) {
@@ -276,11 +301,113 @@ export default function TokenWithID({ network }) {
         </Flex>
       </Flex>
       {!isResolved(status) && disputed && <Dispute item={token} />}
+      {requests && (
+        <Accordion allowZeroExpanded={false}>
+          {requests.map((request, requestIndex) => (
+            <AccordionItem
+              dangerouslySetExpanded={requestIndex === 0}
+              uuid={`request-timeline-uuid-${requestIndex}`}
+              key={`request-timeline-${requestIndex}`}
+            >
+              <AccordionItemHeading>
+                Request #{requests.length - requestIndex}
+              </AccordionItemHeading>
+              <AccordionItemPanel>
+                <ScrollTo>
+                  {({ scroll }) => (
+                    <Box sx={{ paddingX: 4 }}>
+                      <Flex
+                        sx={{
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: 3,
+                        }}
+                      >
+                        {!isResolved(status) && requestIndex === 0 && (
+                          <Button
+                            type="button"
+                            onClick={onSubmitEvidenceClick}
+                            variant="primary"
+                            sx={{ height: "45px" }}
+                          >
+                            Submit Evidence
+                          </Button>
+                        )}
+                        <Text
+                          sx={{ color: "primary" }}
+                          role="button"
+                          onClick={() =>
+                            scroll({
+                              y: request.evidences.length * 190,
+                              smooth: true,
+                            })
+                          }
+                        >
+                          Scroll to 1st Evidence{" "}
+                          <DownArrow
+                            sx={{
+                              stroke: "background",
+                              path: { fill: "primary" },
+                            }}
+                          />
+                        </Text>
+                      </Flex>
+                      <ScrollArea
+                        sx={{
+                          marginBottom: 2,
+                          marginTop: -3,
+                          marginX: -4,
+                          maxHeight: 650,
+                          overflowY: "scroll",
+                          paddingTop: 3,
+                          paddingX: 4,
+                        }}
+                      >
+                        {request.evidences.map((_evidence, evidenceIndex) => (
+                          <EvidenceItem
+                            key={_evidence.id}
+                            evidence={_evidence}
+                            index={request.evidences.length - evidenceIndex}
+                          />
+                        ))}
+                      </ScrollArea>
+                      <Flex
+                        sx={{
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <Text
+                          sx={{ color: "primary" }}
+                          role="button"
+                          onClick={() => scroll({ y: 0, smooth: true })}
+                        >
+                          Scroll to Last Evidence{" "}
+                          <UpArrow
+                            sx={{
+                              stroke: "background",
+                              path: { fill: "primary" },
+                            }}
+                          />
+                        </Text>
+                      </Flex>
+                    </Box>
+                  )}
+                </ScrollTo>
+              </AccordionItemPanel>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
       <ChallengePopup
         isOpen={challengeModalOpen}
-        close={closeTokenChallengeModal}
+        close={closeChallengeModal}
         itemID={tokenID}
         requestType={requestType}
+      />
+      <EvidencePopup
+        isOpen={evidenceModalOpen}
+        close={closeEvidenceModal}
+        itemID={tokenID}
       />
     </PageContent>
   );

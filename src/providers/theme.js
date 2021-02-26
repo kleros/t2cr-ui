@@ -78,9 +78,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
   },
 
   accordion: {
-    item: {
-      marginY: 2,
-    },
     heading: {
       borderRadius: 3,
       color: "background",
@@ -97,7 +94,6 @@ export const theme = merge(merge(base, toTheme(typographyTheme)), {
       bordeRadius: 3,
       boxShadow: "0 6px 90px rgba(153, 153, 153, 0.25)",
       fontSize: 1,
-      paddingX: 4,
       paddingY: 3,
     },
   },

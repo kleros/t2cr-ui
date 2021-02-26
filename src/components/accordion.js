@@ -1,7 +1,5 @@
 import {
   AccordionItemState,
-  Accordion as _Accordion,
-  AccordionItem as _AccordionItem,
   AccordionItemButton as _AccordionItemButton,
   AccordionItemHeading as _AccordionItemHeading,
   AccordionItemPanel as _AccordionItemPanel,
@@ -11,30 +9,6 @@ import useMeasure from "react-use-measure";
 import { Box } from "theme-ui";
 
 import SVG from "./svg";
-
-export default function Accordion({
-  allowMultipleExpanded = true,
-  allowZeroExpanded = true,
-  ...rest
-}) {
-  return (
-    <Box
-      as={(props) => (
-        <_Accordion
-          allowMultipleExpanded={allowMultipleExpanded}
-          allowZeroExpanded={allowZeroExpanded}
-          {...rest}
-          {...props}
-        />
-      )}
-      {...rest}
-    />
-  );
-}
-
-export function AccordionItem(props) {
-  return <Box as={_AccordionItem} variant="accordion.item" {...props} />;
-}
 
 function Rectangle(props) {
   return (

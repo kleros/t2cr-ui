@@ -22,12 +22,7 @@ export { default as List, ListItem } from "./list";
 export { default as SocialIcons } from "./social-icons";
 export { default as Input } from "./input";
 export { default as TimeAgo } from "./time-ago";
-export {
-  default as Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemPanel,
-} from "./accordion";
+export { AccordionItemHeading, AccordionItemPanel } from "./accordion";
 export { default as SVG } from "./svg";
 export { default as Network } from "./network";
 export { default as Form, Field } from "./form";

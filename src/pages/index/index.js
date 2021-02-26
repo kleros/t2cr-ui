@@ -16,6 +16,7 @@ import {
 } from "../../components";
 import { itemStatusEnum } from "../../data";
 import { useContracts, useWallet } from "../../providers";
+import { chainIdToEtherscanName } from "../../utils";
 
 import { SubmissionPopup } from "./popups";
 import TokenPreviewCard from "./token-preview-card";
@@ -344,6 +345,7 @@ export default function Index() {
                 <TokenPreviewCard
                   tokenPreview={tokenPreview}
                   key={`grid-item-${index}`}
+                  network={chainIdToEtherscanName[chainId]}
                 />
               ))}
           </Grid>
