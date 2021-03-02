@@ -23,7 +23,6 @@ import { DownArrow, EtherscanLogo, UpArrow } from "../../icons";
 import { useActivity, useContracts, useWallet } from "../../providers";
 import { isResolved } from "../../utils";
 
-import Dispute from "./dispute";
 import EvidenceItem from "./evidence-item";
 import { ChallengePopup, EvidencePopup } from "./popups";
 
@@ -300,7 +299,6 @@ export default function TokenWithID({ network }) {
           </Link>
         </Flex>
       </Flex>
-      {!isResolved(status) && disputed && <Dispute item={token} />}
       {requests && (
         <Accordion allowZeroExpanded={false}>
           {requests.map((request, requestIndex) => (
@@ -320,7 +318,7 @@ export default function TokenWithID({ network }) {
                         sx={{
                           alignItems: "center",
                           justifyContent: "space-between",
-                          marginBottom: 3,
+                          marginBottom: "64px",
                         }}
                       >
                         {!isResolved(status) && requestIndex === 0 && (
