@@ -308,7 +308,7 @@ module.exports = {
 
     // Regex Plugin
     "regex/invalid": [
-      "error",
+      "warn",
       [
         "[^\\d]0p[x]", // Don't use pixels unit for zero values.
         "(?=.*[A-F])#[0-9a-fA-F]{1,6}", // Don't use upper case letters in hex colors.
