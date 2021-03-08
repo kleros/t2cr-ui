@@ -9,6 +9,7 @@ import { Box, Flex } from "theme-ui";
 import {
   AccordionItemHeading,
   AccordionItemPanel,
+  Appeal,
   Button,
   Image,
   Link,
@@ -18,6 +19,7 @@ import {
   Status,
   Text,
 } from "../../components";
+import Alert from "../../components/alert";
 import { itemStatusEnum } from "../../data";
 import { DownArrow, EtherscanLogo, UpArrow } from "../../icons";
 import { useActivity, useContracts, useWallet } from "../../providers";
@@ -72,6 +74,7 @@ const idQuery = gql`
         challenger
         disputed
         disputeID
+        arbitratorExtraData
         rounds {
           id
           amountPaidRequester
@@ -94,6 +97,9 @@ const idQuery = gql`
     }
     registries(first: 1) {
       challengePeriodDuration
+      sharedStakeMultiplier
+      winnerStakeMultiplier
+      loserStakeMultiplier
     }
   }
 `;
@@ -200,10 +206,33 @@ export default function TokenWithID({ network }) {
   const { name, ticker, address, symbolMultihash, requests, status } = token;
 
   const t2crData = registries[0];
-  const { challengePeriodDuration } = t2crData || {};
+  const {
+    challengePeriodDuration,
+    sharedStakeMultiplier,
+    winnerStakeMultiplier,
+    loserStakeMultiplier,
+  } = t2crData || {};
 
   const latestRequest = requests[requests.length - 1];
-  const { disputed, submissionTime, type: requestType } = latestRequest;
+  const {
+    disputed,
+    disputeID,
+    submissionTime,
+    type: requestType,
+    arbitratorExtraData,
+    arbitrator,
+    requester,
+    challenger,
+    rounds,
+  } = latestRequest;
+
+  const latestRound = rounds[rounds.length - 1];
+  const {
+    amountPaidChallenger,
+    amountPaidRequester,
+    hasPaidChallenger,
+    hasPaidRequester,
+  } = latestRound;
 
   const submissionTimeMili = submissionTime * 1000;
   const challengePeriodDurationMili = challengePeriodDuration * 1000;
@@ -301,6 +330,40 @@ export default function TokenWithID({ network }) {
       </Flex>
       {requests && (
         <Accordion allowZeroExpanded={false}>
+          {
+            <Box sx={{ marginBottom: "12px" }}>
+              <AccordionItem uuid="appealCrowdfunding" key="appealCrowdfunding">
+                <AccordionItemHeading>Appeal</AccordionItemHeading>
+                <AccordionItemPanel>
+                  <Text>Appeal the decision</Text>
+                  <Text>
+                    In order to appeal the decision, you need to fully fund the
+                    crowdfunding deposit. The dispute will be sent to the jurors
+                    when the full deposit is reached. Note that if the previous
+                    round loser funds its side, the previous round winner should
+                    also fully fund its side in order not to lose the case.
+                  </Text>
+                  <Alert title="External contributors can fund the appeal and win rewards">
+                    Note that help funding the dispute can make you win rewards
+                    if the side you contributed won.
+                  </Alert>
+                  <Appeal
+                    sharedStakeMultiplier={sharedStakeMultiplier}
+                    winnerStakeMultiplier={winnerStakeMultiplier}
+                    loserStakeMultiplier={loserStakeMultiplier}
+                    arbitrator={arbitrator}
+                    arbitratorExtraData={arbitratorExtraData}
+                    hasPaidRequester={hasPaidRequester}
+                    hasPaidChallenger={hasPaidChallenger}
+                    amountPaidRequester={amountPaidRequester}
+                    amountPaidChallenger={amountPaidChallenger}
+                    requester={requester}
+                    challenger={challenger}
+                  />
+                </AccordionItemPanel>
+              </AccordionItem>
+            </Box>
+          }
           {requests.map((request, requestIndex) => (
             <AccordionItem
               dangerouslySetExpanded={requestIndex === 0}

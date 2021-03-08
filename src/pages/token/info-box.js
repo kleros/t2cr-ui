@@ -1,7 +1,6 @@
+import Alert from "../../components/alert";
 import { itemStatusEnum } from "../../data";
 import { isResolved } from "../../utils";
-
-import Alert from "./alert";
 
 const getStatusInfo = ({ status, disputed, appealPeriodStart }) => {
   if (!isResolved(status)) {

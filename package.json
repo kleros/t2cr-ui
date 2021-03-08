@@ -50,6 +50,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
     "react-scroll-to": "^3.0.0-beta.6",
+    "react-share": "^4.4.0",
     "react-spinners": "^0.10.6",
     "react-spring": "^8.0.27",
     "react-storage-hooks": "^4.0.1",

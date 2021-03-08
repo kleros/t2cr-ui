@@ -27,3 +27,5 @@ export { default as SVG } from "./svg";
 export { default as Network } from "./network";
 export { default as Form, Field } from "./form";
 export { default as TransactionToast } from "./transaction-toast";
+export { default as Appeal } from "./appeal";
+export { default as Alert } from "./alert";

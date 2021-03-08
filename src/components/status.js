@@ -2,7 +2,12 @@ import { Flex, Label } from "theme-ui";
 
 import { itemStatusEnum } from "../data";
 
+import { Link } from ".";
+
 export default function Status({ item, sx }) {
+  const { requests } = item;
+  const latestRequest = requests[requests.length - 1];
+  const { disputed, disputeID } = latestRequest;
   return (
     <Flex
       sx={{
@@ -24,6 +29,15 @@ export default function Status({ item, sx }) {
         }}
       />
       {itemStatusEnum.parse(item).startCase}
+      {disputed && (
+        <Link
+          sx={{ marginLeft: "8px" }}
+          newTab
+          href={`https://court.kleros.io/cases/${disputeID}`}
+        >
+          # {disputeID}
+        </Link>
+      )}
     </Flex>
   );
 }

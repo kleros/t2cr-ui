@@ -1,7 +1,8 @@
 import { Box, Flex } from "theme-ui";
 
-import { Text } from "../../components";
-import { Info } from "../../icons";
+import { Info } from "../icons";
+
+import { Text } from ".";
 
 export default function Alert({ type = "info", title, children, sx }) {
   const Icon = { info: Info }[type];
